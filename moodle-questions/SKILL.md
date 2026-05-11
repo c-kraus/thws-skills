@@ -1,151 +1,233 @@
 ---
-name: moodle-question-generator
-description: Generate Moodle XML quiz questions from lecture content, case studies, or concepts. Supports multiple question types (multichoice, matching, numerical, cloze, essay, trufalse). Automatically detects appropriate question type and generates didactic feedback. Use when the user requests Moodle questions, quiz generation, or exam questions. Trigger phrases include "Erstelle Moodle-Fragen", "Generate quiz questions", "Export as Moodle XML", "Prüfungsfragen für Moodle".
+name: moodle-questions
+description: "Generiert valides Moodle-XML aus Lehrinhalt, Fallstudien oder Konzepten — direkt importierbar in Moodle 4.x/5.x. Unterstützt alle Fragetypen: Multiple Choice, Zuordnung (match), Numerisch, Lückentext (cloze), Freitext (essay), Wahr/Falsch. Immer verwenden wenn: Moodle-Fragen oder Prüfungsfragen benötigt werden, Lehrinhalt in ein Quiz umgewandelt werden soll, Moodle-XML exportiert werden soll, oder Klausuraufgaben erstellt werden sollen. Trigger-Phrasen: 'Erstelle Moodle-Fragen', 'mach mir Prüfungsfragen', 'Klausuraufgaben für Moodle', 'Quiz aus dem Kapitel', 'Generate Moodle XML', 'Export as Moodle XML', 'Fragen für die Klausur', 'erstell mir ein Quiz', 'Testfragen zu', 'baue Übungsfragen', 'Moodle-Quiz', 'Prüfungsfragen exportieren'."
 ---
 
 # Moodle Question Generator
 
-Transform accounting and business concepts into valid Moodle XML quiz questions with professional formatting and didactic feedback.
+Wandelt Lehrinhalt in valides Moodle-XML um — direkt importierbar in Moodle 4.x/5.x.
 
-## Role & Mission
+---
 
-You are the "Universal Moodle XML Architect" for academic content. Your task: Transform lecture content, concepts, or case studies into production-ready Moodle XML.
+## Schritt 0: Klärungsabfrage
 
-## Critical Output Rules
+Bevor du XML generierst, prüfe ob diese Parameter bekannt sind. Wenn mindestens einer unklar ist, stelle **eine einzige kurze Frage** mit allen offenen Punkten auf einmal:
 
-### Output Format (MANDATORY)
-1. **Code Block Only:** Entire output MUST be in a Markdown code block: ```xml ... ```
-2. **No Explanations:** NO introductions, NO "Here is your code", NO postamble
-3. **Direct Output:** Only the XML code block, nothing else
+| Parameter | Unklar wenn... | Default (wenn nicht nachgefragt) |
+|---|---|---|
+| **Sprache** | Input gemischt oder explizit keine Sprache genannt | Sprache des Inputs übernehmen |
+| **Anzahl** | Keine Zahl genannt | 5 Fragen |
+| **Fragetyp** | Kein Typ erwähnt, Inhalt nicht eindeutig | Auto-Detect (siehe unten) |
+| **Schwierigkeitsgrad** | Mehrere Niveaus möglich | Mittel (Bachelor-Niveau) |
 
-### Language Rules
-- **Default Language:** English (even if input is German, unless explicitly requested otherwise)
-- **Terminology:** Use precise technical terms (IFRS/US GAAP: "Inventory" not "Stock", "Accounts Payable" not "Debts")
-- **Consistency:** Maintain terminology consistency across all questions
+Wenn alle Parameter klar sind (z.B. „5 deutsche MC-Fragen zu IFRS 15"), direkt zur Generierung springen — keine Rückfrage.
 
-## Question Type Detection Logic
+**Beispiel-Abfrage** (nur wenn nötig):
+> „Kurz bevor ich loslege: Wie viele Fragen brauchst du, in welcher Sprache sollen sie sein, und soll ich den Fragetyp automatisch wählen oder möchtest du einen bestimmten Typ?"
 
-Automatically select the appropriate question type:
+---
 
-1. **Matching** → Definitions/term matching, concept pairing
-2. **Numerical** → Calculations, numbers, formulas with specific answers
-3. **TrueFalse** → True/false statements
-4. **Cloze** → Journal entries, fill-in-the-blanks, structured answers
-5. **Essay** → Discussion, reflections, open-ended analysis
-6. **Multichoice** → Everything else (default)
+## Fragetyp-Erkennung (Auto-Detect)
 
-## XML Syntax Rules (STRICT)
+| Inhalt / Kontext | Fragetyp |
+|---|---|
+| Definitionen ↔ Begriffe zuordnen | `match` |
+| Berechnungen mit konkreten Zahlen | `numerical` |
+| Wahr/Falsch-Aussagen | `truefalse` |
+| Buchungssätze, Lückentexte | `cloze` |
+| Diskussion, Analyse, offene Fragen | `essay` |
+| Alles andere | `multichoice` (Default) |
 
-### Mandatory Elements
-1. **Root:** Must start with `<quiz>` and end with `</quiz>`
-2. **CDATA:** ALL text content (`<text>`) MUST be wrapped in `<![CDATA[ ... ]]>`
-3. **Shuffle:** Include `<shuffleanswers>1</shuffleanswers>` (except Essay/TrueFalse)
-4. **Feedback:** ALWAYS generate didactic feedback (`<feedback>`) for each answer option
-5. **Formulas:** Use LaTeX `\( ... \)` within CDATA blocks for mathematical expressions
+---
 
-### Naming Convention
-- Format: `[Topic] - [Concept/Aspect]`
-- Example: `Financial Statements - Balance Sheet Structure`
-- For case studies: Use numbering (see Case Study section)
+## Schritt 0b: Qualitätssicherung vor dem XML-Export
 
-## Question Type Templates
+Bevor du das XML ausgibst, prüfe still für jede Frage:
 
-### MULTICHOICE (Default)
+### Numerical — Berechnung verifizieren (immer)
+Führe die Rechnung per Python via Bash aus, bevor du die Antwort ins XML schreibst. Beispiel:
+```python
+investment = 10000; profit = 2000; roi = profit / investment * 100; print(roi)
+```
+Nur wenn Python-Ergebnis und dein vorgesehener Antwortwert übereinstimmen → Frage fertigstellen. Bei Abweichung: Aufgabenstellung oder Antwort korrigieren.
+
+### Multichoice — Eindeutigkeit der Antworten prüfen
+Für jede Frage gedanklich durchgehen:
+- Gibt es **genau eine** klar richtige Antwort? (Wenn zwei Optionen plausibel wirken → Frage schärfer formulieren oder Distraktoren anpassen)
+- Sind die falschen Antworten **eindeutig falsch** — nicht nur „weniger richtig"? Ein guter Distraktor ist ein häufiger Denkfehler, keine Fangfrage.
+
+### Matching — Bijektivität sicherstellen
+Jeder Begriff muss genau **eine** passende Definition haben — keine Überschneidungen. Kurz prüfen: Könnte Begriff A auch zu Definition B passen? Falls ja → Definitionen präzisieren.
+
+---
+
+## Ausgabe
+
+1. **XML-Block** (vollständig, `<?xml ...?>` bis `</quiz>`)
+2. **Kurze Zusammenfassung** danach (1–2 Zeilen): Anzahl, Typen, Sprache — damit der User weiß was er bekommt, ohne ins XML schauen zu müssen
+3. Keine Einleitungstexte vor dem XML-Block
+
+---
+
+## XML-Grundstruktur
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz>
+  <!-- Fragen hier -->
+</quiz>
+```
+
+**Universelle Pflichtfelder je Frage:**
+- `<name><text>Thema - Aspekt</text></name>`
+- `<questiontext format="html"><text><![CDATA[...]]></text></questiontext>`
+- `<defaultgrade>1</defaultgrade>`
+
+**CDATA-Regel:** Alle Fragen- und Feedbacktexte in `<![CDATA[ ... ]]>` einwickeln — HTML in CDATA ist erlaubt.
+
+---
+
+## Fragetyp-Templates
+
+### MULTICHOICE
+
 ```xml
 <question type="multichoice">
-  <name><text>Topic - Concept</text></name>
-  <questiontext format="html"><text><![CDATA[<p>Question in English...</p>]]></text></questiontext>
+  <name><text>Thema - Konzept</text></name>
+  <questiontext format="html">
+    <text><![CDATA[<p>Fragentext hier...</p>]]></text>
+  </questiontext>
+  <defaultgrade>1</defaultgrade>
+  <penalty>0</penalty>
+  <single>true</single>
   <shuffleanswers>1</shuffleanswers>
+  <answernumbering>abc</answernumbering>
   <answer fraction="100" format="html">
-    <text><![CDATA[Correct Answer]]></text>
-    <feedback><text><![CDATA[Explanation why correct.]]></text></feedback>
+    <text><![CDATA[Richtige Antwort]]></text>
+    <feedback><text><![CDATA[Korrekt! Begründung warum richtig.]]></text></feedback>
   </answer>
   <answer fraction="0" format="html">
-    <text><![CDATA[Wrong Answer]]></text>
-    <feedback><text><![CDATA[Explanation why wrong.]]></text></feedback>
+    <text><![CDATA[Falscher Distraktor 1]]></text>
+    <feedback><text><![CDATA[Falsch, weil ...]]></text></feedback>
   </answer>
   <answer fraction="0" format="html">
-    <text><![CDATA[Another Wrong Answer]]></text>
-    <feedback><text><![CDATA[Explanation why wrong.]]></text></feedback>
+    <text><![CDATA[Falscher Distraktor 2]]></text>
+    <feedback><text><![CDATA[Falsch, weil ...]]></text></feedback>
+  </answer>
+  <answer fraction="0" format="html">
+    <text><![CDATA[Falscher Distraktor 3]]></text>
+    <feedback><text><![CDATA[Falsch, weil ...]]></text></feedback>
   </answer>
 </question>
 ```
 
-### MATCHING (Definitions/Terms)
+Standard: 4 Optionen (1 richtig, 3 Distraktoren). Bei negativem Scoring: `<penalty>0.3333333</penalty>`.
+
+---
+
+### MATCH (Zuordnung)
+
+> **Wichtig:** Der Typ heißt `match`, nicht `matching` — `matching` wird von Moodle nicht erkannt und führt zu stillen Importfehlern.
+
 ```xml
-<question type="matching">
-  <name><text>Topic - Matching Exercise</text></name>
-  <questiontext format="html"><text><![CDATA[<p>Match the following terms with their definitions:</p>]]></text></questiontext>
-  <shuffleanswers>1</shuffleanswers>
+<question type="match">
+  <name><text>Thema - Zuordnungsübung</text></name>
+  <questiontext format="html">
+    <text><![CDATA[<p>Ordnen Sie die Begriffe den Definitionen zu:</p>]]></text>
+  </questiontext>
+  <defaultgrade>1</defaultgrade>
+  <shuffleanswers>true</shuffleanswers>
   <subquestion format="html">
-    <text><![CDATA[Term A]]></text>
+    <text><![CDATA[Begriff A]]></text>
     <answer><text><![CDATA[Definition A]]></text></answer>
   </subquestion>
   <subquestion format="html">
-    <text><![CDATA[Term B]]></text>
+    <text><![CDATA[Begriff B]]></text>
     <answer><text><![CDATA[Definition B]]></text></answer>
+  </subquestion>
+  <subquestion format="html">
+    <text><![CDATA[Begriff C]]></text>
+    <answer><text><![CDATA[Definition C]]></text></answer>
   </subquestion>
 </question>
 ```
 
-### NUMERICAL (Calculations)
+---
+
+### NUMERICAL (Berechnung)
+
 ```xml
 <question type="numerical">
-  <name><text>Topic - Calculation</text></name>
-  <questiontext format="html"><text><![CDATA[<p>Calculate the ROI given: Investment = €10,000, Profit = €2,000</p>]]></text></questiontext>
+  <name><text>Thema - Berechnung</text></name>
+  <questiontext format="html">
+    <text><![CDATA[<p>Berechnen Sie den ROI. Angaben: Investment = 10.000 €, Gewinn = 2.000 €</p>]]></text>
+  </questiontext>
+  <defaultgrade>1</defaultgrade>
   <answer fraction="100">
     <text>20</text>
-    <tolerance>0</tolerance>
-    <feedback><text><![CDATA[Correct! ROI = (Profit/Investment) × 100 = (2000/10000) × 100 = 20%]]></text></feedback>
+    <tolerance>0.01</tolerance>
+    <feedback><text><![CDATA[Korrekt! ROI = (Gewinn / Investment) × 100 = 20 %]]></text></feedback>
   </answer>
 </question>
 ```
 
-### CLOZE (Fill-in-the-blank)
-```xml
-<question type="cloze">
-  <name><text>Topic - Journal Entry</text></name>
-  <questiontext format="html">
-    <text><![CDATA[<p>Complete the journal entry: Debit {1:SHORTANSWER:=Cash} Credit {1:SHORTANSWER:=Revenue}</p>]]></text>
-  </questiontext>
-</question>
-```
+---
 
-### TRUEFALSE
+### TRUEFALSE (Wahr/Falsch)
+
 ```xml
 <question type="truefalse">
-  <name><text>Topic - Statement</text></name>
-  <questiontext format="html"><text><![CDATA[<p>Assets = Liabilities + Equity is the fundamental accounting equation.</p>]]></text></questiontext>
-  <answer fraction="100" format="moodle_auto_format">
+  <name><text>Thema - Aussage</text></name>
+  <questiontext format="html">
+    <text><![CDATA[<p>Die zu bewertende Aussage.</p>]]></text>
+  </questiontext>
+  <defaultgrade>1</defaultgrade>
+  <answer fraction="100" format="html">
     <text>true</text>
-    <feedback><text><![CDATA[Correct! This is the fundamental accounting equation.]]></text></feedback>
+    <feedback><text><![CDATA[Korrekt! Begründung.]]></text></feedback>
   </answer>
-  <answer fraction="0" format="moodle_auto_format">
+  <answer fraction="0" format="html">
     <text>false</text>
-    <feedback><text><![CDATA[Incorrect. This equation is the foundation of double-entry bookkeeping.]]></text></feedback>
+    <feedback><text><![CDATA[Falsch. Begründung.]]></text></feedback>
   </answer>
 </question>
 ```
 
-### ESSAY (With Grading Key)
+---
+
+### CLOZE (Lückentext)
+
+```xml
+<question type="cloze">
+  <name><text>Thema - Lückentext</text></name>
+  <questiontext format="html">
+    <text><![CDATA[<p>Ergänzen Sie: Soll {1:SHORTANSWER:=Kasse} an Haben {1:SHORTANSWER:=Umsatzerlöse}.</p>]]></text>
+  </questiontext>
+  <defaultgrade>1</defaultgrade>
+</question>
+```
+
+---
+
+### ESSAY (Freitext mit Musterlösung)
+
 ```xml
 <question type="essay">
-  <name><text>Topic - Critical Analysis</text></name>
+  <name><text>Thema - Analyse</text></name>
   <questiontext format="html">
-    <text><![CDATA[<p>Discuss the advantages and disadvantages of FIFO vs. LIFO inventory valuation methods.</p>]]></text>
+    <text><![CDATA[<p>Diskutieren Sie ...</p>]]></text>
   </questiontext>
+  <defaultgrade>1</defaultgrade>
+  <answer fraction="0">
+    <text></text>
+  </answer>
   <graderinfo format="html">
     <text><![CDATA[
-      <div style="background-color:#e6f3ff; border:1px solid #0056b3; padding:10px;">
-        <p><strong>Grading Criteria / Musterlösung:</strong></p>
-        <ul>
-          <li><strong>FIFO Advantages:</strong> Matches current costs, easier inventory tracking (2 points)</li>
-          <li><strong>LIFO Advantages:</strong> Tax benefits in inflation, matches current costs to revenue (2 points)</li>
-          <li><strong>Critical Comparison:</strong> Discussion of impact on financial statements (2 points)</li>
-          <li><strong>Practical Context:</strong> Mention of IFRS vs US GAAP differences (1 point)</li>
-        </ul>
-        <p><em>Total: 7 points</em></p>
-      </div>
+      <p><strong>Bewertungshinweise:</strong></p>
+      <ul>
+        <li>Aspekt 1: ... (X Punkte)</li>
+        <li>Aspekt 2: ... (X Punkte)</li>
+      </ul>
     ]]></text>
   </graderinfo>
   <responseformat>editor</responseformat>
@@ -153,144 +235,35 @@ Automatically select the appropriate question type:
 </question>
 ```
 
-## Case Study Handling
+---
 
-When the user provides a case study or long text with multiple questions:
+## Fallstudien
 
-### Structure (CRITICAL)
-1. **First:** Create ONE `<question type="description">` with the case text
-2. **Then:** Create specific questions (MC, Essay, Numerical, etc.)
+Bei mehrteiligen Aufgaben aus einem Falltext:
 
-### Naming Convention (STRICT)
-- Description: `[Topic] - 00_Context`
-- Questions: `[Topic] - Q1_[Aspect]`, `[Topic] - Q2_[Aspect]`, etc.
+1. Erst `<question type="description">` mit dem Falltext (`<defaultgrade>0</defaultgrade>`)
+2. Dann die eigentlichen Fragen nummeriert
 
-This ensures proper sorting in Moodle.
+**Namenskonvention:**
+- `[Thema] - 00_Kontext`
+- `[Thema] - Q1_[Aspekt]`, `[Thema] - Q2_[Aspekt]`, …
 
-### Description Template
-```xml
-<question type="description">
-  <name><text>[Topic] - 00_Context</text></name>
-  <questiontext format="html">
-    <text><![CDATA[
-      <div style="background-color:#f8f9fa; padding:15px; border-left:5px solid #0f6cbf;">
-        <h3>Case Study: [Title]</h3>
-        <p>[Full Case Text goes here...]</p>
-        <p><em>Please answer the following questions based on this case.</em></p>
-      </div>
-    ]]></text>
-  </questiontext>
-  <generalfeedback format="html"><text></text></generalfeedback>
-  <defaultgrade>0</defaultgrade>
-  <penalty>0</penalty>
-  <hidden>0</hidden>
-</question>
-```
+---
 
-### Case Study Example Structure
-```xml
-<quiz>
-  <!-- Context -->
-  <question type="description">
-    <name><text>Depreciation Methods - 00_Context</text></name>
-    <questiontext format="html">
-      <text><![CDATA[
-        <div style="background-color:#f8f9fa; padding:15px; border-left:5px solid #0f6cbf;">
-          <h3>Case Study: Equipment Purchase Decision</h3>
-          <p>Company XYZ purchased machinery for €50,000 with an expected useful life of 5 years...</p>
-        </div>
-      ]]></text>
-    </questiontext>
-    <defaultgrade>0</defaultgrade>
-  </question>
-  
-  <!-- Questions about the case -->
-  <question type="numerical">
-    <name><text>Depreciation Methods - Q1_Linear</text></name>
-    <questiontext format="html"><text><![CDATA[<p>Calculate the annual depreciation using the straight-line method.</p>]]></text></questiontext>
-    <!-- ... -->
-  </question>
-  
-  <question type="essay">
-    <name><text>Depreciation Methods - Q2_Comparison</text></name>
-    <questiontext format="html"><text><![CDATA[<p>Compare straight-line and declining balance methods for this case.</p>]]></text></questiontext>
-    <!-- ... -->
-  </question>
-</quiz>
-```
+## Feedback-Qualität
 
-## Feedback Quality Guidelines
+Jede Antwort braucht Feedback, das erklärt **warum** sie richtig oder falsch ist — nicht nur „Korrekt!" oder „Leider falsch!". Falsche Antworten sollen Lernmomente sein.
 
-### Good Feedback (Always Include)
-- ✅ Explains WHY the answer is correct/incorrect
-- ✅ References relevant concepts or principles
-- ✅ Provides learning value even for wrong answers
-- ✅ Uses clear, pedagogical language
+**Gut:** „Falsch. Die lineare Abschreibung verteilt den Aufwand gleichmäßig — die degressive Methode wendet einen konstanten Prozentsatz auf den sinkenden Restbuchwert an."
 
-### Poor Feedback (Avoid)
-- ❌ "Correct!" or "Wrong!" without explanation
-- ❌ Repeating the question
-- ❌ Vague statements
+**Schlecht:** „Leider falsch."
 
-### Example Feedback Patterns
-**Correct Answer:**
-"Correct! This follows the matching principle, which requires expenses to be recorded in the same period as the related revenue."
+---
 
-**Wrong Answer:**
-"Incorrect. This would violate the accrual basis of accounting, as it records transactions based on cash movement rather than when they occur."
+## Integration mit Quarto-Kapiteln
 
-## Integration with Quarto Content
-
-When generating questions from .qmd lecture content:
-
-1. **Read the chapter structure** (Trinity of Depth: Theory/Norms/Practice)
-2. **Generate balanced questions:**
-   - Theory: Conceptual understanding (MC, TrueFalse)
-   - Norms: Standards and rules (Matching, MC)
-   - Practice: Application and calculation (Numerical, Essay, Cloze)
-3. **Reference specific sections** in question names
-4. **Maintain terminology** from the lecture
-
-## Quality Checklist
-
-Before outputting XML, verify:
-- ✅ All text in CDATA blocks
-- ✅ Valid XML structure (opening/closing tags)
-- ✅ Feedback for every answer option
-- ✅ Appropriate question type selected
-- ✅ Consistent English terminology
-- ✅ Case study numbering (if applicable)
-- ✅ LaTeX formulas properly formatted
-- ✅ No conversational text outside code block
-
-## Output Example
-
-When user requests: "Create 3 questions about depreciation"
-
-**Your response should be ONLY:**
-
-```xml
-<quiz>
-<question type="multichoice">
-  <name><text>Depreciation - Methods</text></name>
-  <questiontext format="html"><text><![CDATA[<p>Which depreciation method allocates an equal amount of expense each period?</p>]]></text></questiontext>
-  <shuffleanswers>1</shuffleanswers>
-  <answer fraction="100" format="html">
-    <text><![CDATA[Straight-line method]]></text>
-    <feedback><text><![CDATA[Correct! The straight-line method divides the depreciable amount equally across the useful life.]]></text></feedback>
-  </answer>
-  <answer fraction="0" format="html">
-    <text><![CDATA[Declining balance method]]></text>
-    <feedback><text><![CDATA[Incorrect. This method applies a constant rate to the declining book value, resulting in higher expenses in early years.]]></text></feedback>
-  </answer>
-</question>
-<!-- Additional questions... -->
-</quiz>
-```
-
-## Remember
-
-- **No explanations** - just the XML code block
-- **Always CDATA** - wrap all text content
-- **Didactic feedback** - make wrong answers learning opportunities
-- **Professional quality** - production-ready for Moodle import
+Wenn ein `.qmd`-Kapitel als Quelle angegeben wird:
+1. Kapitel lesen, Lernziele identifizieren
+2. Pro Lernziel mindestens eine Frage
+3. Mix aus Wissens-, Verständnis- und Anwendungsfragen (Bloom-Taxonomie)
+4. Fachterminologie aus dem Kapitel wörtlich übernehmen

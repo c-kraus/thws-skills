@@ -154,7 +154,30 @@ Follow the **widget-pipeline** skill in full (FULL mode):
 :::
 ```
 
-5. Replace any placeholder comments from Stage 1 with actual widget integrations where applicable.
+5. **Add postMessage listener** — check if the .qmd already contains `iframeHeight`. If not, insert this block directly after the YAML frontmatter (before the first H2), exactly once per document:
+
+````markdown
+```{=html}
+<script>
+window.addEventListener('message', function (e) {
+  if (e.data && typeof e.data.iframeHeight === 'number') {
+    var frames = document.querySelectorAll('iframe');
+    frames.forEach(function (f) {
+      try {
+        if (f.contentWindow === e.source) {
+          f.style.height = (e.data.iframeHeight + 16) + 'px';
+        }
+      } catch (err) {}
+    });
+  }
+});
+</script>
+```
+````
+
+   This makes all widget iframes auto-resize to their actual content height across devices and zoom levels. The corresponding sender script must be present in each widget HTML file (see `widget-pipeline/references/iframe-template.md`).
+
+6. Replace any placeholder comments from Stage 1 with actual widget integrations where applicable.
 
 ### Final Summary
 

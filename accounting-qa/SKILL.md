@@ -1,6 +1,6 @@
 ---
 name: accounting-qa
-description: "Quality assurance for accounting lecture content. Checks calculations (Python), legal references (HGB, IFRS, IAS, StGB, AktG), and literature citations (via academic-research skill). Spawns three parallel subagents and produces a structured QA report. Use standalone or integrated into lecture-factory. Trigger phrases: 'QA für das Kapitel', 'Berechnungen prüfen', 'Normen checken', 'Qualitätssicherung Rechnungswesen', 'accounting QA', 'check my calculations', 'Zahlen prüfen'."
+description: "Quality assurance for accounting lecture content. Checks calculations (Python), legal references (HGB, IFRS, IAS, StGB, AktG), and literature citations. Spawns three parallel subagents and produces a structured QA report. Use standalone or integrated into lecture-factory. Trigger phrases: 'QA für das Kapitel', 'Berechnungen prüfen', 'Normen checken', 'Qualitätssicherung Rechnungswesen', 'accounting QA', 'check my calculations', 'Zahlen prüfen'."
 ---
 
 # Accounting QA Skill
@@ -118,8 +118,8 @@ Literatur zum Prüfen:
 [Liste C aus dem Inhaltsscan]
 
 Vorgehensweise für jeden Verweis:
-1. Existenz prüfen: Nutze den academic-research Skill (OpenAlex / CrossRef / SSRN).
-   Suche nach Autor + Jahr + ggf. Titelstichwort.
+1. Existenz prüfen: Suche über OpenAlex (curl, siehe unten) oder aus Trainingswissen nach
+   Autor + Jahr + ggf. Titelstichwort.
 2. Aktualität prüfen: Gibt es eine neuere Auflage oder Nachfolgearbeit, die der Text
    nicht berücksichtigt? (Relevanz: nur wenn ≥3 Jahre neuer und substantiell abweichend)
 3. Wenn eine Quelle nicht gefunden wird: als ⚠️ markieren mit Hinweis
@@ -175,7 +175,7 @@ Nach Rückkehr aller Subagents den Gesamt-Report zusammenstellen:
 
 **Subagent 2: Norm unbekannt:** Als `⚠️ nicht in Referenzdatenbank — Quelle: [dejure.org/gesetze/HGB/...]` markieren.
 
-**Subagent 3: academic-research nicht verfügbar:** Literaturprüfung überspringen, im Report vermerken: `Literaturprüfung übersprungen (academic-research Skill nicht verfügbar)`.
+**Subagent 3: OpenAlex nicht erreichbar:** Literaturprüfung aus Trainingswissen durchführen, im Report vermerken: `Literaturprüfung basiert auf Trainingswissen — keine Live-Suche`.
 
 ---
 

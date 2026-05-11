@@ -43,6 +43,7 @@ For each of the top 3 widget specifications:
 - Follow exact specifications from the analysis
 - Ensure THWS branding consistency (primary: #ff6a00, font: Inter)
 - Create production-ready, self-contained HTML files
+- **Include the postMessage auto-resize sender** directly before `</body>` in every widget HTML (see `references/iframe-template.md` → "Auto-Resize via postMessage")
 
 ---
 
