@@ -33,6 +33,8 @@ Before writing a single word of text, clarify these four foundations. Ask them t
 
 4. **Sources & Release**: Is this based on a real, identifiable company? Does the user have internal data or does it rely on public sources? Will case release (company approval) be needed?
 
+5. **Companion Lecture** *(optional)*: Is there an existing `.qmd` lecture file that this case accompanies? If yes, ask for the path — it enables the learning objective alignment check in Phase 3d.
+
 Wait for answers before starting Phase 2. A case built on vague foundations cannot be fixed in editing.
 
 ## Phase 2: Drafting
@@ -75,30 +77,54 @@ format:
 
 [Opening Paragraph – max 200 words. Protagonist + organization + time point + immediate issue. Hook the reader immediately.]
 
-## Unternehmenshintergrund
+[Unternehmenshintergrund — no heading. Run straight into the narrative. If you need a visual label, use **Unternehmenshintergrund** in bold, but only if the transition would be abrupt without it.]
 
-[Relevant history and business model — only what informs the decision.]
+[Markt- und Wettbewerbsumfeld — same: no heading, prose or **bold label** at most.]
 
-## Markt- und Wettbewerbsumfeld
+[Core problem section — develops the underlying issue implicitly. No heading. Bold labels if needed.]
 
-[External context if needed to sharpen the stakes.]
+## Aufgabe 1 — [Analysefeld]
 
-## [Specific Section Title — name it after the problem domain, not "The Problem"]
+[Brief narrative context that sets up this specific task — 2–4 sentences max, no subheadings.]
 
-[The analytical core. Develops the underlying issue implicitly through facts and narrative.]
+[Data table inline, if relevant:]
 
-## Die Entscheidung
+| Spalte A | Spalte B |
+|----------|----------|
+| Wert     | Wert     |
 
-[Options available to the protagonist. Fair, balanced, no thumb on the scale.]
+a) [Question sub-part]
+b) [Question sub-part]
+c) [Question sub-part]
 
-## [Closing — no section header needed, or use protagonist's name]
+---
 
-[Returns to immediate issue. Time pressure. Leave the reader hanging.]
+## Aufgabe 2 — [Analysefeld]
+
+[Brief narrative context — continues the story to the next decision point.]
+
+a) [Question sub-part]
+b) [Question sub-part]
+
+---
+
+## Aufgabe 3 — [Analysefeld]
+
+[Closing narrative context. Returns to protagonist. Creates urgency. Ends before the decision.]
+
+a) [Question sub-part]
+b) [Question sub-part]
 ```
 
 ### Heading Hierarchy Discipline
 
-If an H2 section contains only a single H3 subsection, the H3 level is unnecessary — promote the content to H2 and eliminate the empty nesting. A heading level is only justified when there are at least two siblings. Cases benefit from continuous narrative flow; artificial sub-divisions interrupt the reading experience without adding navigational value.
+The heading hierarchy separates **story from task**:
+
+- **Story and background sections** (Unternehmenshintergrund, Marktumfeld, analytical context) use **no headings** — prose only, with **bold labels** at most for visual anchors. Reason: these are continuous narrative; sub-divisions create a table-of-contents feel that interrupts the story and competes with the task structure.
+- **Aufgaben** (the numbered tasks) are the H2 heading level. There should be no H2 headings in the story sections at all — if a story section carries an H2, it will visually compete with the task headings and make the numbering feel inconsistent.
+- Within an Aufgabe, sub-questions use lowercase `a) b) c)` — not H3 headings, not bold bullets, just lettered items. Keep the format consistent across all Aufgaben.
+
+If an H2 section contains only a single H3 subsection, the H3 level is unnecessary — promote the content to H2 and eliminate the empty nesting. A heading level is only justified when there are at least two siblings.
 
 ### Case Architecture for Lecture Use: Integrated Structure
 
@@ -131,28 +157,28 @@ This means:
 **Template for an integrated, quantitative case section:**
 
 ```markdown
-## [Sachverhalt: descriptive title]
+[Story narrative for this task — 2–4 sentences max. No subheadings inside this story block.]
 
-[Narrative: what happened, what the protagonist discovered, what the decision is]
-
-[Data table inline, if needed:]
+**Anlage N: [Titel]** ← bold label, not a heading
 
 | Spalte A | Spalte B |
 |----------|----------|
 | Wert     | Wert     |
 
-[If a note about the data is needed, place it here as a brief italic paragraph]
+*[Optional: brief italic note about the data if needed]*
 
-**Frage [N]: [Question title in bold]**
+## Aufgabe N — [Analysefeld]
 
-[Question text. One to three focused questions. Self-contained — the student does not need to look anything up elsewhere to answer this question.]
+a) [Question sub-part]
+b) [Question sub-part]
+c) [Question sub-part]
 
 ---
 ```
 
-This `---` separator between sections is useful: it gives visual breathing room and signals "this section is complete, next section begins."
+The `---` separator signals "this section is complete, next begins."
 
-**German-language cases (THWS/IFRS context):** Use `### Aufgabe N — [Analysefeld]` for task headings and `**Anlage N: [Titel]**` (bold, not a heading) for data tables within the same section. Task titles name the analytical field, not the theory: `Aufgabe 2 — Erstbewertung und Folgebewertung` not `Aufgabe 2 — IFRS 16.26–27 anwenden`. Tasks are broad, open-ended — no a/b/c/d sub-parts that walk students through the method. Finding the method is their job.
+**German-language cases (THWS/IFRS context):** Use `## Aufgabe N — [Analysefeld]` for task headings (H2 level, consistent with the rest of the case). Use `**Anlage N: [Titel]**` (bold, not a heading) for data tables — they appear in the narrative block before the Aufgabe heading. Task titles name the analytical field, not the theory. Sub-questions use `a) b) c)` lettering consistently across all Aufgaben.
 
 ## Phase 3: Gap Analysis
 
@@ -175,17 +201,123 @@ Flag anything missing and propose additions.
 
 For every number in the case, verify:
 
-1. **Internal consistency of input data**: Do all line items in tables sum to their stated totals? Add them up explicitly — do not eyeball. If a table shows individual items and a total, the sum must match.
+1. **Run calculations in Python via Bash** — for every number students are expected to derive, write and execute a short Python script. Do not mentally verify; compute. Example:
+   ```python
+   # Kapitalwert-Verifikation
+   import numpy as np
+   cf = [-180000, 45000, 45000, 45000, 45000, 45000]
+   npv = np.npv(0.08, cf)  # or manual: sum(cf[i]/(1.08**i) for i in range(6))
+   print(f"NPV: {npv:.2f}")
+   ```
+   Only if the Python result matches the number in the case → that number is correct.
 
-2. **Derivation chain**: Is every number that students are expected to calculate actually derivable from the numbers given? Work through the model solution yourself, using only the data provided in the case. If you need a number that isn't there, it must be added.
+2. **Internal consistency of input data**: Do all line items in tables sum to their stated totals? Run the sums in Python — do not eyeball.
 
-3. **Cross-reference**: Does the same number appear correctly in multiple places? (e.g., a cost figure used in the narrative, then in a table, then in the solution — all three must be identical.)
+3. **Derivation chain**: Work through the model solution using only the data provided in the case. If you need a number that isn't there, add it.
 
-4. **Pro-rata and rounding**: For time-based calculations (monthly depreciation, partial-year charges), apply the pro-rata explicitly. State the exact rounding convention if results differ depending on rounding.
+4. **Cross-reference**: Same number used in narrative, table, and solution must be identical.
 
-5. **Conceptual correctness**: Beyond arithmetic, check whether the numerical setup embeds the right conceptual structure. For example: if the case involves EBITDA, does the design of the numbers actually require understanding what EBITDA includes and excludes? A number that "works out" under a wrong concept is worse than a wrong number — it teaches students to apply the wrong framework.
+5. **Pro-rata and rounding**: For time-based calculations, apply pro-rata explicitly. State rounding convention if results differ.
 
-Flag any discrepancy and resolve it in the case *before* writing the teaching note solution. A teaching note solution derived from wrong input data will itself be wrong.
+6. **Conceptual correctness**: Does the numerical setup embed the right conceptual structure? A number that "works out" under a wrong concept teaches the wrong framework — worse than a wrong number.
+
+Flag any discrepancy and resolve it in the case *before* writing the teaching note solution.
+
+## Phase 3c: Multiperspektivischer Review
+
+Dispatch drei Subagents **gleichzeitig**. Jeder erhält den vollständigen Falltext als Input.
+
+---
+
+**Subagent A — Kupp & Mueller Methodiker**
+
+```
+Du prüfst eine Fallstudie auf Einhaltung der Kupp & Mueller Case-Method.
+
+Falltext: [vollständiger Falltext]
+
+Prüfe folgende Kriterien und nenne maximal 5 nummerierte Probleme:
+1. Verrät der Fall die "richtige Antwort" — gibt es Passagen, die lehren statt zu provozieren?
+2. Sind Immediate Issue (die konkrete Entscheidung) und Underlying Issue (das Lernkonzept) klar getrennt und wird Letzteres nie explizit benannt?
+3. Endet der Fall VOR der Entscheidung (cut-off point), nicht danach?
+4. Enthält der Eröffnungsabsatz alle vier Elemente: Protagonist (mit Name), Organisation, Zeitpunkt, Immediate Issue?
+5. Hat der Protagonist echte Handlungsoptionen — gibt es mindestens zwei vertretbare Positionen?
+6. Sind alle Diskussionsfragen self-contained (keine Rückverweise auf andere Dokumente nötig)?
+
+Format pro Problem: [Nr] [Schwere: ❌ kritisch / ⚠️ Hinweis] [Beschreibung] [Konkrete Stelle im Text]
+```
+
+---
+
+**Subagent B — Erstleser (Studierender)**
+
+```
+Du liest diese Fallstudie zum ersten Mal als Studierender ohne Vorkenntnisse zum spezifischen Konzept.
+
+Falltext: [vollständiger Falltext]
+
+Berichte maximal 4 Stellen, an denen:
+- Der Einstieg dich nicht sofort gepackt hat oder der Protagonist ungreifbar wirkte
+- Die Erzählung an Schwung verloren hat (Langatmigkeit, zu viele Zahlen auf einmal)
+- Ein Begriff oder Konzept verwendet wird, den du nicht kennst und der nicht erklärt wird
+- Der Schluss keine echte Dringlichkeit erzeugt hat
+
+Format: [Nr] [Abschnitt/Stelle] [Was fehlt oder stört] [Konkreter Verbesserungsvorschlag]
+```
+
+---
+
+**Subagent C — Diskussionsleiter**
+
+```
+Du bereitest dich darauf vor, diesen Fall in einer 90-Minuten-Lehrveranstaltung zu unterrichten.
+Die 90 Minuten umfassen alles: deine Eröffnung, Diskussion der Aufgaben, Erklärungen durch dich, Synthese.
+
+Falltext: [vollständiger Falltext]
+
+Prüfe maximal 4 Punkte aus Lehrperspektive:
+1. Füllt der Diskussionsstoff realistisch 90 Minuten — oder ist er knapper (zu wenig Tiefe) oder breiter (Überladung)?
+2. Gibt es Fragen, bei denen Studierende hängen bleiben werden, die aber nicht der Kern des Lernziels sind (potenzielle Ablenkungsfallen)?
+3. Lassen die Aufgaben wirklich mehrere vertretbare Positionen zu, oder führt die Datenstruktur zur offensichtlichen Lösung?
+4. Fehlt dem Lehrenden etwas, um die Diskussion sicher zu führen — offene Lücken, die die Teaching Note schließen muss?
+
+Format: [Nr] [Lehrsituation] [Problem] [Empfehlung]
+```
+
+---
+
+### Synthese nach Rückkehr aller drei Subagents
+
+- **Methodiker ❌ kritisch**: Immer beheben — diese Punkte brechen die Case-Method.
+- **Methodiker ⚠️ Hinweis vs. Erstleser-Wunsch**: Case-Method gewinnt (Pädagogik vor Lesbarkeit).
+- **Erstleser vs. Diskussionsleiter**: Beide Perspektiven dem Nutzer anzeigen, keine automatische Auflösung.
+- Maximal 5 Verbesserungen anwenden; Rest als offene Punkte im Checkpoint melden.
+
+---
+
+## Phase 3d: Lernziel-Abgleich mit Vorlesung (nur wenn Companion-QMD vorhanden)
+
+Wenn der Nutzer in Phase 1 einen Vorlesungspfad angegeben hat:
+
+1. **Vorlesungs-QMD laden** — vollständigen Inhalt lesen.
+
+2. **Lernziele der Vorlesung extrahieren** — aus Einleitung, Lernziel-Divs (`.quick-check`, `.flip-card`), oder Sektionsstruktur.
+
+3. **Underlying Issue abgleichen** — Entspricht das Lernkonzept des Falls einem Thema in der Vorlesung? Wenn nicht: Hinweis, ob der Fall thematisch verschoben oder die Vorlesung erweitert werden sollte.
+
+4. **Begriffskonsistenz prüfen** — Werden im Fall Konzepte oder Fachbegriffe verwendet, die in der Vorlesung **nicht** eingeführt wurden? Diese sind für Studierende ohne Zusatzlektüre nicht lösbar.
+
+5. **Tiefenabgleich** — Erfordern die Diskussionsfragen des Falls mehr konzeptionelle Tiefe, als die Vorlesung vermittelt? (Trinity of Depth: Theorie → Norm → Praxis)
+
+**Ausgabe** (kompakt, direkt nach Gap Analysis in den Checkpoint integriert):
+
+```
+### Lernziel-Abgleich mit [Dateiname der Vorlesung]
+✅ Underlying Issue "[Konzept]" ist in Abschnitt "[Titel]" der Vorlesung abgedeckt.
+⚠️ Begriff "[X]" wird im Fall verwendet, fehlt aber in der Vorlesung — Studierende müssen ihn selbst mitbringen.
+⚠️ Aufgabe [N] setzt [Konzept Y] voraus, das erst in Kapitel [Z] behandelt wird.
+❌ Underlying Issue "[Konzept]" findet sich nicht in der Vorlesung — Fall und Vorlesung passen thematisch nicht zusammen.
+```
 
 ## Phase 4: Teaching Note
 
@@ -236,7 +368,7 @@ Nach der Diskussion sollen Studierende in der Lage sein:
 
 # Vollständige Lösung
 
-## Frage [N]: [Fragetitel, identisch zum Falltext]
+## Aufgabe [N] — [Titel, identisch zur Aufgaben-Überschrift im Falltext]
 
 **Musterlösung:**
 
@@ -259,21 +391,24 @@ Example format:
 
 ---
 
-## Frage [N+1]: [Fragetitel]
+## Aufgabe [N+1] — [Titel]
 
-[Same structure — one block per question]
+[Same structure — one block per Aufgabe]
 
 ---
 
 # Diskussionsplan (Zeitübersicht)
 
-| Frage | Inhalt | Dauer |
+Target: **90 minutes total**, including instructor explanations. Typical split: ~10 min opening/framing, ~60–65 min for Aufgaben discussion, ~10 min synthesis/closing, ~5 min buffer. Do not plan more than 90 minutes — the Diskussionsleiter has one session.
+
+| Phase | Inhalt | Dauer |
 |-------|--------|-------|
-| Einstieg | [Opening question before Q1] | 10 Min. |
-| Frage 1 | [Title] | [N] Min. |
-| Frage 2 | [Title] | [N] Min. |
-| Synthese | Abschluss und Verbindung zum nächsten Thema | 10 Min. |
-| **Gesamt** | | **[N] Min.** |
+| Einstieg | [Opening framing + cold start question] | 10 Min. |
+| Aufgabe 1 | [Title — including instructor explanation time] | [N] Min. |
+| Aufgabe 2 | [Title — including instructor explanation time] | [N] Min. |
+| Aufgabe 3 | [Title — including instructor explanation time] | [N] Min. |
+| Synthese | Abschluss, Theoriebrücke, nächstes Thema | 10 Min. |
+| **Gesamt** | | **90 Min.** |
 
 # Tafelbild (Board Plan)
 
