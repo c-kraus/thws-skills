@@ -1,6 +1,6 @@
 ---
 name: lecture-factory
-description: "Full end-to-end workflow for creating a complete, widget-enhanced Quarto lecture from raw content. Orchestrates quarto-lecture (write the .qmd), then widget-pipeline (analyze, build, and integrate interactive widgets) with a review checkpoint in between. Use when the user wants to go from raw notes, PDFs, or RAG output to a production-ready lecture chapter with interactive HTML widgets — all in one command. Trigger for German requests like 'Erstelle mir ein komplettes Kapitel mit Widgets', 'Vollständiger Vorlesungsworkflow', 'baue mir eine komplette Vorlesung', 'Kapitel komplett mit allem Drum und Dran', or any request that combines lecture creation with widget integration. Also trigger when the user provides raw content and says something like 'mach alles' or 'full workflow' or 'von Anfang bis Ende'."
+description: "Full end-to-end workflow for creating OR reviewing a complete, widget-enhanced Quarto lecture. Two modes: (1) CREATE — takes raw content (notes, PDFs, RAG output) and produces a production-ready .qmd with widgets; (2) RE-REVIEW — takes an existing .qmd path and runs a full review: 3-perspective review (Professor / sehr guter Student / mittelmäßiger Student) + accounting-qa + QMD quality gate in parallel, then applies improvements. Trigger CREATE for: 'Erstelle mir ein komplettes Kapitel mit Widgets', 'baue mir eine komplette Vorlesung', 'full workflow', 'mach alles', 'von Anfang bis Ende'. Trigger RE-REVIEW for: 'nochmal ansehen', 'review', 'quality gate darüber laufen lassen', 'prüf das Kapitel', 'überarbeite das bestehende Kapitel', 'verbessere das Kapitel', or any request where an existing .qmd path is provided instead of raw content."
 ---
 
 # Lecture Factory
@@ -9,11 +9,62 @@ A meta-skill that takes raw content and produces a finished, widget-enhanced Qua
 
 ## What This Skill Does
 
-**Stage 1:** Write the lecture (.qmd file) from raw input, following the quarto-lecture skill's standards — Trinity of Depth pedagogy, correct Div syntax, THWS branding, YAML frontmatter.
+This skill has two modes. Detect the correct mode from the user's request before doing anything else.
+
+**CREATE Mode** (default — raw content → finished lecture):
+
+**Stage 1:** Write the lecture (.qmd file) from raw input, following the quarto-lecture skill's standards — Trinity of Depth pedagogy, correct Div syntax, THWS branding, YAML frontmatter. Includes Perspektiven-Review, accounting-qa, and QMD Quality Gate before the checkpoint.
 
 **Checkpoint:** Show the finished .qmd to the user and ask: "Looks good? Should I now run the widget pipeline?"
 
 **Stage 2:** If confirmed, run the widget-pipeline — analyze the .qmd for interactive visualization opportunities, build the top 3 widgets as self-contained HTML files, and integrate them into the .qmd using `.widget` Div wrappers.
+
+**RE-REVIEW Mode** (existing .qmd → comprehensive review and improvement):
+
+Runs when the user provides an existing .qmd path instead of raw content, or uses review-trigger phrases. See "Re-Review Mode" section below — skip Pre-Flight, Intake, Stage 1, and Stage 2 entirely.
+
+## Re-Review Mode
+
+Aktiviert sich, wenn der Input ein **Pfad zu einer bestehenden .qmd-Datei** ist — statt Rohinhalt. Erkennungszeichen:
+- User gibt einen Dateipfad mit `.qmd`-Endung an
+- User nutzt Formulierungen wie „nochmal ansehen", „review", „quality gate darüber", „prüf das Kapitel", „überarbeite das Kapitel", „verbessere das bestehende Kapitel"
+- Kein neuer Rohinhalt wird übergeben
+
+### Ablauf (ersetzt Stage 1 und Stage 2 vollständig)
+
+**Schritt 1 — QMD lesen:** Vollständigen Inhalt laden.
+
+**Schritt 2 — Drei Prüfstränge parallel starten:**
+
+**Strang 1 — Perspektiven-Review** (3 Subagents gleichzeitig, Prompt-Templates aus quarto-lecture SKILL.md Schritt 5b):
+- Subagent A: Kritischer Professor — Korrektheit, Normgenauigkeit, Trinity-Vollständigkeit, intellektuelle Tiefe
+- Subagent B: Sehr guter Student — Logischer Aufbau, Beispiel-Qualität, Transferpotenzial
+- Subagent C: Mittelmäßiger Student — Einstiegshürden, unerklärte Begriffe, Ankerpunkte, Praxisbezug
+
+**Strang 2 — Accounting QA** (wenn Accounting-Indikatoren gefunden):
+Scan auf Zahlenbeispiele, §§-Verweise (HGB/IFRS/AktG/…), Literaturzitate → `accounting-qa` Skill aufrufen.
+
+**Strang 3 — QMD Quality Gate** (strukturelle Prüfung):
+Load `quarto-lecture/references/qmd-quality-gate.md` → alle Checks.
+
+**Schritt 3 — Synthese nach Rückkehr aller Stränge:**
+- Alle Syntax-Violations (Strang 3) sofort und vollständig korrigieren
+- Accounting-Fehler ❌ sofort korrigieren; ⚠️ Hinweise dem Nutzer anzeigen
+- Perspektiven-Review: Konfliktanalyse wie in quarto-lecture Schritt 5b → max. 5 Verbesserungen anwenden; Auflösungsregel bei Widerspruch Professor ↔ schwächerer Student: Inhalt ins `.details`-Div verschieben
+
+**Schritt 4 — Report:**
+
+> **Re-Review abgeschlossen: `kap-{nn}-{slug}.qmd`**
+>
+> **Perspektiven-Review:** {N} Verbesserungen angewandt · {offene Punkte falls vorhanden}
+> **Accounting QA:** {N} ✅ · {N} ⚠️ · {N} ❌ · [oder: keine Accounting-Indikatoren gefunden]
+> **Quality Gate:** {N} Violations korrigiert · [oder: keine Violations]
+>
+> [Je Verbesserung: Abschnitt → was geändert → aus welcher Perspektive]
+
+Kein Widget-Pipeline-Angebot nach Re-Review, es sei denn, der Nutzer fragt explizit danach.
+
+---
 
 ## Pre-Flight: Curriculum & Kontext
 
@@ -113,7 +164,17 @@ Scanne den fertigen Entwurf auf Accounting-Indikatoren: Zahlenbeispiele, Buchung
 - Bei ❌ Fehlern: Fehler direkt im QMD korrigieren, bevor der Checkpoint dem Nutzer präsentiert wird
 - Bei ⚠️ Hinweisen: im Checkpoint anzeigen, Nutzer entscheidet
 
-**Wenn keine Indikatoren:** Schritt überspringen, Checkpoint direkt starten.
+**Wenn keine Indikatoren:** Schritt überspringen.
+
+### Perspektiven-Review (nach Accounting QA)
+
+Dispatch drei Subagents **gleichzeitig** — Prompt-Templates aus quarto-lecture SKILL.md Schritt 5b:
+
+- **Subagent A — Kritischer Professor:** Korrektheit, Normgenauigkeit, Trinity-Vollständigkeit, intellektuelle Tiefe. Max. 5 nummerierte Kritikpunkte.
+- **Subagent B — Sehr guter Student:** Logischer Aufbau, Beispiel-Qualität, Lernzielkontrollen, Transferpotenzial. Max. 4 Verbesserungsvorschläge.
+- **Subagent C — Mittelmäßiger Student:** Einstiegshürden, unerklärte Begriffe, Ankerpunkte, Praxisbezug. Max. 4 konkrete Stellen.
+
+Nach Rückkehr aller drei: Synthese wie in quarto-lecture Schritt 5b (Konfliktanalyse, Priorisierung Stufe 1–3, max. 5 Verbesserungen anwenden). Bei Widerspruch Professor ↔ schwächerer Student: Inhalt in `.details`-Div verschieben.
 
 ---
 
