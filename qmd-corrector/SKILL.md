@@ -220,11 +220,39 @@ Question text?
 </iframe>
 :::
 ```
-See section 6 for iframe-specific rules.
+See section 7 for iframe-specific rules.
 
 ---
 
-### 6. Widget IFrame Syntax
+### 6. LaTeX Math — Euro Sign
+
+Scan every `$$...$$` (display math) and `$...$` (inline math) block for bare `€` characters.
+
+**Rule:** Inside any LaTeX math context, `€` must always be written as `\text{€}`. A bare `€` causes a math output error because LaTeX does not recognise it as a valid math symbol.
+
+| Problem | Fix |
+|---|---|
+| `\mathbf{€\,500}` | `\mathbf{\text{€}\,500}` |
+| `\mathbf{+€\,1{,}000}` | `\mathbf{+\text{€}\,1{,}000}` |
+| `= €\,363` inside `$...$` | `= \text{€}\,363` |
+| `\text{€}` already present | ✓ no action needed |
+| `€` outside math (plain text) | ✓ no action needed |
+
+```
+✓ CORRECT:
+$$NPV = \mathbf{+\text{€}\,10{,}153}$$
+$I_0 = \text{€}\,100{,}000$
+
+✗ WRONG — produces a math output error:
+$$NPV = \mathbf{+€\,10{,}153}$$
+$I_0 = €\,100{,}000$
+```
+
+**How to fix:** Replace every `\mathbf{€` with `\mathbf{\text{€}`, and every `= €\,` (or `+ €\,` / `- €\,`) inside math delimiters with `= \text{€}\,`. Do **not** touch `€` that appears in plain markdown text outside math blocks.
+
+---
+
+### 7. Widget IFrame Syntax
 
 For every `<iframe>` found in the document:
 
@@ -295,7 +323,7 @@ If the file has no issues, say so clearly — a clean bill of health is valuable
 ## Workflow
 
 1. Read the file with the Read tool
-2. Work through each checklist (YAML → flip-cards → drag-exercises → case-studies → details → quick-checks → videos → widgets)
+2. Work through each checklist (YAML → flip-cards → drag-exercises → case-studies → details → quick-checks → LaTeX € signs → videos → widgets)
 3. For each violation: note it, apply the fix to the content string in memory
 4. After all checks: output the Quality Report
 5. Save the corrected file (use Edit for targeted fixes, or Write if changes are extensive)

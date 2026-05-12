@@ -88,4 +88,30 @@ Welche Aussage ist korrekt?
 
 ---
 
+---
+
+## LaTeX Math — Euro Sign Checklist
+
+Check every `$$...$$` (display math) and `$...$` (inline math) block that contains a `€` character.
+
+| Regel | Korrekt | Falsch (korrigieren) |
+|---|---|---|
+| `€` in LaTeX-Mathblock | `\text{€}` | Bare `€` ohne `\text{}` |
+| `€` in `\mathbf{}` | `\mathbf{\text{€}\,363}` | `\mathbf{€\,363}` |
+| `€` außerhalb Math (plain text) | `€ 100` oder `€\,100` | Kein Problem — bleibt wie es ist |
+
+```
+✓ KORREKT:
+$$NPV = \mathbf{+\text{€}\,10{,}153}$$
+$I_0 = \text{€}\,100{,}000$
+
+✗ FALSCH — LaTeX kennt € nicht als Zeichen ohne \text{}:
+$$NPV = \mathbf{€\,10{,}153}$$
+$I_0 = €\,100{,}000$
+```
+
+**Hintergrund:** LaTeX behandelt `€` als unbekanntes Symbol und produziert einen Math-Output-Fehler. In den Kapiteln des BUA3-Projekts (Part 2, Chapter 5–9) ist dieser Fehler aufgetreten. Die korrekte Schreibweise aus Part 1 (Chapter 1–4) ist immer `\text{€}`.
+
+---
+
 Alle Verstöße inline beheben, bevor die Datei gespeichert wird. Bei Unsicherheit über ein Element: Syntaxregeln im `quarto-lecture` Skill nachlesen.
