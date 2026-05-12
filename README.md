@@ -25,44 +25,45 @@ Das Skript legt für jeden Skill-Ordner einen Symlink in `~/.claude/skills/` an.
 
 ### Vorlesungserstellung
 
-| Skill | Aufruf | Was er tut |
-|---|---|---|
-| **lecture-factory** | `/lecture-factory` | End-to-End-Workflow: Rohmaterial → fertiges `.qmd`-Kapitel mit integrierten Widgets. Orchestriert `quarto-lecture` + `widget-pipeline`. |
-| **quarto-lecture** | `/quarto-lecture` | Schreibt ein hybrides Quarto-Skript für Single Source Publishing (Moodle-Website + PDF-Skriptum). |
-| **marp-slides** | `/marp-slides` | Erstellt MARP-Präsentationsfolien im THWS-Corporate-Design. |
-| **slides-to-notes** | `/slides-to-notes` | Wandelt MARP-Folien in ein vollständiges Quarto-Begleitskript um (Prosa, BibTeX, Quellenverifikation). |
-| **qmd-corrector** | `/qmd-corrector` | Liest ein `.qmd` und behebt YAML- und Div-Syntaxfehler; gibt einen strukturierten Fehlerbericht aus. |
+| Skill | Aufruf | Was er tut | Benötigt |
+|---|---|---|---|
+| **lecture-factory** | `/lecture-factory` | Meta-Skill mit zwei Modi: **CREATE** (Rohmaterial → fertiges `.qmd` + Widgets in einem Zug) und **RE-REVIEW** (bestehendes `.qmd` → Perspektiven-Review + QA + Syntaxkorrektur). Empfohlener Einstiegspunkt für den kompletten Workflow. | `quarto-lecture`, `widget-pipeline`, `accounting-qa`, `qmd-corrector` |
+| **quarto-lecture** | `/quarto-lecture` | Schreibt ein hybrides Quarto-Skript für Single Source Publishing (Moodle-Website + PDF-Skriptum) nach der Trinity-of-Depth-Didaktik. Inklusive Perspektiven-Review (Professor / sehr guter Student / mittelmäßiger Student) und Lernzielkontrollen. | — |
+| **marp-slides** | `/marp-slides` | Erstellt MARP-Präsentationsfolien im THWS-Corporate-Design aus Gliederungen, Rohmaterial oder fertigen `.qmd`-Kapiteln. | — |
+| **slides-to-notes** | `/slides-to-notes` | Wandelt MARP-Folien in ein vollständiges Quarto-Begleitskript (Skriptum) um: Stichpunkte → Fließtext, Inline-Zitate → BibTeX, fehlende Quellen per CrossRef/arXiv automatisch ergänzt. | — |
+| **qmd-corrector** | `/qmd-corrector` | Liest ein `.qmd`, findet und behebt alle YAML- und Div-Syntaxfehler in-place und gibt einen strukturierten Fehlerbericht aus. Verhindert stille Fehler im Moodle-Lua-Filter und PDF-Renderer. | — |
+| **quarto-book-setup** | `/quarto-book-setup` | Wandelt eine Sammlung einzelner `.qmd`-Kapitel in ein vollständiges Quarto-Book-Projekt um: `_quarto.yml`, YAML-Patches, moodle-html-Extension und GitHub-Actions-Workflow für automatisches Deployment auf GitHub Pages. | — |
 
 ### Interaktive Widgets
 
-| Skill | Aufruf | Was er tut |
-|---|---|---|
-| **widget-pipeline** | `/widget-pipeline` | Analysiert ein `.qmd`, baut die drei didaktisch wertvollsten HTML-Widgets und integriert sie als IFRAMEs. Alternativ: reine Analyse ohne Build. |
-| **html-builder** | `/html-builder` | Baut einzelne interaktive HTML/JS-Widgets für Visualisierungen, Simulationen oder Lernspiele. |
-| **widget-analyzer** | `/widget-analyzer` | Standalone-Analyse eines `.qmd` auf Widget-Potenziale (ohne Build). |
+| Skill | Aufruf | Was er tut | Benötigt |
+|---|---|---|---|
+| **widget-pipeline** | `/widget-pipeline` | Analysiert ein `.qmd` auf Widget-Potenziale, baut die drei didaktisch wertvollsten Widgets als HTML und integriert sie als IFRAMEs. Alternativmodus: reine Analyse ohne Build. | `html-builder`, `widget-analyzer` (Muster) |
+| **html-builder** | `/html-builder` | Baut einzelne interaktive HTML/JS-Widgets (Visualisierungen, Simulationen, Lernspiele) als standalone, IFRAME-einbettbare Dateien. | — |
+| **widget-analyzer** | `/widget-analyzer` | Standalone-Analyse eines `.qmd` auf Widget-Potenziale mit konkreten Spezifikationen — ohne Build. Kanonische Analyselogik liegt in `widget-pipeline/references/analyzer-patterns.md`. | — |
 
 ### Lehrmaterialien & Aufgaben
 
-| Skill | Aufruf | Was er tut |
-|---|---|---|
-| **case-builder** | `/case-builder` | Erstellt didaktisch fundierte Business-Fallstudien nach Kupp & Mueller als `.qmd`. |
-| **moodle-questions** | `/moodle-questions` | Generiert Moodle-XML-Quizfragen (Multiple Choice, Cloze, Matching, numerisch …) aus Lehrinhalt. |
-| **accounting-qa** | `/accounting-qa` | Qualitätssicherung für Accounting-Kapitel: prüft Berechnungen (Python), Normen (HGB/IFRS) und Literaturverweise parallel. |
+| Skill | Aufruf | Was er tut | Benötigt |
+|---|---|---|---|
+| **case-builder** | `/case-builder` | Erstellt didaktisch fundierte Business-Fallstudien nach Kupp & Mueller als `.qmd`: Explorations-Interview, Falltext mit integrierter Datentabelle und Aufgaben, Python-Arithmetikprüfung, Dreifach-Perspektiven-Review (Methodiker / Erstleser / Diskussionsleiter) und Teaching Note mit 90-Minuten-Diskussionsplan. Optional: Lernziel-Abgleich mit Begleitvorlesung. | — |
+| **moodle-questions** | `/moodle-questions` | Generiert Moodle-XML-Quizfragen (Multiple Choice, Cloze, Matching, Numerisch, Wahr/Falsch, Essay) aus Lehrinhalt. Klärt Fragetyp und Sprache im Vorfeld, prüft Bijektionen bei Matching und verifiziert numerische Lösungen per Python. | — |
+| **accounting-qa** | `/accounting-qa` | Qualitätssicherung für Accounting-Kapitel: drei parallele Subagents prüfen Berechnungen (Python-Ausführung), Normverweise (HGB/IFRS/IAS/AktG) und Literaturzitate unabhängig voneinander. Einsetzbar standalone oder eingebettet in `lecture-factory`. | — |
 
 ### Verwaltung & Kommunikation
 
-| Skill | Aufruf | Was er tut |
-|---|---|---|
-| **thws-brief** | `/thws-brief` | Erstellt THWS-Briefe im Corporate-Design als PDF (Quarto + brief-typst-Extension). |
-| **ba-gutachten** | `/ba-gutachten` | Erstellt akademische Kurzgutachten für Bachelor-/Masterarbeiten an der THWS als `.qmd`. |
+| Skill | Aufruf | Was er tut | Benötigt |
+|---|---|---|---|
+| **thws-brief** | `/thws-brief` | Erstellt THWS-Briefe im Corporate-Design als PDF (Quarto + brief-typst-Extension). Trigger: jeder Hinweis auf einen zu schreibenden Brief oder ein Anschreiben. | — |
+| **ba-gutachten** | `/ba-gutachten` | Erstellt akademische Kurzgutachten für Bachelor- und Masterarbeiten an der THWS (Fakultät Wirtschaftsingenieurwesen) als `.qmd`, das als THWS-Hochschulbrief rendert. | — |
 
 ### Tools & Integrationen
 
-| Skill | Aufruf | Was er tut |
-|---|---|---|
-| **zotero-skill** | `/zotero-skill` | Zugriff auf die lokale Zotero-7-Bibliothek (localhost:23119) und die Zotero Web API. |
-| **notebooklm** | `/notebooklm` | Vollständiger API-Zugriff auf Google NotebookLM — Notebooks anlegen, Quellen hinzufügen, Podcasts generieren. |
-| **excalidraw-diagram** | `/excalidraw-diagram` | Erstellt Excalidraw-Diagramme (Workflows, Architekturen, Konzepte) als JSON. |
+| Skill | Aufruf | Was er tut | Benötigt |
+|---|---|---|---|
+| **zotero-skill** | `/zotero-skill` | Zugriff auf die lokale Zotero-7-Bibliothek (localhost:23119) und die Zotero Web API: Quellen suchen, BibTeX exportieren, Sammlungen verwalten. | Zotero 7 läuft lokal |
+| **notebooklm** | `/notebooklm` | Vollständiger API-Zugriff auf Google NotebookLM — Notebooks anlegen, Quellen hinzufügen, alle Artefakttypen generieren (inkl. Podcast), Formate herunterladen. Auch für Features, die die Web-UI nicht bietet. | Google-Konto |
+| **excalidraw-diagram** | `/excalidraw-diagram` | Erstellt Excalidraw-Diagramme (Workflows, Architekturen, Konzepte) direkt im Excalidraw-MCP — keine JSON-Datei nötig. | Excalidraw MCP |
 
 ---
 
