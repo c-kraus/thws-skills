@@ -37,16 +37,22 @@ Jedes Widget-HTML MUSS diesen Block direkt vor `</body>` enthalten:
     var h = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
     window.parent.postMessage({ iframeHeight: h }, '*');
   }
-  window.addEventListener('load', reportHeight);
+  window.addEventListener('load', function() { setTimeout(reportHeight, 100); });
   if (window.ResizeObserver) {
     new ResizeObserver(reportHeight).observe(document.body);
+  }
+  if (window.MutationObserver) {
+    new MutationObserver(function() { setTimeout(reportHeight, 400); })
+      .observe(document.body, { attributes: true, childList: true, subtree: true,
+                                attributeFilter: ['class', 'style'] });
   }
 })();
 </script>
 ```
 
-- `load` feuert beim ersten Rendern
-- `ResizeObserver` feuert erneut bei Zoom-Änderungen und wenn sich der Widget-Inhalt dynamisch verändert (z. B. durch Klicks)
+- `load` + 100ms Delay: feuert nach dem ersten Render-Zyklus, wenn alle Elemente ihre finale Größe haben
+- `ResizeObserver`: feuert bei Layout-Änderungen (Zoom, Fensterbreite)
+- `MutationObserver` + 400ms Delay: feuert nach CSS-Transitionen, die durch Klick-Interaktionen ausgelöst werden (z.B. Expand/Collapse-Karten mit `max-height`-Animation). **Wichtig:** Ohne diesen Observer meldet das Widget nach einem Klick die Höhe vor Ende der Animation — das iframe bleibt zu klein oder zu groß.
 
 ### Listener (einmalig im QMD, nach dem YAML-Frontmatter)
 

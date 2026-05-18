@@ -19,7 +19,9 @@ Two concepts are easy to confuse but must stay distinct throughout:
 
 ## Phase 1: Exploration Interview
 
-Before writing a single word of text, clarify these four foundations. Ask them together in one message — don't trickle them out one by one.
+**Fast-path:** If the trigger message already provides answers to all four core questions below (underlying issue/concept, fictional vs. real, protagonist approach, target audience), skip the Q&A. State your assumptions in one short paragraph and proceed directly to Phase 2.
+
+Only ask if something is genuinely missing. Ask all open questions together in one message — never trickle them out one by one.
 
 1. **Educational Need (Underlying Issue)**: Which theoretical concept should students learn? Be specific. Not "innovation" but "Disruptive Innovation nach Christensen" or "Blue Ocean Strategy nach Kim/Mauborgne".
 
@@ -33,9 +35,9 @@ Before writing a single word of text, clarify these four foundations. Ask them t
 
 4. **Sources & Release**: Is this based on a real, identifiable company? Does the user have internal data or does it rely on public sources? Will case release (company approval) be needed?
 
-5. **Companion Lecture** *(optional)*: Is there an existing `.qmd` lecture file that this case accompanies? If yes, ask for the path — it enables the learning objective alignment check in Phase 3d.
+5. **Companion Lecture** *(optional)*: Is there an existing `.qmd` lecture file that this case accompanies? If yes, note the path — it enables the learning objective alignment check done inline during drafting.
 
-Wait for answers before starting Phase 2. A case built on vague foundations cannot be fixed in editing.
+A case built on vague foundations cannot be fixed in editing.
 
 ## Phase 2: Drafting
 
@@ -223,101 +225,37 @@ For every number in the case, verify:
 
 Flag any discrepancy and resolve it in the case *before* writing the teaching note solution.
 
-## Phase 3c: Multiperspektivischer Review
+## Phase 3c: Review
 
-Dispatch drei Subagents **gleichzeitig**. Jeder erhält den vollständigen Falltext als Input.
+**Standard (kein Subagent-Overhead):** Führe den Review als Self-Checklist durch. Gehe die Liste einmal durch und notiere gefundene Probleme direkt — kein Agent-Start, keine Wartephase.
 
----
+Checkliste:
+- Eröffnungsabsatz: Protagonist (Name) + Organisation + Zeitpunkt + Immediate Issue — alle vier vorhanden?
+- Endet der Fall VOR der Entscheidung (cut-off), nicht danach?
+- Werden Immediate Issue und Underlying Issue klar getrennt gehalten? Wird Letzteres nie explizit benannt?
+- Hat der Protagonist echte Handlungsoptionen — mindestens zwei vertretbare Positionen?
+- Sind alle Fragen self-contained (kein Blättern nötig)?
+- Ist jede Datentabelle inline dort platziert, wo sie gebraucht wird?
+- Erzeugt der Schluss echte Dringlichkeit?
+- Protagonist mit echten persönlichen Stakes (nicht nur Funktion)?
+- Fachbegriffe erklärt oder aus Kontext ableitbar?
+- Passt der Diskussionsstoff realistisch in die vorgesehene Lehrzeit?
 
-**Subagent A — Kupp & Mueller Methodiker**
+Behebe gefundene Probleme direkt. Maximal 5 Änderungen — Rest als offene Punkte im finalen Output melden.
 
-```
-Du prüfst eine Fallstudie auf Einhaltung der Kupp & Mueller Case-Method.
-
-Falltext: [vollständiger Falltext]
-
-Prüfe folgende Kriterien und nenne maximal 5 nummerierte Probleme:
-1. Verrät der Fall die "richtige Antwort" — gibt es Passagen, die lehren statt zu provozieren?
-2. Sind Immediate Issue (die konkrete Entscheidung) und Underlying Issue (das Lernkonzept) klar getrennt und wird Letzteres nie explizit benannt?
-3. Endet der Fall VOR der Entscheidung (cut-off point), nicht danach?
-4. Enthält der Eröffnungsabsatz alle vier Elemente: Protagonist (mit Name), Organisation, Zeitpunkt, Immediate Issue?
-5. Hat der Protagonist echte Handlungsoptionen — gibt es mindestens zwei vertretbare Positionen?
-6. Sind alle Diskussionsfragen self-contained (keine Rückverweise auf andere Dokumente nötig)?
-
-Format pro Problem: [Nr] [Schwere: ❌ kritisch / ⚠️ Hinweis] [Beschreibung] [Konkrete Stelle im Text]
-```
+**Optionaler Subagent-Review:** Nur starten wenn (a) der Nutzer explizit darum bittet oder (b) der Falltext > 3.000 Wörter umfasst und es sich um einen hochstakigen Einsatz handelt (Prüfung, Publikation). In diesem Fall die drei Subagents wie ursprünglich dokumentiert dispatchen.
 
 ---
 
-**Subagent B — Erstleser (Studierender)**
+## Phase 3d: Lernziel-Abgleich mit Vorlesung
 
-```
-Du liest diese Fallstudie zum ersten Mal als Studierender ohne Vorkenntnisse zum spezifischen Konzept.
+Wenn eine Companion-QMD bekannt ist, führe den Abgleich **inline während des Schreibens** durch — nicht als eigene Phase. Prüfe beim Formulieren jeder Aufgabe: Ist das verwendete Konzept in der Vorlesung eingeführt? Sind alle Fachbegriffe dort erklärt?
 
-Falltext: [vollständiger Falltext]
-
-Berichte maximal 4 Stellen, an denen:
-- Der Einstieg dich nicht sofort gepackt hat oder der Protagonist ungreifbar wirkte
-- Die Erzählung an Schwung verloren hat (Langatmigkeit, zu viele Zahlen auf einmal)
-- Ein Begriff oder Konzept verwendet wird, den du nicht kennst und der nicht erklärt wird
-- Der Schluss keine echte Dringlichkeit erzeugt hat
-
-Format: [Nr] [Abschnitt/Stelle] [Was fehlt oder stört] [Konkreter Verbesserungsvorschlag]
-```
-
----
-
-**Subagent C — Diskussionsleiter**
-
-```
-Du bereitest dich darauf vor, diesen Fall in einer 90-Minuten-Lehrveranstaltung zu unterrichten.
-Die 90 Minuten umfassen alles: deine Eröffnung, Diskussion der Aufgaben, Erklärungen durch dich, Synthese.
-
-Falltext: [vollständiger Falltext]
-
-Prüfe maximal 4 Punkte aus Lehrperspektive:
-1. Füllt der Diskussionsstoff realistisch 90 Minuten — oder ist er knapper (zu wenig Tiefe) oder breiter (Überladung)?
-2. Gibt es Fragen, bei denen Studierende hängen bleiben werden, die aber nicht der Kern des Lernziels sind (potenzielle Ablenkungsfallen)?
-3. Lassen die Aufgaben wirklich mehrere vertretbare Positionen zu, oder führt die Datenstruktur zur offensichtlichen Lösung?
-4. Fehlt dem Lehrenden etwas, um die Diskussion sicher zu führen — offene Lücken, die die Teaching Note schließen muss?
-
-Format: [Nr] [Lehrsituation] [Problem] [Empfehlung]
-```
-
----
-
-### Synthese nach Rückkehr aller drei Subagents
-
-- **Methodiker ❌ kritisch**: Immer beheben — diese Punkte brechen die Case-Method.
-- **Methodiker ⚠️ Hinweis vs. Erstleser-Wunsch**: Case-Method gewinnt (Pädagogik vor Lesbarkeit).
-- **Erstleser vs. Diskussionsleiter**: Beide Perspektiven dem Nutzer anzeigen, keine automatische Auflösung.
-- Maximal 5 Verbesserungen anwenden; Rest als offene Punkte im Checkpoint melden.
-
----
-
-## Phase 3d: Lernziel-Abgleich mit Vorlesung (nur wenn Companion-QMD vorhanden)
-
-Wenn der Nutzer in Phase 1 einen Vorlesungspfad angegeben hat:
-
-1. **Vorlesungs-QMD laden** — vollständigen Inhalt lesen.
-
-2. **Lernziele der Vorlesung extrahieren** — aus Einleitung, Lernziel-Divs (`.quick-check`, `.flip-card`), oder Sektionsstruktur.
-
-3. **Underlying Issue abgleichen** — Entspricht das Lernkonzept des Falls einem Thema in der Vorlesung? Wenn nicht: Hinweis, ob der Fall thematisch verschoben oder die Vorlesung erweitert werden sollte.
-
-4. **Begriffskonsistenz prüfen** — Werden im Fall Konzepte oder Fachbegriffe verwendet, die in der Vorlesung **nicht** eingeführt wurden? Diese sind für Studierende ohne Zusatzlektüre nicht lösbar.
-
-5. **Tiefenabgleich** — Erfordern die Diskussionsfragen des Falls mehr konzeptionelle Tiefe, als die Vorlesung vermittelt? (Trinity of Depth: Theorie → Norm → Praxis)
-
-**Ausgabe** (kompakt, direkt nach Gap Analysis in den Checkpoint integriert):
-
-```
-### Lernziel-Abgleich mit [Dateiname der Vorlesung]
-✅ Underlying Issue "[Konzept]" ist in Abschnitt "[Titel]" der Vorlesung abgedeckt.
-⚠️ Begriff "[X]" wird im Fall verwendet, fehlt aber in der Vorlesung — Studierende müssen ihn selbst mitbringen.
-⚠️ Aufgabe [N] setzt [Konzept Y] voraus, das erst in Kapitel [Z] behandelt wird.
-❌ Underlying Issue "[Konzept]" findet sich nicht in der Vorlesung — Fall und Vorlesung passen thematisch nicht zusammen.
-```
+Melde nur echte Lücken im finalen Output — kompakt, ein Satz pro Punkt:
+- ✅ Konzept X ist in der Vorlesung abgedeckt (keine Erwähnung nötig)
+- ⚠️ Begriff Y fehlt in der Vorlesung — Hinweis an Nutzer
+- ⚠️ Aufgabe N setzt Konzept Z voraus, das erst in Session K behandelt wird — Hinweis an Nutzer
+- ❌ Underlying Issue nicht in der Vorlesung — Hinweis an Nutzer
 
 ## Phase 4: Teaching Note
 
