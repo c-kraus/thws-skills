@@ -7,7 +7,7 @@ description: "Converts a collection of standalone Quarto lecture files (.qmd) in
 
 Converts a folder of standalone Quarto lecture files into a deployable Quarto book project — with THWS branding, moodle-html format, and GitHub Actions publish-to-Pages workflow.
 
-This skill encodes hard-won lessons from the BUA3 project: the absolute-path logo bug, the CSS `img vs svg` issue with inline SVGs, and the front-YAML-causes-duplicate-title problem. Don't let the next project discover those the hard way.
+This skill encodes hard-won lessons from the BUA3 project: the absolute-path logo bug, the CSS `img vs svg` issue with inline SVGs, the front-YAML-causes-duplicate-title problem, and the three-layer header positioning bug (z-index conflict, timing, Quarto JS override). Don't let the next project discover those the hard way.
 
 ---
 
@@ -146,7 +146,9 @@ Then apply the logo fix (Step 5a) regardless of whether you just copied it or it
 
 Check `inject-header.lua`. If it already reads and inlines the SVG (look for `f:read("*all")` and `svg_content`), it's already fixed — skip.
 
-If it uses an `<img src="...">` tag or any external path reference, replace it with the inline-SVG pattern:
+If it uses an `<img src="...">` tag or any external path reference, replace it with the correct inline-SVG pattern below.
+
+**This is the canonical, fully-debugged version.** Three non-obvious bugs are baked into it — see the Pitfalls table at the bottom for the reasoning behind each decision:
 
 ```lua
 local function inject_header(doc)
@@ -163,31 +165,72 @@ local function inject_header(doc)
 
   local header_html = '<div id="custom-header">' .. svg_content .. '</div>\n' ..
     '<script>\n' ..
-    'window.onscroll = function() {\n' ..
-    '  var h = document.getElementById("custom-header");\n' ..
-    '  var s = document.getElementById("quarto-margin-sidebar");\n' ..
-    '  var scrolled = document.body.scrollTop > 50 || document.documentElement.scrollTop > 50;\n' ..
-    '  h.classList.toggle("shrink", scrolled);\n' ..
-    '  if (s) s.classList.toggle("scrollmargin", scrolled);\n' ..
-    '};\n' ..
+    '(function() {\n' ..
+    '  var h  = document.getElementById("custom-header");\n' ..
+    '  var qh = document.getElementById("quarto-header");\n' ..
+    '\n' ..
+    '  function updatePositions() {\n' ..
+    '    if (!h) return;\n' ..
+    '    var thwsH = h.offsetHeight;\n' ..
+    '    if (qh) qh.style.top = thwsH + "px";\n' ..
+    '    var totalH = thwsH + (qh ? qh.offsetHeight : 0);\n' ..
+    '    document.body.style.marginTop = totalH + "px";\n' ..
+    '    document.documentElement.style.setProperty("--sidebar-top", totalH + "px");\n' ..
+    '  }\n' ..
+    '\n' ..
+    '  if (document.readyState === "loading") {\n' ..
+    '    document.addEventListener("DOMContentLoaded", updatePositions);\n' ..
+    '  } else {\n' ..
+    '    updatePositions();\n' ..
+    '  }\n' ..
+    '  window.addEventListener("load", updatePositions);\n' ..
+    '\n' ..
+    '  window.onscroll = function() {\n' ..
+    '    var scrolled = document.body.scrollTop > 50 || document.documentElement.scrollTop > 50;\n' ..
+    '    h.classList.toggle("shrink", scrolled);\n' ..
+    '    requestAnimationFrame(updatePositions);\n' ..
+    '  };\n' ..
+    '})();\n' ..
     '</script>\n'
 
   local header_block = pandoc.RawBlock("html", header_html)
   local blocks = pandoc.List{header_block}
   blocks:extend(doc.blocks)
-  return pandoc.Pandoc(blocks, doc.meta)
+  return pandoc.Pandoc(pandoc.Blocks(blocks), doc.meta)
 end
 
 return { { Pandoc = inject_header } }
 ```
 
-### Step 5b — CSS fix for inline SVG sizing
+### Step 5b — CSS fixes for inline SVG sizing and header stacking
 
-**Why:** The SCSS file targets `#custom-header img` for logo sizing. When the logo is an inline `<svg>` element (not an `<img>`), those rules don't apply and the SVG defaults to 100% container width — making it enormous.
+**Why (SVG sizing):** The SCSS file targets `#custom-header img` for logo sizing. When the logo is an inline `<svg>` element (not an `<img>`), those rules don't apply and the SVG defaults to 100% container width — making it enormous.
 
-Open `thws-styles.scss`. Find the `#custom-header img` rule. Add `#custom-header svg` alongside it for every selector that sizes the logo:
+**Why (z-index):** Bootstrap sets `#quarto-header` (the secondary nav shown on mobile/tablet) to `z-index: 1030`. The THWS banner must be `1031` or higher, otherwise the Quarto nav appears on top of it.
+
+**Why (sidebar top via CSS custom property):** The sticky sidebars need `top` equal to the combined height of all fixed headers. Setting `style.top` directly via JS doesn't work because Quarto's own sidebar JS resets it afterward. The fix is a CSS custom property (`--sidebar-top`) set by JS, with `!important` in the stylesheet so the CSS rule wins over Quarto's JS.
+
+Open `thws-styles.scss` and ensure these rules are present:
 
 ```scss
+// Sidebars must sit below the fixed THWS header — JS sets this variable
+#quarto-sidebar,
+#quarto-margin-sidebar {
+  top: var(--sidebar-top, 85px) !important;
+}
+
+// Header Bar
+#custom-header {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 1031;          // must be > Bootstrap's 1030
+  background-color: $_teal;
+  width: 100vw;
+  padding: 0.5em;
+  transition: all 0.2s ease-in-out;
+}
+
 #custom-header img,
 #custom-header svg {
   height: 4em;
@@ -196,14 +239,27 @@ Open `thws-styles.scss`. Find the `#custom-header img` rule. Add `#custom-header
   transition: transform 0.2s ease-in-out;
 }
 
+#custom-header.shrink {
+  height: 3.2em;
+  padding: 0.2em;
+}
+
 #custom-header.shrink img,
 #custom-header.shrink svg {
   transform: scale(0.8);
   margin-top: -0.5em;
 }
+
+body {
+  margin-top: 6em;        // JS overrides this dynamically via updatePositions()
+}
+
+html {
+  scroll-padding-top: 7em;
+}
 ```
 
-If these selectors already include `svg`, skip.
+If `z-index: 1031` and `var(--sidebar-top)` are already present, skip.
 
 ---
 
@@ -328,3 +384,7 @@ These are real bugs encountered in the BUA3 project — check for them proactive
 | `excalidraw.log` committed | Unrelated binary blob pollutes the repo | Add to `.gitignore` |
 | `output-dir: _book` vs `_site` | GitHub Pages Action uploads wrong folder | Use `_site` and match in `path: '_site'` |
 | `quarto-dev/quarto-actions/render@v2` with no `to:` | Renders to default format, not moodle-html | Add `to: moodle-html` explicitly |
+| `z-index: 1000` on `#custom-header` | On mobile/tablet, Quarto's breadcrumb nav (z-index 1030) appears on top of THWS banner | Use `z-index: 1031`; push `#quarto-header` down via JS (`qh.style.top = thwsH + "px"`) |
+| Calling `updatePositions()` immediately in inline script | `h.offsetHeight` is 0 at parse time → sidebars get `top: 0px` | Fire on `DOMContentLoaded` + `load` event instead |
+| Setting sidebar `style.top` directly in JS | Quarto's own sidebar JS resets it back to 0 afterward | Use CSS custom property `--sidebar-top` on `:root` with `!important` in stylesheet — stylesheet `!important` beats Quarto's inline JS |
+| `pandoc.Pandoc(blocks, doc.meta)` with `pandoc.List` | Lua LSP type warning (not runtime error, but noisy) | Cast: `pandoc.Pandoc(pandoc.Blocks(blocks), doc.meta)` |
