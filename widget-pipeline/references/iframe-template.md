@@ -33,8 +33,11 @@ Jedes Widget-HTML MUSS diesen Block direkt vor `</body>` enthalten:
 ```html
 <script>
 (function () {
+  var lastH = 0;
   function reportHeight() {
-    var h = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+    var h = document.body.scrollHeight;
+    if (h === lastH) return;
+    lastH = h;
     window.parent.postMessage({ iframeHeight: h }, '*');
   }
   window.addEventListener('load', function() { setTimeout(reportHeight, 100); });
@@ -50,9 +53,11 @@ Jedes Widget-HTML MUSS diesen Block direkt vor `</body>` enthalten:
 </script>
 ```
 
+- `lastH`-Guard: verhindert Feedback-Schleife — nur gesendet, wenn sich die Höhe tatsächlich ändert
+- `document.body.scrollHeight` statt `documentElement.scrollHeight`: `documentElement` reflektiert die vom Parent gesetzte iframe-Höhe und würde bei jedem Resize-Zyklus einen größeren Wert liefern → endlose Größenzunahme
 - `load` + 100ms Delay: feuert nach dem ersten Render-Zyklus, wenn alle Elemente ihre finale Größe haben
 - `ResizeObserver`: feuert bei Layout-Änderungen (Zoom, Fensterbreite)
-- `MutationObserver` + 400ms Delay: feuert nach CSS-Transitionen, die durch Klick-Interaktionen ausgelöst werden (z.B. Expand/Collapse-Karten mit `max-height`-Animation). **Wichtig:** Ohne diesen Observer meldet das Widget nach einem Klick die Höhe vor Ende der Animation — das iframe bleibt zu klein oder zu groß.
+- `MutationObserver` + 400ms Delay: feuert nach CSS-Transitionen (z.B. Expand/Collapse-Karten)
 
 ### Listener (einmalig im QMD, nach dem YAML-Frontmatter)
 
@@ -67,7 +72,7 @@ window.addEventListener('message', function (e) {
     frames.forEach(function (f) {
       try {
         if (f.contentWindow === e.source) {
-          f.style.height = (e.data.iframeHeight + 16) + 'px';
+          f.style.height = (e.data.iframeHeight + 2) + 'px';
         }
       } catch (err) {}
     });
@@ -77,7 +82,7 @@ window.addEventListener('message', function (e) {
 ```
 ```
 
-Der `+ 16px`-Puffer verhindert, dass ein horizontaler Scrollbalken erscheint und die Höhe erneut triggert.
+Der `+2px`-Puffer verhindert minimale Scrollbalken. Nicht mehr als +2 verwenden — größere Werte wurden früher von `documentElement.scrollHeight` re-gemessen und erzeugten endlose Größenzunahme (jetzt durch `lastH`-Guard im Sender verhindert).
 
 ## Warum `.widget`-Div?
 
