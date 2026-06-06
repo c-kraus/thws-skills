@@ -21,6 +21,12 @@ Respond in the language the user prompts in, or as explicitly requested (e.g., "
 
 **Both modes:** Aesthetics come from intellectual sharpness, not decorative adjectives. Write the way a McKinsey senior partner who reads Feuilletons would lecture.
 
+**Citations — no namedropping:** Sources belong at the end of a sentence, not at its grammatical subject. State the content first, cite at the end:
+- Wrong: »Freeman zeigt, dass Stakeholder-Theorie...« / »Schwerk hat argumentiert, dass CG und CSR...[@Schwerk]«
+- Right: »Die Stakeholder-Theorie besagt, dass... [@Freeman1984]« / »CG und CSR sind keine getrennten Bereiche [@Schwerk]«
+
+Author names as the subject of the main clause are almost always superfluous — the content is what matters, not who wrote it. Name an author explicitly only when the attribution IS the point: contrasting philosophical positions where Position A vs. Position B is the structure of the argument.
+
 ## RAG & Clean-Up Protocol
 
 Before structuring, aggressively clean the input:
@@ -77,16 +83,21 @@ For a concrete example of this structure in action, load `references/chapter-exa
 
 Use exclusively these Div containers. They trigger Lua filters for PDF rendering and JavaScript for Moodle interactivity.
 
-### A. Deep Dives (Details)
+### A. Deep Dives
 
-For complex legal text or supplementary depth that would disrupt reading flow. Use H4 (####) for the internal heading.
+For technical concepts, legal text, or supplementary depth that would disrupt reading flow. Use `.callout-note` with a descriptive title:
 
 ```markdown
-::: {.details}
-#### Exkurs: § 253 Abs. 3 HGB
-Legal text or detailed explanation...
+::: {.callout-note title="Deep Dive: [Concept Name]"}
+Explanation...
 :::
 ```
+
+**Title convention:** German — `"Deep Dive: Marktversagen"` / `"Deep Dive: § 249 HGB"`. English — `"Deep Dive: Market Failure"`. The title should name the concept, not describe what the box does.
+
+**Density rule:** One deep dive per major concept — not for every technical term. If a term can be explained in one sentence in the flow, do that instead. Deep dives are for content that would take a paragraph and break the argument.
+
+**Legacy format:** Older chapters may use `::: {.details}` with `#### Exkurs: ...` heading — that's the Lua-filter variant for the BUA accounting course. Use `.callout-note` for all new chapters.
 
 ### B. Inline Case Studies
 
@@ -324,17 +335,20 @@ Mandatory-Elemente beider Rollen anwenden. Wenn die Summe 3 Elemente überschrei
 
 ### Deep Dive Trigger Rules
 
-**Mandatory** (immer `.details` einfügen):
-- Ein § oder IAS/IFRS-Absatz wird im Kapitel **zum ersten Mal** zitiert
-- Ein theoretisches Konzept hat wichtige Nuancen, Ausnahmen oder Unterarten, die im Fließtext den Lesefluss brechen würden
+**Mandatory:**
+- Ein § oder IAS/IFRS-Absatz wird im Kapitel **zum ersten Mal** zitiert (Accounting)
+- Ein Fachbegriff, der *nicht im allgemeinen Sprachgebrauch* ist, wird eingeführt und braucht mehr als einen Satz Erklärung (alle Disziplinen)
+- Ein theoretisches Konzept hat wichtige Nuancen, Ausnahmen oder Unterarten, die den Lesefluss des Haupttextes unterbrechen würden
 
-**Optional** (`.details` empfohlen, wenn vorhanden):
-- Historischer Kontext oder Herleitung
+**Optional:**
+- Historischer Kontext oder Herleitung, die das Verständnis schärft
 - Grenzfall, der nur fortgeschrittene Studierende betrifft
+- Vergleich zweier verwandter Konzepte, die Studierende häufig verwechseln
 
 **Nie:**
-- Als erstes Element einer Section (braucht erst Prosa-Kontext)
+- Als erstes Element einer Section — der Prosa-Kontext muss zuerst kommen
 - Zwei Deep Dives hintereinander ohne mindestens 100 Wörter Prosa dazwischen
+- Für Begriffe, die in einem Satz im Fließtext erklärt werden können
 
 ---
 
