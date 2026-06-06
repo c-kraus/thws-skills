@@ -83,21 +83,20 @@ For a concrete example of this structure in action, load `references/chapter-exa
 
 Use exclusively these Div containers. They trigger Lua filters for PDF rendering and JavaScript for Moodle interactivity.
 
-### A. Deep Dives
+### A. Deep Dives (Details)
 
-For technical concepts, legal text, or supplementary depth that would disrupt reading flow. Use `.callout-note` with a descriptive title:
+For technical concepts, legal text, or supplementary depth that would disrupt reading flow. Use H4 (####) for the internal heading.
 
 ```markdown
-::: {.callout-note title="Deep Dive: [Concept Name]"}
+::: {.details}
+#### Deep Dive: Marktversagen
 Explanation...
 :::
 ```
 
-**Title convention:** German — `"Deep Dive: Marktversagen"` / `"Deep Dive: § 249 HGB"`. English — `"Deep Dive: Market Failure"`. The title should name the concept, not describe what the box does.
+**Title convention:** German — `#### Deep Dive: Marktversagen` / `#### Exkurs: § 249 HGB`. English — `#### Deep Dive: Market Failure`. The heading should name the concept.
 
 **Density rule:** One deep dive per major concept — not for every technical term. If a term can be explained in one sentence in the flow, do that instead. Deep dives are for content that would take a paragraph and break the argument.
-
-**Legacy format:** Older chapters may use `::: {.details}` with `#### Exkurs: ...` heading — that's the Lua-filter variant for the BUA accounting course. Use `.callout-note` for all new chapters.
 
 ### B. Inline Case Studies
 

@@ -129,12 +129,12 @@ Follow the **quarto-lecture** skill in full:
 2. Write YAML frontmatter (lang, title, subtitle, author, format)
 3. Architect the chapter structure using Trinity of Depth (Theory → Norm → Practice)
 4. Write 1,500–3,000 words of prose with correct element density (~1 interactive element per 400–600 words)
-5. Use correct Div syntax: `.callout-note title="Deep Dive: ..."`, `.case-study`, `.drag-exercise`, `.quick-check`, `.flip-card`, `.video`, `.widget`
+5. Use correct Div syntax: `.details`, `.case-study`, `.drag-exercise`, `.quick-check`, `.flip-card`, `.video`, `.widget`
 6. Save to `[output-directory]/kap-{nn}-{slug}.qmd`
 
 Two conventions that apply universally — check these before presenting the draft:
 - **No namedropping:** Content states the idea; `[@Key]` cites the source. Never »X zeigt, dass...« or »Y hat entwickelt...« as the main clause.
-- **Deep dives sparingly:** One `.callout-note title="Deep Dive: ..."` per unexplained technical concept. Never two in a row, never as a section opener.
+- **Deep dives sparingly:** One `.details` block per unexplained technical concept. Never two in a row, never as a section opener.
 
 ### Curriculum-bewusstes Schreiben
 
@@ -294,7 +294,7 @@ The output of this skill must meet the same standard as if both skills had been 
 - No content was accidentally removed or corrupted during widget integration
 - Document language (German/English) is consistent throughout, including widget UI text
 - **Citations:** No namedropping — author names are never the grammatical subject of a sentence. Pattern: state the content, append `[@Key]` at end. See quarto-lecture citation guidance.
-- **Deep Dives:** Use `.callout-note title="Deep Dive: [Concept]"` — one per major unexplained concept, not for every term. Place after prose context, never as section opener. See quarto-lecture Deep Dive trigger rules.
+- **Deep Dives:** Use `.details` with `#### Deep Dive: [Concept]` heading — one per major unexplained concept, not for every term. Place after prose context, never as section opener. See quarto-lecture Deep Dive trigger rules.
 
 ## Notes for Claude
 
