@@ -88,23 +88,39 @@ Use ONLY these classes. Inventing new classes breaks the THWS theme.
 |:---|:---|
 | `<!-- _class: titlepage -->` | Slide 1 only |
 | `<!-- _class: structural -->` | Agenda, chapter breaks, interactions, learning objectives |
-| `<!-- _class: img-right -->` | Standard content: text left, image right |
-| `<!-- _class: img-right small-text -->` | Same, but more text |
 | `<!-- _class: fullscreen -->` | Full-bleed photo with caption |
 | `<!-- _class: center -->` | Centered theses, provocative statements, quotes |
 | `<!-- _class: end -->` | Content pinned to bottom of slide |
+| `<!-- _class: tiny-text -->` | Slides with tables or dense content needing smaller font |
+
+**Do NOT use `img-right` or `img-right small-text`** — images are placed using the MARP `bg` directive instead (see Step 6).
 
 ### Step 6: Images
 
 Use images **only when they provide real didactic value** — i.e., when the image helps the audience understand or remember something they couldn't equally well without it. Decorative images that just fill the right column add cognitive noise, not value.
 
-Ask yourself: does this image *teach* something, or does it just look nice? If the latter, leave the slide image-free (use a standard layout, not `img-right`).
+Ask yourself: does this image *teach* something, or does it just look nice? If the latter, leave the slide image-free.
 
-- Format: `![Description](URL)`
-- Use Unsplash: `https://source.unsplash.com/featured/?keyword`
-- For `img-right`: place the image **after** all text on that slide
-- Good use case: a screenshot of an actual accessibility tool, a before/after UI comparison, a chart
-- Poor use case: a stock photo of "collaboration" or "technology" next to a bullet list
+**Standard image placement — use `bg` directive:**
+
+```markdown
+---
+
+# Titel der Folie
+
+- Bullet-Punkt A
+- Bullet-Punkt B
+- Bullet-Punkt C
+
+![bg right 80%](../diagrams/kapitel-03/diagram-erp-crm-scm-dw.svg)
+```
+
+- `![bg right 80%](path)` places the image on the right half; text stays left automatically — no special class needed
+- Adjust the percentage (e.g. `60%`, `70%`, `80%`) to control image size
+- For full-bleed images use `<!-- _class: fullscreen -->` with `![bg](path)`
+- Use Unsplash for stock photos: `https://source.unsplash.com/featured/?keyword`
+- Good use case: diagrams, charts, before/after comparisons
+- Poor use case: decorative stock photos next to bullet lists
 
 ### Step 6b: Prominent Provocations with `<!-- fit -->`
 
@@ -122,15 +138,15 @@ Use this on `center` class slides for maximum effect:
 Also works for closing questions or section titles you want to resonate.
 Do **not** overuse — one or two per deck is enough.
 
-### Step 6c: Tables always use `small-text`
+### Step 6c: Tables always use `tiny-text`
 
-Whenever a slide contains a table, always add `small-text` to the class — even if the rest of the text seems large enough. Tables render larger than expected in MARP and will overflow or look cramped without it.
+Whenever a slide contains a table, always use `<!-- _class: tiny-text -->` — even if the rest of the text seems large enough. Tables render larger than expected in MARP and will overflow or look cramped without it.
 
 ```markdown
-<!-- _class: img-right small-text -->
+<!-- _class: tiny-text -->
 ```
 
-If the slide has no image but has a table, consider using `<!-- _class: end -->` or a plain slide with `small-text` added as a scoped style comment if needed.
+If the slide also has a `bg`-image, the `tiny-text` class still applies — just add the `![bg right X%](path)` line at the end of the slide content as usual.
 
 ### Step 6d: Show consequences with arrows
 
