@@ -13,21 +13,18 @@ Generate `.excalidraw` JSON files that **argue visually**, not just display info
 
 **90% of lecture and concept diagrams fit one of six templates.** Skip the full design process and go directly:
 
-1. **Read** `references/color-palette.md` (colors)
-2. **Pick** the right template from `references/layout-templates.md`:
-   - **A** — 3-box flow (A→B→C)
-   - **B** — 4-box flow (A→B→C→D)
-   - **C** — Split zone left/right with divider (Balance Sheet | Income Statement)
-   - **D** — 2-column comparison (Method A vs Method B)
-   - **E** — Vertical timeline (chronological sequence)
-   - **F** — Hub and spoke (one center → multiple effects)
-3. **Copy** the template JSON, replace LABEL / STROKE / FILL / ARROW_COLOR with real content from the color palette
-4. **Add** any free-floating text labels, sub-labels, or annotations
-5. **Write** the `.excalidraw` file and **render** immediately
+1. **Pick** the right layout from `references/layout-templates.md` (nur als Layout-Idee — Koordinaten skizzieren, nicht JSON kopieren):
+   - **A** — 3-box flow (A→B→C) · **B** — 4-box flow · **C** — Split zone with divider
+   - **D** — 2-column comparison · **E** — Vertical timeline · **F** — Hub and spoke
+2. **Write a compact spec** (JSON: boxes mit `role`, arrows mit `from`/`to`, freier Text mit `level`) — see the spec format in `scripts/build_diagram.py`'s docstring. Du platzierst nur die Box-Anker (x/y) und Inhalte; Größen, Textzentrierung, Farben und Bindings übernimmt der Generator.
+3. **Run the generator:** `python ~/.claude/skills/excalidraw-diagram/scripts/build_diagram.py spec.json -o diagram.excalidraw` — misst Text (Monospace), dimensioniert Boxen auto auf Textmaß + Padding, bindet Labels an Shapes, bindet Pfeile beidseitig, prüft sich selbst (⚠️-Ausgabe ernst nehmen).
+4. **Render once & verify** (see Render & Validate below).
 
-> **If the MCP `batch_create_elements` tool is available, prefer it over writing JSON by hand.** Pass text directly on shape elements via the `label` property — Excalidraw will auto-center it within the shape. See **Text in Shapes** below.
+> **Why the generator instead of hand-written JSON:** Textbreite ist in fontFamily 3 exakt berechenbar — der Generator macht Text-Overflow und Padding-Korrekturen per Konstruktion unmöglich und reduziert den Render-Loop auf eine einzige Verifikation. Farben kommen aus `references/color-palette.md` und sind im Generator hinterlegt; bei Palette-Änderungen beide Stellen pflegen.
 
-No planning phase, no sketching, no 6-step design process. Templates have all coordinates pre-calculated.
+> **If the MCP `batch_create_elements` tool is available** (live canvas session), it is fine too — pass text via the `label` property on shapes. For `.excalidraw` **files** (the lecture pipeline), always use the generator; the `label` property does not exist in the file format.
+
+No planning phase, no sketching, no 6-step design process for template-shaped diagrams.
 
 **Use the full Design Process below only when:**
 - The concept genuinely doesn't fit any template
@@ -222,57 +219,26 @@ For multi-concept diagrams: **each major concept must use a different visual pat
 ### Step 4: Sketch the Flow
 Before JSON, mentally trace how the eye moves through the diagram. There should be a clear visual story.
 
-### Step 5: Generate JSON
-Only now create the Excalidraw elements. **See below for how to handle large diagrams.**
+### Step 5: Write the Spec & Generate
+Only now write the diagram spec and run `scripts/build_diagram.py`. **See below for how to handle large diagrams.**
 
-### Step 6: Render & Validate (MANDATORY)
-After generating the JSON, you MUST run the render-view-fix loop until the diagram looks right. This is not optional — see the **Render & Validate** section below for the full process.
+### Step 6: Render & Validate
+One verification render, fixes go into the spec — see the **Render & Validate** section below.
 
 ---
 
 ## Large / Comprehensive Diagram Strategy
 
-**For comprehensive or technical diagrams, you MUST build the JSON one section at a time.** Do NOT attempt to generate the entire file in a single pass. This is a hard constraint — Claude Code has a ~32,000 token output limit per response, and a comprehensive diagram easily exceeds that in one shot. Even if it didn't, generating everything at once leads to worse quality. Section-by-section is better in every way.
+Auch große Diagramme laufen über die **Spec**, nicht über handgeschriebenes Element-JSON. Die Spec ist um den Faktor 10–20 kompakter als das erzeugte JSON — das frühere Token-Limit-Problem existiert damit nicht mehr.
 
-### The Section-by-Section Workflow
+1. **Spec sektionsweise aufbauen:** Eine Spec-Datei, pro Section ein Edit (Entry/Trigger → Routing → Hero-Section → Outputs). Beschreibende IDs (`trigger_rect`, `arrow_fan_left`) — Pfeile referenzieren sie über `from`/`to`, die Bindings erzeugt der Generator.
+2. **Layout-Anker bewusst setzen:** In der Spec platzierst du nur x/y der Boxen. Plane Sektionen mit genug Abstand (≥120 px zwischen Gruppen); der Generator vergrößert Boxen nach Textmaß — bei knapper Planung können Nachbarn kollidieren. Im Zweifel großzügig.
+3. **Generator laufen lassen, ⚠️-Ausgabe prüfen** (fehlende Referenzen, Overflows meldet er selbst).
+4. **Einmal rendern und gegen die Konzept-Skizze prüfen** (Render & Validate).
 
-**Phase 1: Build each section**
+**Evidence artifacts** (Code-Snippets, JSON-Beispiele) sind `role: "evidence"`-Boxen mit mehrzeiligem Label — dunkler Hintergrund und helle Schrift kommen automatisch.
 
-1. **Create the base file** with the JSON wrapper (`type`, `version`, `appState`, `files`) and the first section of elements.
-2. **Add one section per edit.** Each section gets its own dedicated pass — take your time with it. Think carefully about the layout, spacing, and how this section connects to what's already there.
-3. **Use descriptive string IDs** (e.g., `"trigger_rect"`, `"arrow_fan_left"`) so cross-section references are readable.
-4. **Namespace seeds by section** (e.g., section 1 uses 100xxx, section 2 uses 200xxx) to avoid collisions.
-5. **Update cross-section bindings** as you go. When a new section's element needs to bind to an element from a previous section (e.g., an arrow connecting sections), edit the earlier element's `boundElements` array at the same time.
-
-**Phase 2: Review the whole**
-
-After all sections are in place, read through the complete JSON and check:
-- Are cross-section arrows bound correctly on both ends?
-- Is the overall spacing balanced, or are some sections cramped while others have too much whitespace?
-- Do IDs and bindings all reference elements that actually exist?
-
-Fix any alignment or binding issues before rendering.
-
-**Phase 3: Render & validate**
-
-Now run the render-view-fix loop from the Render & Validate section. This is where you'll catch visual issues that aren't obvious from JSON — overlaps, clipping, imbalanced composition.
-
-### Section Boundaries
-
-Plan your sections around natural visual groupings from the diagram plan. A typical large diagram might split into:
-
-- **Section 1**: Entry point / trigger
-- **Section 2**: First decision or routing
-- **Section 3**: Main content (hero section — may be the largest single section)
-- **Section 4-N**: Remaining phases, outputs, etc.
-
-Each section should be independently understandable: its elements, internal arrows, and any cross-references to adjacent sections.
-
-### What NOT to Do
-
-- **Don't generate the entire diagram in one response.** You will hit the output token limit and produce truncated, broken JSON. Even if the diagram is small enough to fit, splitting into sections produces better results.
-- **Don't use a coding agent** to generate the JSON. The agent won't have sufficient context about the skill's rules, and the coordination overhead negates any benefit.
-- **Don't write a Python generator script.** The templating and coordinate math seem helpful but introduce a layer of indirection that makes debugging harder. Hand-crafted JSON with descriptive IDs is more maintainable.
+**Don't use a coding agent** to generate the spec — the agent won't have this skill's design rules in context; write the spec yourself.
 
 ---
 
@@ -433,28 +399,12 @@ Position alone doesn't show relationships. If A relates to B, there must be an a
 
 ## Text in Shapes
 
-**Use the `label` property to embed text directly in a shape — never a separate text element.**
+Zwei Wege, je nach Kontext — nie freien Text manuell über eine Box legen:
 
-When using the MCP `batch_create_elements` tool, pass `label: { text: "..." }` on the shape itself:
+- **`.excalidraw`-Dateien (Pipeline):** Der Generator erzeugt gebundene Text-Elemente (`containerId` + `boundElements`) mit **gemessener** Breite und exakt berechneter Zentrierung. Das frühere „containerId zentriert nicht zuverlässig"-Problem war eine Folge geratener Textbreiten — mit korrekten Maßen zentriert es deterministisch.
+- **MCP `batch_create_elements` (Live-Canvas):** `label: { text: "..." }` direkt auf dem Shape — Excalidraw zentriert automatisch. Das `label`-Property existiert **nur** im MCP-Tool, nicht im Dateiformat.
 
-```json
-{
-  "type": "rectangle",
-  "id": "my_box",
-  "x": 20, "y": 68, "width": 240, "height": 72,
-  "backgroundColor": "#fed7aa",
-  "strokeColor": "#c2410c",
-  "label": { "text": "TSMC\nTaiwan · ~55 %" },
-  "fontSize": 14,
-  "fontFamily": 3
-}
-```
-
-Excalidraw automatically centers the label horizontally and vertically within the shape. No separate `text` element, no `containerId` binding, no coordinate math needed.
-
-**Why not a separate text element with `containerId`?** The renderer does not reliably center text positioned this way — the result is consistently left-aligned regardless of `textAlign: "center"`. The `label` approach is the correct Excalidraw-native method.
-
-For **free-floating text** (titles, annotations, level labels) that is not inside a shape, use a normal `text` element without `label`.
+For **free-floating text** (titles, annotations, level labels), use a `text` spec element (`level: title|subtitle|body`).
 
 ---
 
@@ -496,9 +446,9 @@ See `references/element-templates.md` for copy-paste JSON templates for each ele
 
 ---
 
-## Render & Validate (MANDATORY)
+## Render & Validate
 
-You cannot judge a diagram from JSON alone. After generating or editing the Excalidraw JSON, you MUST render it to PNG, view the image, and fix what you see — in a loop until it's right. This is a core part of the workflow, not a final check.
+You cannot judge a diagram from JSON alone — but with the generator, **one verification render is the norm**, not a 2–4-iteration loop. The generator guarantees text fit, centering, and bindings; what remains to check visually is composition: arrow routing, section balance, label proximity. Render once, view the PNG, fix the **spec** (never the generated JSON) only if you see a defect, regenerate, re-render. If the second render still has issues, something is wrong with the layout plan — rethink anchors instead of iterating pixel by pixel.
 
 ### How to Render
 
@@ -578,13 +528,16 @@ The loop is done when:
 git clone https://github.com/yctimlin/mcp_excalidraw.git ~/Dev/mcp_excalidraw
 cd ~/Dev/mcp_excalidraw && npm ci && npm run build
 
-# 2. Register as Claude Code MCP
+# 2. Register as Claude Code MCP — wrapped so the server's excalidraw.log
+#    lands in /tmp instead of littering every project directory:
 claude mcp add excalidraw -s user -e EXPRESS_SERVER_URL=http://localhost:3000 \
-  -- node ~/Dev/mcp_excalidraw/dist/index.js
+  -- bash -c 'cd /tmp && exec node ~/Dev/mcp_excalidraw/dist/index.js'
 
 # 3. (Optional) install Playwright for --headless mode
 pip install playwright && playwright install chromium
 ```
+
+**Log-Hygiene:** Der MCP-Server schreibt `excalidraw.log` in sein Arbeitsverzeichnis. Der `bash -c 'cd /tmp && exec …'`-Wrapper oben verlegt das nach `/tmp`. Wenn der Server bereits ohne Wrapper registriert ist: `claude mcp remove excalidraw -s user`, dann neu registrieren. Vorhandene Streuner aufräumen: `find ~/Dev -maxdepth 2 -name "excalidraw.log" -delete`.
 
 ---
 
@@ -616,7 +569,7 @@ pip install playwright && playwright install chromium
 ### Technical
 16. **Text clean**: `text` contains only readable words
 17. **Font**: `fontFamily: 3`
-18. **Text in shapes**: Used `label: { text: "..." }` on the shape element, not a separate text element with `containerId`
+18. **Text in shapes**: Generated via `build_diagram.py` (bound + measured) or MCP `label` property — never free-floating text placed over a box
 19. **Roughness**: `roughness: 0` for clean/modern (unless hand-drawn style requested)
 19. **Opacity**: `opacity: 100` for all elements (no transparency)
 20. **Container ratio**: <30% of text elements should be inside containers

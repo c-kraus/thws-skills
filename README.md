@@ -65,7 +65,7 @@ Das Skript legt für jeden Skill-Ordner einen Symlink in `~/.claude/skills/` an.
 |---|---|---|---|
 | **zotero-skill** | `/zotero-skill` | Zugriff auf die lokale Zotero-7-Bibliothek (localhost:23119) und die Zotero Web API: Quellen suchen, BibTeX exportieren, Sammlungen verwalten. | Zotero 7 läuft lokal |
 | **notebooklm** | `/notebooklm` | Vollständiger API-Zugriff auf Google NotebookLM — Notebooks anlegen, Quellen hinzufügen, alle Artefakttypen generieren (inkl. Podcast), Formate herunterladen. Auch für Features, die die Web-UI nicht bietet. | Google-Konto |
-| **excalidraw-diagram** | `/excalidraw-diagram` | Erstellt Excalidraw-Diagramme (Workflows, Architekturen, Konzepte) direkt im Excalidraw-MCP — keine JSON-Datei nötig. | Excalidraw MCP |
+| **excalidraw-diagram** | `/excalidraw-diagram` | Erstellt Excalidraw-Diagramme (Workflows, Architekturen, Konzepte). Datei-Pipeline läuft über `scripts/build_diagram.py`: kompakte Spec → fertiges `.excalidraw` mit gemessenen Textmaßen, auto-dimensionierten Boxen und gebundenen Labels — ein Verifikationsrender statt Korrektur-Loop. Live-Canvas via Excalidraw-MCP weiterhin möglich. | Canvas-Server für PNG-Render |
 
 ---
 
