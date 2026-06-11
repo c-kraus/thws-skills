@@ -1,7 +1,40 @@
 # Normen-Schnellreferenz: Externes Rechnungswesen
 
 Häufig zitierte Paragraphen in HGB-/IFRS-Accounting-Lehrveranstaltungen.
-Für den Normen-Prüfer als Erste-Anlaufstelle — kein Ersatz für die Originalquelle.
+**Prüfreihenfolge für den Normen-Prüfer:** (1) Wortlaut-Referenz unten (Satz-genau, gegen Gesetzestext verifiziert) → (2) Kurzinhalt-Tabellen → (3) Live-Fetch **nur**, wenn die Norm hier nicht abgedeckt ist UND Unsicherheit besteht (max. 3 Fetches pro Kapitel, parallel ausführen).
+
+---
+
+## Wortlaut-Referenz (Satz-genau)
+
+Die beiden fehlerträchtigsten Normen im Wortlaut — Stand 06/2026, abgeglichen mit dejure.org. Satz-Zuordnungen hieraus gelten als verifiziert; dafür nicht fetchen.
+
+### § 249 HGB — Rückstellungen
+
+**Abs. 1 Satz 1:** „Rückstellungen sind für ungewisse Verbindlichkeiten und für drohende Verluste aus schwebenden Geschäften zu bilden." *(Pflicht)*
+**Abs. 1 Satz 2:** Ferner sind Rückstellungen zu bilden für *(ebenfalls Pflicht!)*
+- Nr. 1: im Geschäftsjahr unterlassene Instandhaltung, die im folgenden Geschäftsjahr **innerhalb von drei Monaten** nachgeholt wird, oder Abraumbeseitigung, die im folgenden Geschäftsjahr nachgeholt wird
+- Nr. 2: Gewährleistungen, die ohne rechtliche Verpflichtung erbracht werden
+**Abs. 2 Satz 1:** „Für andere als die in Absatz 1 bezeichneten Zwecke dürfen Rückstellungen nicht gebildet werden." *(abschließender Katalog — seit BilMoG 2009 keine Wahlrecht-Rückstellungen mehr)*
+**Abs. 2 Satz 2:** Auflösung nur, soweit der Grund entfallen ist.
+
+### § 253 HGB — Zugangs- und Folgebewertung (Auszug)
+
+**Abs. 1 Satz 1:** Vermögensgegenstände höchstens zu AK/HK abzüglich Abschreibungen nach Abs. 3–5.
+**Abs. 1 Satz 2:** „Verbindlichkeiten sind zu ihrem Erfüllungsbetrag und Rückstellungen in Höhe des nach vernünftiger kaufmännischer Beurteilung notwendigen Erfüllungsbetrages anzusetzen."
+**Abs. 2 Satz 1:** Rückstellungen mit Restlaufzeit > 1 Jahr sind abzuzinsen mit dem restlaufzeitäquivalenten durchschnittlichen Marktzinssatz — bei **Altersversorgungsverpflichtungen aus den vergangenen zehn**, bei **sonstigen Rückstellungen aus den vergangenen sieben Geschäftsjahren**. *(Beide Fristen stehen in Satz 1!)*
+**Abs. 2 Satz 2:** Wahlrecht: Altersversorgungs-/vergleichbare Verpflichtungen pauschal mit dem Zins bei angenommener Restlaufzeit von **15 Jahren**.
+**Abs. 2 Satz 4:** Abzinsungszinssätze ermittelt die Deutsche Bundesbank, monatliche Bekanntgabe.
+**Abs. 3 Satz 1–2:** Planmäßige Abschreibung zeitlich begrenzt nutzbarer AV-Gegenstände über die Nutzungsdauer.
+**Abs. 3 Satz 3–4:** Nicht verlässlich schätzbare ND selbsterstellter immaterieller VG: 10 Jahre; gilt entsprechend für entgeltlich erworbenen Goodwill.
+**Abs. 3 Satz 5:** Außerplanmäßige Abschreibung bei voraussichtlich **dauernder** Wertminderung (AV, Pflicht). **Satz 6:** Finanzanlagen: Wahlrecht auch bei nicht dauernder.
+**Abs. 4:** Strenges Niederstwertprinzip im UV (Börsen-/Marktpreis, sonst beizulegender Wert).
+**Abs. 5 Satz 1:** Wertaufholungsgebot. **Satz 2:** Ausnahme Goodwill — niedrigerer Wertansatz ist beizubehalten.
+**Abs. 6:** Ausschüttungssperre für den Unterschiedsbetrag 10- vs. 7-Jahres-Zins bei Pensionsrückstellungen.
+
+### § 5 Abs. 4a EStG — Steuerliche Drohverlustrückstellungen (Kurzinhalt)
+
+Satz 1: Rückstellungen für drohende Verluste aus schwebenden Geschäften dürfen in der Steuerbilanz **nicht** gebildet werden. (Ansatzunterschied HB/StB → latente Steuern, § 274 HGB.)
 
 ---
 
@@ -158,8 +191,9 @@ Für den Normen-Prüfer als Erste-Anlaufstelle — kein Ersatz für die Original
 | Falsch | Richtig |
 |---|---|
 | "Niederstwertprinzip nach § 252 HGB" | § 253 Abs. 4 HGB (UV) oder § 253 Abs. 3 HGB (AV) |
-| "Rückstellung nach § 249 Abs. 2 HGB" | Nur bei Wahlrecht-Rückstellungen; Pflicht-RSt: § 249 Abs. 1 |
-| "Abzinsung mit aktuellem Marktzins" | § 253 Abs. 2: **durchschnittlicher** Marktzins der **letzten 7 Jahre** |
+| "Rückstellung nach § 249 Abs. 2 HGB" | § 249 Abs. 2 ist ein **Verbot** (abschließender Katalog) — alle zulässigen RSt stehen in Abs. 1; Wahlrecht-RSt gibt es seit BilMoG nicht mehr |
+| "Abzinsung mit aktuellem Marktzins" | § 253 Abs. 2 Satz 1: **durchschnittlicher** Marktzins — 7 Jahre (sonstige RSt) bzw. 10 Jahre (Altersversorgung) |
+| "10-Jahres-Zins steht in § 253 Abs. 2 Satz 2" | Nein — beide Fristen (7 und 10 Jahre) stehen in **Satz 1**; Satz 2 ist die 15-Jahres-Pauschalierung |
 | "Stetigkeitsgebot § 252 Abs. 1 Nr. 6 HGB" | Korrekt — aber Durchbrechung nach § 252 Abs. 2 HGB zulässig |
 | "IFRS 9 für Rückstellungen" | Rückstellungen: IAS 37; IFRS 9 = Finanzinstrumente |
 | "IAS 37.14 Recognition Criteria" als einzige Referenz | Vollständig: IAS 37.14 (a)–(c); für Bewertung zusätzlich IAS 37.36 |

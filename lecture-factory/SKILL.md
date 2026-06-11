@@ -1,304 +1,164 @@
 ---
 name: lecture-factory
-description: "Full end-to-end workflow for creating OR reviewing a complete, widget-enhanced Quarto lecture. Two modes: (1) CREATE — takes raw content (notes, PDFs, RAG output) and produces a production-ready .qmd with widgets; (2) RE-REVIEW — takes an existing .qmd path and runs a full review: 3-perspective review (Professor / sehr guter Student / mittelmäßiger Student) + accounting-qa + QMD quality gate in parallel, then applies improvements. Trigger CREATE for: 'Erstelle mir ein komplettes Kapitel mit Widgets', 'baue mir eine komplette Vorlesung', 'full workflow', 'mach alles', 'von Anfang bis Ende'. Trigger RE-REVIEW for: 'nochmal ansehen', 'review', 'quality gate darüber laufen lassen', 'prüf das Kapitel', 'überarbeite das bestehende Kapitel', 'verbessere das Kapitel', or any request where an existing .qmd path is provided instead of raw content."
+description: "Full end-to-end workflow for creating OR reviewing a complete, widget-enhanced Quarto lecture. Two modes: (1) CREATE — takes raw content (notes, PDFs, RAG output) and produces a production-ready .qmd with widgets; (2) RE-REVIEW — takes an existing .qmd path and runs a full review: Perspektiven-Review + accounting-qa + QMD quality gate, then applies improvements. Trigger CREATE for: 'Erstelle mir ein komplettes Kapitel mit Widgets', 'baue mir eine komplette Vorlesung', 'full workflow', 'mach alles', 'von Anfang bis Ende'. Trigger RE-REVIEW for: 'nochmal ansehen', 'review', 'quality gate darüber laufen lassen', 'prüf das Kapitel', 'überarbeite das bestehende Kapitel', 'verbessere das Kapitel', or any request where an existing .qmd path is provided instead of raw content."
 ---
 
 # Lecture Factory
 
-A meta-skill that takes raw content and produces a finished, widget-enhanced Quarto lecture in two clearly separated stages with a review checkpoint in the middle.
+Reiner **Orchestrator**: Diese Datei enthält keine inhaltlichen Regeln. Alle Schreib-, Review- und Syntaxregeln leben in `quarto-lecture` und seinen Referenzen — die Factory bestimmt nur Reihenfolge, Checkpoints und Reporting. Regeln hier nie restaten oder improvisieren; immer die kanonische Quelle laden.
 
-## What This Skill Does
+**Kanonische Quellen** (Pfade lösen über `~/.claude/skills/` auf):
 
-This skill has two modes. Detect the correct mode from the user's request before doing anything else.
-
-**CREATE Mode** (default — raw content → finished lecture):
-
-**Stage 1:** Write the lecture (.qmd file) from raw input, following the quarto-lecture skill's standards — Trinity of Depth pedagogy, correct Div syntax, THWS branding, YAML frontmatter. Includes Perspektiven-Review, accounting-qa, and QMD Quality Gate before the checkpoint.
-
-**Checkpoint:** Show the finished .qmd to the user and ask: "Looks good? Should I now run the widget pipeline?"
-
-**Stage 2:** If confirmed, run the widget-pipeline — analyze the .qmd for interactive visualization opportunities, build the top 3 widgets as self-contained HTML files, and integrate them into the .qmd using `.widget` Div wrappers.
-
-**RE-REVIEW Mode** (existing .qmd → comprehensive review and improvement):
-
-Runs when the user provides an existing .qmd path instead of raw content, or uses review-trigger phrases. See "Re-Review Mode" section below — skip Pre-Flight, Intake, Stage 1, and Stage 2 entirely.
-
-## Re-Review Mode
-
-Aktiviert sich, wenn der Input ein **Pfad zu einer bestehenden .qmd-Datei** ist — statt Rohinhalt. Erkennungszeichen:
-- User gibt einen Dateipfad mit `.qmd`-Endung an
-- User nutzt Formulierungen wie „nochmal ansehen", „review", „quality gate darüber", „prüf das Kapitel", „überarbeite das Kapitel", „verbessere das bestehende Kapitel"
-- Kein neuer Rohinhalt wird übergeben
-
-### Ablauf (ersetzt Stage 1 und Stage 2 vollständig)
-
-**Schritt 1 — QMD lesen:** Vollständigen Inhalt laden.
-
-**Schritt 2 — Drei Prüfstränge parallel starten:**
-
-**Strang 1 — Perspektiven-Review** (3 Subagents gleichzeitig, Prompt-Templates aus quarto-lecture SKILL.md Schritt 5b):
-- Subagent A: Kritischer Professor — Korrektheit, Normgenauigkeit, Trinity-Vollständigkeit, intellektuelle Tiefe
-- Subagent B: Sehr guter Student — Logischer Aufbau, Beispiel-Qualität, Transferpotenzial
-- Subagent C: Mittelmäßiger Student — Einstiegshürden, unerklärte Begriffe, Ankerpunkte, Praxisbezug
-
-**Strang 2 — Accounting QA** (wenn Accounting-Indikatoren gefunden):
-Scan auf Zahlenbeispiele, §§-Verweise (HGB/IFRS/AktG/…), Literaturzitate → `accounting-qa` Skill aufrufen.
-
-**Strang 3 — QMD Quality Gate** (strukturelle Prüfung):
-Load `quarto-lecture/references/qmd-quality-gate.md` → alle Checks.
-
-**Schritt 3 — Synthese nach Rückkehr aller Stränge:**
-- Alle Syntax-Violations (Strang 3) sofort und vollständig korrigieren
-- Accounting-Fehler ❌ sofort korrigieren; ⚠️ Hinweise dem Nutzer anzeigen
-- Perspektiven-Review: Konfliktanalyse wie in quarto-lecture Schritt 5b → max. 5 Verbesserungen anwenden; Auflösungsregel bei Widerspruch Professor ↔ schwächerer Student: Inhalt ins `.details`-Div verschieben
-
-**Schritt 4 — Report:**
-
-> **Re-Review abgeschlossen: `kap-{nn}-{slug}.qmd`**
->
-> **Perspektiven-Review:** {N} Verbesserungen angewandt · {offene Punkte falls vorhanden}
-> **Accounting QA:** {N} ✅ · {N} ⚠️ · {N} ❌ · [oder: keine Accounting-Indikatoren gefunden]
-> **Quality Gate:** {N} Violations korrigiert · [oder: keine Violations]
->
-> [Je Verbesserung: Abschnitt → was geändert → aus welcher Perspektive]
-
-Kein Widget-Pipeline-Angebot nach Re-Review, es sei denn, der Nutzer fragt explizit danach.
-
----
-
-## Pre-Flight: Curriculum & Kontext
-
-Bevor Intake gesammelt wird, zwei Checks — in dieser Reihenfolge, still im Hintergrund.
-
-### Check 1: Curriculum
-
-Suche `_curriculum.md` im Ausgabe-Verzeichnis (oder einem von der Person genannten Projektpfad).
-
-**Gefunden:** Lade die Datei sofort und still. Extrahiere:
-- Den Vorgänger-Eintrag (Kapitel Nr - 1): Titel + Kernthemen
-- Den Nachfolger-Eintrag (Kapitel Nr + 1): Titel + Kernthemen
-- Kursweite Terminologie-Konventionen (falls definiert)
-
-Diese Informationen fließen in Stage 1 ein (siehe "Curriculum-bewusstes Schreiben" unten).
-
-**Nicht gefunden:** Einmalig fragen:
-> "Ich habe keine `_curriculum.md` im Projektverzeichnis gefunden. Diese Datei listet alle Kapitel in Reihenfolge und ermöglicht konsistente Vor-/Rückverweise. Soll ich sie anlegen? Vorlage: `lecture-factory/references/curriculum-template.md`."
->
-> Antwortet die Person mit Nein oder ignoriert es, einfach ohne Curriculum fortfahren.
-
----
-
-### Check 2: Kontext-Materialien
-
-Suche `context/kapitel-{nn}/` im Projektverzeichnis (Kapitelnummer aus dem Intake ableiten).
-
-**Gefunden und nicht leer:** Dateiliste anzeigen und fragen:
-> "Ich habe Kontext-Materialien für Kapitel {nn} gefunden:
-> - [Datei 1]
-> - [Datei 2]
-> Soll ich diese als Quellen für das Kapitel verwenden?"
-
-Bei **Ja**: Alle Dateien laden. Enthält der Ordner ein `wiki/`-Unterverzeichnis (second-brain-Output), diese Dateien als vorstrukturiertes Wissen mit höherem Gewicht behandeln als rohe PDFs/Notizen.
-
-Bei **Nein** oder **nicht gefunden**: Mit dem nutzerbereitgestellten Input fortfahren.
-
-`context/shared/` (falls vorhanden) immer mitlesen — dort liegen kursweite Normen und Glossare.
-
----
-
-## Intake: What to Collect Before Starting
-
-Before writing a single line, confirm these with the user (pull from context if already clear):
-
-| What you need | How to get it |
+| Was | Quelle |
 |---|---|
-| **Raw content** | Notes, RAG output, PDF text, or bullet points — anything the user pastes or attaches |
-| **Chapter number** | e.g., "Kapitel 3" → determines filename `kap-03-...qmd` and widget folder `widgets/kapitel-03/` |
-| **Topic / slug** | e.g., "Rückstellungen" → filename `kap-03-rueckstellungen.qmd` |
-| **Subtitle** | Brief explanatory subtitle for the YAML frontmatter; derive from topic if not given |
-| **Language** | Detect from content; confirm if ambiguous |
-| **Output directory** | Where to save the .qmd — default to user's project path or `outputs/` |
+| Schreiben, Kontext, Workflow | `quarto-lecture/SKILL.md` |
+| Perspektiven-Review | `quarto-lecture/references/review-protocol.md` |
+| Syntax-/Element-Regeln | `quarto-lecture/references/qmd-quality-gate.md` |
+| Accounting-Prüfung | `accounting-qa` Skill |
+| Widget-Analyse & -Bau | `widget-pipeline` Skill |
+| Curriculum-Anlage | `curriculum-architect` Skill |
 
-If critical info is missing (especially the raw content), ask before proceeding. If the chapter number is not given, pick a reasonable default and mention it.
+## Modus-Erkennung (vor allem anderen)
 
-## Stage 1: Writing the Lecture
+**Arbeitsmodus:**
+- **CREATE** (Default): Rohinhalt wird übergeben → komplette Pipeline.
+- **RE-REVIEW**: Ein Pfad zu einer bestehenden `.qmd` wird übergeben, oder Formulierungen wie „nochmal ansehen", „review", „prüf das Kapitel" — und kein neuer Rohinhalt. → Nur Review-Stränge, kein Neuschreiben.
 
-Follow the **quarto-lecture** skill in full:
+**Prüfniveau — bewusst zweistufig entlang des Arbeitsmodus:**
+- **CREATE prüft schnell (inline):** QA und Perspektiven-Review laufen in einem Durchgang — keine Subagents, keine Live-Fetches (Normen gegen `accounting-qa/references/common-norms.md`), dieselben Prüfprotokolle und Ausgabeformate. Ziel ist der schnelle Weg zum lesbaren Entwurf; die Person liest das Kapitel ohnehin vor der Veröffentlichung.
+- **RE-REVIEW prüft gründlich:** Subagent-Dispatch + Live-Norm-Verifikation. Das ist der Finalisierungsschritt vor der Veröffentlichung — wer prüfen lässt, will Gründlichkeit.
 
-1. Clean the input (strip source markers, remove meta-comments, resolve contradictions)
-2. Write YAML frontmatter (lang, title, subtitle, author, format)
-3. Architect the chapter structure using Trinity of Depth (Theory → Norm → Practice)
-4. Write 1,500–3,000 words of prose with correct element density (~1 interactive element per 400–600 words)
-5. Use correct Div syntax: `.details`, `.case-study`, `.drag-exercise`, `.quick-check`, `.flip-card`, `.video`, `.widget`
-6. Save to `[output-directory]/kap-{nn}-{slug}.qmd`
-
-Two conventions that apply universally — check these before presenting the draft:
-- **No namedropping:** Content states the idea; `[@Key]` cites the source. Never »X zeigt, dass...« or »Y hat entwickelt...« as the main clause.
-- **Deep dives sparingly:** One `.details` block per unexplained technical concept. Never two in a row, never as a section opener.
-
-### Curriculum-bewusstes Schreiben
-
-Wenn `_curriculum.md` geladen wurde, gelten zusätzlich:
-
-- **Eröffnungssatz (falls Vorgänger-Kapitel existiert):** Das erste H2-Section-Opening enthält einen 1-Satz-Rückverweis: *„Aufbauend auf [Kernthema aus Kapitel N-1] ..."* — nicht als Zusammenfassung, sondern als gedanklichen Anschluss.
-- **Schlusspunkt (falls Nachfolger-Kapitel existiert):** Das Kapitel endet statt mit einer Zusammenfassung mit einem knappen Vorausverweis: *„[Thema des nächsten Kapitels] wird zeigen, wie ..."* — 1 Satz, keine Spoiler.
-- **Terminologie-Konsistenz:** Begriffe aus `_curriculum.md` → Terminologie-Konventionen werden genau so verwendet. Kein eigenes Vokabular einführen, das mit dem Kurs bricht.
-- **Keine Redefinition:** Konzepte, die in früheren Kapiteln etabliert wurden (erkennbar an den Kernthemen im Curriculum), werden nicht neu erklärt — stattdessen kurz als bekannt vorausgesetzt.
-
-Do NOT use widget iframes in Stage 1 — those come in Stage 2. Placeholder comments are fine if a visualization is obviously needed:
-```markdown
-<!-- Widget placeholder: ROI calculator goes here -->
-```
-
-### Heading Hierarchy Discipline
-
-Before saving, verify: if any H2 section contains only a single H3 subsection, promote the content to H2 and eliminate the empty nesting. A heading level is only justified when there are at least two siblings at that level.
-
-### QMD Quality Gate (run before saving)
-
-After drafting the .qmd but **before saving or presenting it**, load `quarto-lecture/references/qmd-quality-gate.md` and apply all checks. Fix every flip-card and drag-exercise violation inline before proceeding.
-
-### Accounting QA (nach Quality Gate)
-
-Scanne den fertigen Entwurf auf Accounting-Indikatoren: Zahlenbeispiele, Buchungssätze, §§-Verweise (HGB/IFRS/AktG/…), Literaturzitate. Mindestens ein Indikator reicht, um den Skill aufzurufen.
-
-**Wenn Accounting-Indikatoren vorhanden:** `accounting-qa` Skill aufrufen.
-- Skill dispatcht bis zu drei Subagents parallel (Kalkulationen, Normen, Literatur)
-- QA-Report abwarten und in den Checkpoint-Output integrieren (kompakte Zusammenfassung: Anzahl ✅/⚠️/❌)
-- Bei ❌ Fehlern: Fehler direkt im QMD korrigieren, bevor der Checkpoint dem Nutzer präsentiert wird
-- Bei ⚠️ Hinweisen: im Checkpoint anzeigen, Nutzer entscheidet
-
-**Wenn keine Indikatoren:** Schritt überspringen.
-
-### Perspektiven-Review (nach Accounting QA)
-
-Dispatch drei Subagents **gleichzeitig** — Prompt-Templates aus quarto-lecture SKILL.md Schritt 5b:
-
-- **Subagent A — Kritischer Professor:** Korrektheit, Normgenauigkeit, Trinity-Vollständigkeit, intellektuelle Tiefe. Max. 5 nummerierte Kritikpunkte.
-- **Subagent B — Sehr guter Student:** Logischer Aufbau, Beispiel-Qualität, Lernzielkontrollen, Transferpotenzial. Max. 4 Verbesserungsvorschläge.
-- **Subagent C — Mittelmäßiger Student:** Einstiegshürden, unerklärte Begriffe, Ankerpunkte, Praxisbezug. Max. 4 konkrete Stellen.
-
-Nach Rückkehr aller drei: Synthese wie in quarto-lecture Schritt 5b (Konfliktanalyse, Priorisierung Stufe 1–3, max. 5 Verbesserungen anwenden). Bei Widerspruch Professor ↔ schwächerer Student: Inhalt in `.details`-Div verschieben.
+Es gibt keinen separaten „Full"-Trigger in CREATE: Der Weg zum Veröffentlichungsniveau ist immer der anschließende RE-REVIEW („prüf das Kapitel"). Der Checkpoint weist darauf hin.
 
 ---
 
-### Checkpoint
+## CREATE Mode
 
-After saving the .qmd, present it to the user and ask:
+### Pre-Flight (verbindlich, vor dem Intake)
 
-> **Kapitel gespeichert als `kap-{nn}-{slug}.qmd`** (~{word-count} Wörter)**.**
+1. **Curriculum:** `_curriculum.md` im Ausgabe-/Projektverzeichnis suchen. Gefunden → still laden: Zielgruppen-Block, Vorgänger-/Nachfolger-Kapitel (Titel + Kernthemen), Terminologie-Konventionen. Nicht gefunden → **einmalig aktiv fragen**: „Ich habe keine `_curriculum.md` gefunden — sie definiert Zielgruppe, Kapitelfolge und Terminologie. Soll ich sie mit dem `curriculum-architect` Skill anlegen?" Bei Nein: mit Default-Zielgruppe fortfahren (siehe quarto-lecture).
+2. **Kontext-Materialien:** `context/kapitel-{nn}/` suchen. Gefunden und nicht leer → Dateiliste zeigen, fragen ob als Quellen verwenden. Enthält der Ordner `wiki/` (second-brain-Output): diese Dateien mit **höherem Gewicht** behandeln als rohe PDFs/Notizen — Wiki-Definitionen sind kursverbindlich. `context/shared/` immer mitlesen, falls vorhanden.
+
+### Intake
+
+Vor der ersten Zeile klären (aus Kontext ziehen, wo schon klar):
+
+| Was | Woher |
+|---|---|
+| Rohinhalt | Notizen, RAG-Output, PDF-Text — was die Person liefert |
+| Kapitelnummer | z. B. „Kapitel 3" → `kap-03-…qmd`, `widgets/kapitel-03/` |
+| Thema / Slug | z. B. „Rückstellungen" → `kap-03-rueckstellungen.qmd` |
+| Untertitel | Aus dem Thema ableiten, falls nicht gegeben |
+| Sprache | Aus dem Inhalt erkennen; bei Ambiguität fragen |
+| Ausgabe-Verzeichnis | Projektpfad der Person oder `outputs/` |
+
+Fehlt der Rohinhalt: fragen, nichts fabrizieren.
+
+### Plannotator-Integration (optional, an zwei Punkten)
+
+Verfügbarkeit prüfen (Plannotator-Plugin: Slash-Command bzw. MCP-Tools). Nicht verfügbar → denselben Inhalt im Chat zur Freigabe zeigen; der Ablauf bleibt identisch.
+
+1. **Gliederungs-Freigabe (vor dem Draft):** Nach quarto-lecture Schritt 4 (Architect) entsteht die Kapitel-Skizze — H2-Sections mit Trinity-Rolle, SLO je Section, geplante Elemente, Diagramm-/Widget-Kandidaten. Diese Skizze als Plan im Plannotator öffnen und fragen: „Gliederung freigeben oder annotieren?" Annotationen einarbeiten, dann erst Schritt 5 (Draft) starten. Bei „direkt schreiben": ohne Freigabe fortfahren.
+2. **Kapitel-Annotation (am Checkpoint):** siehe Checkpoint-Frage unten. Annotationen als **eine gebündelte Revision** anwenden, danach Quality Gate nur auf den geänderten Stellen.
+
+### Stage 1 — Kapitel schreiben
+
+`quarto-lecture` SKILL.md laden und dessen Workflow **vollständig** ausführen (Schritte 1–8), mit Orchestrierungs-Hinweisen:
+
+- Nach Schritt 4 (Architect): Gliederungs-Freigabe via Plannotator anbieten (siehe oben), bevor Schritt 5 startet.
+- Schritt 5a (Excalidraw-Dispatch), 5b (Review) und Schritt 8 (Widget-Angebot) übernimmmt die Factory — quarto-lecture überspringt sie laut eigener Skip-Regel. Excalidraw-Placeholder bleiben im Draft stehen.
+- Nach quarto-lecture Schritt 7 (Save) führt die Factory aus:
+
+**1d — QA + Perspektiven-Review (inline, auf dem gespeicherten Draft):**
+
+Beide Prüfungen in einem Durchgang — erst QA-Scan nach accounting-qa-Protokoll (Berechnungen per Python verifizieren, Normen gegen `common-norms.md`, keine Fetches), dann die drei Review-Linsen nach `quarto-lecture/references/review-protocol.md` selbst durchlaufen. Anwendung: ❌-Fehler sofort korrigieren; ⚠️ für den Checkpoint sammeln; Review-Verbesserungen als **eine gebündelte Edit-Runde** anwenden (nicht pro Befund einzeln editieren). Review läuft genau **einmal** pro Durchlauf.
+
+**1e — Gate-Wiederholung nach Änderungen:** Haben QA oder Review Änderungen ausgelöst, das Quality Gate (`qmd-quality-gate.md`) nur auf den **geänderten Stellen** erneut anwenden. Kein Render-Test in CREATE — die Person rendert nach der Widget-Integration ohnehin selbst.
+
+### Checkpoint (nicht verhandelbar)
+
+> **Kapitel gespeichert als `kap-{nn}-{slug}.qmd`** (~{Wörter} Wörter).
 >
-> [Wenn Perspektiven-Review gelaufen:] **Review:** {N} Verbesserungen angewandt (Professor · Sehr guter Student · Mittelmäßiger Student) — Details oben.
+> **Review:** {N} Verbesserungen angewandt ({N} Stufe 1 · {N} Stufe 2 · {N} Stufe 3)
+> **Accounting QA:** {N} ✅ · {N} ⚠️ · {N} ❌ [oder: keine Indikatoren]
 >
-> [Wenn Accounting QA gelaufen:] **QA-Ergebnis:** {N} ✅ korrekt · {N} ⚠️ Hinweise · {N} ❌ Fehler (Details im QA-Report oben)
+> Wie weiter?
+> **(a)** Visualisierungen bauen — Top 3 Widgets **und** die {N} Excalidraw-Diagramme aus den Placeholdern, parallel. [Diagramm-Anzahl aus den `<!-- Excalidraw: … -->`-Placeholdern zählen und konkret nennen; bei 0 Placeholdern nur Widgets anbieten]
+> **(b)** Kapitel im Plannotator öffnen — Sie annotieren, ich arbeite die Anmerkungen ein. [nur anbieten, wenn Plannotator verfügbar]
+> **(c)** Hier stoppen.
 >
-> Möchtest du, dass ich jetzt die Widget-Pipeline starte? Ich analysiere das Kapitel, baue die Top 3 interaktiven Widgets und binde sie direkt ein.
->
-> *(English: Chapter saved. Want me to run the widget pipeline now — analyze the chapter, build the top 3 interactive widgets, and integrate them?)*
+> *Hinweis: Vor der Veröffentlichung empfiehlt sich ein gründlicher Durchlauf mit Live-Norm-Verifikation — einfach „prüf das Kapitel" sagen (RE-REVIEW).*
 
-Wait for explicit confirmation before proceeding to Stage 2. If the user says no, or wants to edit first, stop here and let them.
+Nach einer Plannotator-Runde (b): Annotationen einarbeiten, Gate auf geänderte Stellen, dann den Checkpoint erneut stellen (ohne Option b, falls keine weiteren Anmerkungen zu erwarten sind).
 
-## Stage 2: Widget Pipeline
+Auf explizite Bestätigung warten. Bei Nein oder „erst selbst ansehen": stoppen — die Pipeline kann später fortgesetzt werden.
 
-Only runs after the user says yes at the checkpoint.
+### Stage 2 — Visualisierungen: Widgets + Excalidraw (nur nach Bestätigung)
 
-Follow the **widget-pipeline** skill in full (FULL mode):
+Beide Visualisierungsarten entstehen erst **nach** der Textfreigabe — so wird keine Arbeit in Abschnitte investiert, die im Review noch umgebaut werden. Die Bestätigung von Checkpoint-Option (a) deckt **beide** ab — der Excalidraw-Dispatch braucht keine eigene Rückfrage mehr und darf nicht stillschweigend entfallen.
 
-0. **Pre-scan for placeholders:** Before running the analysis, scan the .qmd for `<!-- Widget placeholder: ... -->` comments left by Stage 1. Treat each placeholder location as a highest-priority candidate; the widget-pipeline analysis fills remaining slots up to 3 total.
-1. **Analyze** the saved .qmd for widget opportunities (load `widget-pipeline/references/analyzer-patterns.md`)
-2. **Build** the top 3 high-priority widgets as standalone HTML files using THWS design system
-3. **Save** widgets to `[qmd-directory]/widgets/kapitel-{nn}/widget-{name}.html`
-4. **Integrate** each widget into the .qmd at the correct location:
-
-```markdown
-::: {.widget}
-<iframe src="widgets/kapitel-{nn}/widget-{name}.html"
-        width="100%" height="[appropriate]px" frameborder="0"
-        title="[Accessible title in document language]">
-</iframe>
-:::
-```
-
-5. **Add postMessage listener** — check if the .qmd already contains `iframeHeight`. If not, insert this block directly after the YAML frontmatter (before the first H2), exactly once per document:
-
-````markdown
-```{=html}
-<script>
-window.addEventListener('message', function (e) {
-  if (e.data && typeof e.data.iframeHeight === 'number') {
-    var frames = document.querySelectorAll('iframe');
-    frames.forEach(function (f) {
-      try {
-        if (f.contentWindow === e.source) {
-          f.style.height = (e.data.iframeHeight + 16) + 'px';
-        }
-      } catch (err) {}
-    });
-  }
-});
-</script>
-```
-````
-
-   This makes all widget iframes auto-resize to their actual content height across devices and zoom levels. The corresponding sender script must be present in each widget HTML file (see `widget-pipeline/references/iframe-template.md`).
-
-6. Replace any placeholder comments from Stage 1 with actual widget integrations where applicable.
+1. **Excalidraw-Dispatch:** `.qmd` auf `<!-- Excalidraw: … -->`-Placeholder scannen; pro Placeholder einen Subagent mit dem Dispatch-Prompt aus `quarto-lecture/references/excalidraw-patterns.md` — alle parallel, gleichzeitig mit Schritt 2. Verbleibt am Ende ein unaufgelöster Placeholder, im Summary ausweisen — nie kommentarlos stehen lassen.
+2. **Widget-Pipeline:** `widget-pipeline` Skill (FULL mode) vollständig ausführen. Vorab-Scan: `<!-- Widget placeholder: … -->`-Kommentare aus Stage 1 als Kandidaten höchster Priorität behandeln; die Analyse füllt die restlichen Slots bis maximal 3. Die Pipeline übernimmt Analyse, Bau, Integration, postMessage-Listener und Verifikation gemäß ihrer eigenen SKILL.md.
 
 ### Final Summary
-
-After Stage 2 completes, present:
 
 ```
 ## Lecture Factory: Abgeschlossen ✓
 
 ### Kapitel
-- Datei: kap-{nn}-{slug}.qmd
-- Wörter: ~[count]
-- Interaktive Elemente (nativ): [count flip-cards, quick-checks, etc.]
+- Datei: kap-{nn}-{slug}.qmd · ~[N] Wörter
+- Interaktive Elemente (nativ): [Zählung]
 
-### Widgets
-1. [Widget Name] — widgets/kapitel-{nn}/widget-{name-1}.html
-   Eingebunden nach: [section heading]
-2. [Widget Name] — widgets/kapitel-{nn}/widget-{name-2}.html
-   Eingebunden nach: [section heading]
-3. [Widget Name] — widgets/kapitel-{nn}/widget-{name-3}.html
-   Eingebunden nach: [section heading]
+### Visualisierungen
+1. [Widget-Name] — widgets/kapitel-{nn}/widget-[name].html · eingebunden nach: [Section]
+2. [Diagramm-Name] — diagrams/kapitel-{nn}/diagram-[slug].png · [gerendert / PNG ausstehend]
+3. …
 
 ### Nächste Schritte
-→ Prüfen Sie das Kapitel auf inhaltliche Korrektheit
-→ Testen Sie die Widgets im Browser
-→ quarto render kap-{nn}-{slug}.qmd
+→ Kapitel inhaltlich prüfen · Widgets im Browser testen · quarto render kap-{nn}-{slug}.qmd
 ```
 
-If `present_files` is available, use it to surface all output files.
+Wenn `present_files` verfügbar: alle Output-Dateien präsentieren.
+
+---
+
+## RE-REVIEW Mode
+
+Ersetzt Pre-Flight, Intake, Stage 1 und Stage 2 vollständig.
+
+1. **QMD lesen** — vollständig. Falls `_curriculum.md` im selben Projekt existiert: Zielgruppen-Block für den Review laden.
+2. **Drei Prüfstränge:**
+   - **Perspektiven-Review:** `quarto-lecture/references/review-protocol.md` laden und befolgen (ein Reviewer, drei Linsen).
+   - **Accounting QA** (konditional, parallel dispatchbar): bei Accounting-Indikatoren `accounting-qa` aufrufen.
+   - **Quality Gate:** `qmd-quality-gate.md` laden, alle 11 Checks.
+3. **Synthese:** Alle Gate-Violations sofort korrigieren. QA-❌ sofort korrigieren, ⚠️ der Person anzeigen. Review-Verbesserungsliste anwenden (Stufe-1 vollständig, dann 2, dann 3 — gemäß review-protocol.md).
+4. **Render-Verifikation:** Wenn Quarto verfügbar, rendern und Fehler beheben.
+5. **Report:**
+
+> **Re-Review abgeschlossen: `[datei].qmd`**
+>
+> **Perspektiven-Review:** {N} Verbesserungen angewandt · {offene Punkte}
+> **Accounting QA:** {N} ✅ · {N} ⚠️ · {N} ❌ [oder: keine Indikatoren]
+> **Quality Gate:** {N} Violations korrigiert [oder: keine]
+> **Render-Check:** ✓ / übersprungen
+>
+> [Je Verbesserung: Abschnitt → was geändert → aus welcher Linse]
+
+Kein Widget-Angebot nach RE-REVIEW, außer die Person fragt explizit.
+
+---
 
 ## Error Handling
 
-**Stage 1 fails (no/poor raw content):** Ask the user to provide better input. Don't fabricate content.
-
-**Checkpoint declined:** Save the .qmd and stop. The user can run the widget pipeline manually later.
-
-**Stage 2: fewer than 3 high-priority widgets found:** Build what's available (minimum 1). Explain in the summary why fewer were built.
-
-**Stage 2: widget creation fails:** Skip that widget, continue with the others. Note the failure in the summary.
-
-## Quality Bar
-
-The output of this skill must meet the same standard as if both skills had been run independently by an expert:
-
-- .qmd renders without errors in both HTML (Moodle) and PDF output
-- All Div containers use correct syntax (no bare HTML, no broken divs)
-- **Every `.flip-card` div:** `####` heading immediately followed by body (no blank line), H4 level only, one paragraph body
-- **Every `.drag-exercise` div:** no heading inside, 1–2 sentences, fillable terms in `*italics*`
-- Widget iframes use relative paths and are wrapped in `.widget` Div
-- No content was accidentally removed or corrupted during widget integration
-- Document language (German/English) is consistent throughout, including widget UI text
-- **Citations:** No namedropping — author names are never the grammatical subject of a sentence. Pattern: state the content, append `[@Key]` at end. See quarto-lecture citation guidance.
-- **Deep Dives:** Use `.details` with `#### Deep Dive: [Concept]` heading — one per major unexplained concept, not for every term. Place after prose context, never as section opener. See quarto-lecture Deep Dive trigger rules.
+- **Stage 1, dünner Input:** Nachfragen, nichts fabrizieren.
+- **Checkpoint abgelehnt:** .qmd ist gespeichert, sauber stoppen.
+- **Stage 2, <3 hochwertige Widgets:** Bauen was trägt (min. 1), im Summary begründen.
+- **Widget-Bau scheitert:** Widget überspringen, weitermachen, im Summary vermerken.
+- **Render scheitert wiederholt (>3 Versuche):** Stoppen, Fehler und bisherige Fixes der Person zeigen.
 
 ## Notes for Claude
 
-- This skill does not replace quarto-lecture or widget-pipeline — it orchestrates them. Follow those skills' logic in full rather than improvising.
-- The checkpoint is non-negotiable. Never auto-proceed to Stage 2 without user confirmation.
-- If the user is using the `lecture-factory` skill but only wants the lecture (no widgets), tell them `quarto-lecture` is the right skill for that.
-- Keep intermediate status updates brief — the user cares about the finished product, not the pipeline steps.
+- Der Checkpoint ist nicht verhandelbar — nie ohne Bestätigung in Stage 2.
+- Will die Person nur das Kapitel ohne Widgets: `quarto-lecture` ist der richtige Skill.
+- Statusmeldungen knapp halten — die Person interessiert das Ergebnis, nicht die Pipeline-Schritte.
+- Jede geladene Referenz gilt: wirklich befolgen, nicht paraphrasieren.

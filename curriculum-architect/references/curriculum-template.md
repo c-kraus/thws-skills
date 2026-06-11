@@ -6,6 +6,20 @@
 
 ---
 
+## Zielgruppe
+
+<!-- Dieser Block kalibriert quarto-lecture und den Perspektiven-Review: Er bestimmt,
+     welche Begriffe als bekannt gelten (Begriffs-Erstnennungsregel), die Beispiel-
+     komplexität und das Tempo. Konkret formulieren, nicht generisch. -->
+
+- **Wer:** [z. B. Bachelor Wirtschaftsingenieurwesen, 4. Semester]
+- **Vorwissen (darf vorausgesetzt werden):** [konkrete Konzepte — z. B. Grundlagen BWL, Buchführung (Soll/Haben), einfache Bilanzlesart]
+- **Kein Vorwissen (muss erklärt werden):** [z. B. IFRS-Systematik, Konzernrechnungslegung, juristische Methodik]
+- **Sprachniveau Fachenglisch:** [z. B. Fachtermini englisch vertraut / eher gering]
+- **Typische Stolpersteine:** [optional — bekannte Missverständnisse aus früheren Kohorten; speist Quick-Check-Distraktoren]
+
+---
+
 ## Kapitelübersicht — Modul 1: [Modul-Titel]
 
 | Nr | Titel | Datei | Status | Kernthemen |

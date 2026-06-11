@@ -88,21 +88,28 @@ Normen zum Prüfen:
 
 Referenz: Lade accounting-qa/references/common-norms.md als Schnellreferenz.
 
-Vorgehensweise für jeden Verweis:
-1. Existenz prüfen: Gibt es diesen Paragraphen / diese Norm?
-2. Inhaltsabgleich: Stimmt die Behauptung im Text mit dem tatsächlichen Normeninhalt überein?
-   - Bei HGB: primär aus Trainingswissen (umfassend); bei Unklarheit: ifrs.org oder dejure.org-URL
-     als Quelle vermerken (aber NICHT fetchen — nur als Hinweis für den Nutzer angeben)
-   - Bei IFRS/IAS: primär aus Trainingswissen; Stand beachten (IFRS-Standards können sich ändern)
-3. Granularität prüfen: Wenn "§ 249 HGB" zitiert wird, aber "§ 249 Abs. 1 Satz 1 HGB" gemeint ist —
+Vorgehensweise für jeden Verweis (Prüfreihenfolge strikt einhalten — Fetches sind der teuerste Schritt):
+1. **Wortlaut-Referenz zuerst:** common-norms.md enthält die fehlerträchtigsten Normen Satz-genau
+   (§ 249, § 253 HGB, § 5 Abs. 4a EStG) — dagegen verifizierte Zuordnungen gelten als geprüft, kein Fetch.
+2. **Kurzinhalt-Tabellen + Trainingswissen:** für alle übrigen Normen; HGB-Trainingswissen ist zuverlässig.
+3. **Live-Fetch nur als letzte Stufe:** wenn die Norm in common-norms.md nicht abgedeckt ist UND
+   Unsicherheit über Existenz, Wortlaut oder Absatz-/Satz-Zuordnung besteht.
+   - Budget: **max. 3 Fetches pro Kapitel**; mehrere nötige Fetches parallel absetzen, nicht sequenziell.
+   - Deutsche Gesetze: https://www.gesetze-im-internet.de/hgb/__249.html
+     (Muster: /[gesetz-kürzel klein]/__[nummer].html); Fallback: https://dejure.org/gesetze/HGB/249.html
+   - IFRS/IAS: kein freier Volltext — aus Trainingswissen prüfen, Stand-Datum nennen, versionssensitive
+     Behauptungen als ⚠️ mit Quelle ifrs.org markieren.
+   - Fetch nicht möglich oder Budget erschöpft: als ⚠️ „nicht live verifiziert" markieren —
+     nie ein unsicheres ✅ vergeben.
+4. Granularität prüfen: Wenn "§ 249 HGB" zitiert wird, aber "§ 249 Abs. 1 Satz 1 HGB" gemeint ist —
    als Hinweis markieren, nicht als Fehler.
-4. Veraltete Fassungen: Wenn eine Norm nach 2020 wesentlich geändert wurde und die Version relevant ist,
+5. Veraltete Fassungen: Wenn eine Norm nach 2020 wesentlich geändert wurde und die Version relevant ist,
    als Hinweis markieren.
 
 Ausgabe-Format (exakt einhalten):
-## Normen ([N] geprüft)
-✅ [Norm] — [Kurzbeschreibung des geprüften Inhalts]: korrekt referenziert
-⚠️ [Norm] — [Kurzbeschreibung]: [Präzisierungshinweis oder Granularitätshinweis]
+## Normen ([N] geprüft, davon [N] live verifiziert)
+✅ [Norm] — [Kurzbeschreibung des geprüften Inhalts]: korrekt referenziert [· live verifiziert]
+⚠️ [Norm] — [Kurzbeschreibung]: [Präzisierungs-/Granularitätshinweis oder „nicht live verifiziert"]
 ❌ [Norm] — FEHLER: [Beschreibung des Problems und ggf. korrekter Verweis]
 ```
 
@@ -173,7 +180,7 @@ Nach Rückkehr aller Subagents den Gesamt-Report zusammenstellen:
 
 **Subagent 1 scheitert (Python-Fehler):** Berechnung als `⚠️ nicht prüfbar (Skript-Fehler)` markieren, manuell prüfen empfehlen.
 
-**Subagent 2: Norm unbekannt:** Als `⚠️ nicht in Referenzdatenbank — Quelle: [dejure.org/gesetze/HGB/...]` markieren.
+**Subagent 2: Norm unbekannt und Live-Fetch erfolglos:** Als `⚠️ nicht verifizierbar — Quelle: [gesetze-im-internet.de/...]` markieren, manuelle Prüfung empfehlen.
 
 **Subagent 3: OpenAlex nicht erreichbar:** Literaturprüfung aus Trainingswissen durchführen, im Report vermerken: `Literaturprüfung basiert auf Trainingswissen — keine Live-Suche`.
 

@@ -27,11 +27,12 @@ Das Skript legt für jeden Skill-Ordner einen Symlink in `~/.claude/skills/` an.
 
 | Skill | Aufruf | Was er tut | Benötigt |
 |---|---|---|---|
-| **lecture-factory** | `/lecture-factory` | Meta-Skill mit zwei Modi: **CREATE** (Rohmaterial → fertiges `.qmd` + Widgets in einem Zug) und **RE-REVIEW** (bestehendes `.qmd` → Perspektiven-Review + QA + Syntaxkorrektur). Empfohlener Einstiegspunkt für den kompletten Workflow. | `quarto-lecture`, `widget-pipeline`, `accounting-qa`, `qmd-corrector` |
-| **quarto-lecture** | `/quarto-lecture` | Schreibt ein hybrides Quarto-Skript für Single Source Publishing (Moodle-Website + PDF-Skriptum) nach der Trinity-of-Depth-Didaktik. Inklusive Perspektiven-Review (Professor / sehr guter Student / mittelmäßiger Student) und Lernzielkontrollen. | — |
+| **lecture-factory** | `/lecture-factory` | Reiner Orchestrator mit zwei Modi: **CREATE** (Rohmaterial → fertiges `.qmd` + Widgets in einem Zug) und **RE-REVIEW** (bestehendes `.qmd` → Perspektiven-Review + QA + Quality Gate + Render-Check). Verbindlicher Pre-Flight: `_curriculum.md` (Zielgruppe) und `context/`-Wiki. Empfohlener Einstiegspunkt. | `quarto-lecture`, `widget-pipeline`, `accounting-qa`, `curriculum-architect` |
+| **quarto-lecture** | `/quarto-lecture` | Schreibt ein hybrides Quarto-Skript für Single Source Publishing (Moodle-Website + PDF-Skriptum) nach der Trinity-of-Depth-Didaktik. Zielgruppen-kalibriert über `_curriculum.md`, Begriffs-Erstnennungsregel und Perspektiven-Review (1 Reviewer, 3 Linsen). Hält die kanonischen Referenzen der Pipeline: `review-protocol.md`, `qmd-quality-gate.md`, `element-placement.md`, `excalidraw-patterns.md`. | — |
+| **curriculum-architect** | `/curriculum-architect` | Erstellt und pflegt die `_curriculum.md` — strukturelles Rückgrat eines Kurses: Zielgruppen-Block (Vorwissen, Stolpersteine), Kapitelliste mit Kernthemen, Terminologie-Konventionen. Kalibriert quarto-lecture und den Perspektiven-Review. | — |
 | **marp-slides** | `/marp-slides` | Erstellt MARP-Präsentationsfolien im THWS-Corporate-Design aus Gliederungen, Rohmaterial oder fertigen `.qmd`-Kapiteln. | — |
 | **slides-to-notes** | `/slides-to-notes` | Wandelt MARP-Folien in ein vollständiges Quarto-Begleitskript (Skriptum) um: Stichpunkte → Fließtext, Inline-Zitate → BibTeX, fehlende Quellen per CrossRef/arXiv automatisch ergänzt. | — |
-| **qmd-corrector** | `/qmd-corrector` | Liest ein `.qmd`, findet und behebt alle YAML- und Div-Syntaxfehler in-place und gibt einen strukturierten Fehlerbericht aus. Verhindert stille Fehler im Moodle-Lua-Filter und PDF-Renderer. | — |
+| **qmd-corrector** | `/qmd-corrector` | Liest ein `.qmd`, findet und behebt alle YAML- und Div-Syntaxfehler in-place (Regeln aus dem kanonischen `qmd-quality-gate.md`), verifiziert per `quarto render` und gibt einen strukturierten Fehlerbericht aus. | `quarto-lecture` (Regeln) |
 | **quarto-book-setup** | `/quarto-book-setup` | Wandelt eine Sammlung einzelner `.qmd`-Kapitel in ein vollständiges Quarto-Book-Projekt um: `_quarto.yml`, YAML-Patches, moodle-html-Extension und GitHub-Actions-Workflow für automatisches Deployment auf GitHub Pages. | — |
 
 ### Interaktive Widgets
@@ -46,9 +47,10 @@ Das Skript legt für jeden Skill-Ordner einen Symlink in `~/.claude/skills/` an.
 
 | Skill | Aufruf | Was er tut | Benötigt |
 |---|---|---|---|
+| **tutorial-builder** | `/tutorial-builder` | Erstellt knappe Übungsblätter und Einzelaufgaben als `.qmd` mit `show_solutions`-Toggle (eine Datei, Aufgaben- und Lösungsblatt). Fünf Aufgabentypen (Rechnen, MC, Kurzszenario, Verständnis, Buchung/Norm), Schwierigkeitsprogression, Python-Arithmetik-Check, Lernziel-Abgleich. Aufgaben auf Wunsch an `exam-builder` exportierbar. | — |
 | **case-builder** | `/case-builder` | Erstellt didaktisch fundierte Business-Fallstudien nach Kupp & Mueller als `.qmd`: Explorations-Interview, Falltext mit integrierter Datentabelle und Aufgaben, Python-Arithmetikprüfung, Dreifach-Perspektiven-Review (Methodiker / Erstleser / Diskussionsleiter) und Teaching Note mit 90-Minuten-Diskussionsplan. Optional: Lernziel-Abgleich mit Begleitvorlesung. | — |
 | **moodle-questions** | `/moodle-questions` | Generiert Moodle-XML-Quizfragen (Multiple Choice, Cloze, Matching, Numerisch, Wahr/Falsch, Essay) aus Lehrinhalt. Klärt Fragetyp und Sprache im Vorfeld, prüft Bijektionen bei Matching und verifiziert numerische Lösungen per Python. | — |
-| **accounting-qa** | `/accounting-qa` | Qualitätssicherung für Accounting-Kapitel: drei parallele Subagents prüfen Berechnungen (Python-Ausführung), Normverweise (HGB/IFRS/IAS/AktG) und Literaturzitate unabhängig voneinander. Einsetzbar standalone oder eingebettet in `lecture-factory`. | — |
+| **accounting-qa** | `/accounting-qa` | Qualitätssicherung für Accounting-Kapitel: drei parallele Subagents prüfen Berechnungen (Python-Ausführung), Normverweise (HGB/IFRS/IAS/AktG — bei Unsicherheit Live-Abgleich gegen gesetze-im-internet.de) und Literaturzitate. Standalone oder eingebettet in `lecture-factory`. | — |
 
 ### Verwaltung & Kommunikation
 

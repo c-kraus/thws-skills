@@ -1,117 +1,209 @@
-# QMD Quality Gate
+# QMD Quality Gate — Kanonische Element-Regeln
 
-Scan every interactive element and fix violations **before saving** the .qmd file. These element types are most frequently malformed in ways that silently break the Moodle Lua filter.
+Die **einzige** Quelle für Syntax- und Strukturregeln aller interaktiven Elemente. Genutzt von:
+- `quarto-lecture` — als Gate vor dem Speichern (alle Verstöße inline beheben)
+- `lecture-factory` — im RE-REVIEW-Strang
+- `qmd-corrector` — als Audit-Checkliste für bestehende Dateien
 
----
-
-## Flip-Card Checklist
-
-Check every `::: {.flip-card}` block:
-
-| Regel | Korrekt | Falsch (korrigieren) |
-|---|---|---|
-| Heading-Ebene | `#### Begriff` (H4) | `### Begriff` oder `**Begriff**` |
-| Leerzeile nach Heading | Keine — Body beginnt direkt in der nächsten Zeile | Leerzeile zwischen `####` und Body |
-| Body-Länge | Ein prägnanter Definitionsabsatz | Mehrere Absätze, Headings oder Listen |
-
-```
-✓ KORREKT:
-::: {.flip-card}
-#### Moral Hazard
-Risiko, dass der Agent nach Vertragsschluss Risiken eingeht, die der Prinzipal nicht beobachten kann.
-:::
-
-✗ FALSCH (Leerzeile bricht den Filter):
-::: {.flip-card}
-#### Moral Hazard
-
-Risiko, dass der Agent...
-:::
-```
+Verstöße brechen den Moodle-Lua-Filter oder den PDF-Renderer meist **still** — deshalb wird jedes Element systematisch geprüft, nicht stichprobenartig.
 
 ---
 
-## Drag-Exercise Checklist
+## 1. YAML Frontmatter
 
-Check every `::: {.drag-exercise}` block:
+Pflichtfelder und Formate:
 
-| Regel | Korrekt | Falsch (korrigieren) |
-|---|---|---|
-| Kein Heading innen | Nur Fließtext | Jedes `####` oder `###` innen |
-| Format | 1–2 Fließsätze | Bullet-Listen, Tabellen oder mehrzeilige Blöcke |
-| Ausfüllbare Terme | Markiert mit `*kursiv*` | Unmarkiert oder nur `**fett**` |
-
+```yaml
+---
+title: "..."          # quoted string
+subtitle: "..."       # quoted string
+date: last-modified   # living docs; festes ISO-Datum nur für archivierte
+lang: de              # oder 'en' — steuert Hyphenation und Moodle-Lokalisierung
+toc-depth: 1          # 2 bei langen Kapiteln mit H3-Untersektionen
+author:
+  - name: Prof. Dr. Christian Kraus
+    email: christian.kraus@thws.de
+    role: Program Lead
+    affiliation: THWS Business & Engineering
+format:
+  moodle-html
+---
 ```
-✓ KORREKT:
-::: {.drag-exercise}
-Der Erfüllungsbetrag ist der Betrag, der zur *Erfüllung der Verpflichtung* voraussichtlich *aufgewendet* werden muss.
-:::
 
-✗ FALSCH (Heading innen, Listenformat):
-::: {.drag-exercise}
-#### Lückentext
-- Der *Erfüllungsbetrag* ist...
-- Das *Vorsichtsprinzip* ist...
-:::
-```
+| Problem | Korrektur |
+|---|---|
+| `format: moodle-html` als String statt Block-Key | `format:\n  moodle-html` |
+| `author` als String statt Liste | Listenform mit `-` |
+| `subtitle`, `toc-depth` oder `lang` fehlt | Ergänzen (`lang` aus Inhaltssprache ableiten) |
+| `date: today` / hartes Datum auf living doc | `date: last-modified` |
 
 ---
 
-## Quick-Check Checklist
+## 2. Flip-Cards `{.flip-card}`
 
-Check every `::: {.quick-check}` block:
+H4-Heading = Vorderseite (Begriff), Body = Rückseite (Definition). Der Lua-Filter verlangt das Heading als erstes Element, Body **direkt** in der nächsten Zeile.
 
-| Regel | Korrekt | Falsch (korrigieren) |
+| Regel | Korrekt | Falsch |
 |---|---|---|
-| Leerzeile nach Frage | Pflicht — Leerzeile zwischen Fragetext und erster `- Option` | Keine Leerzeile: Frage und Liste kleben zusammen |
+| Heading-Ebene | `#### Begriff` | `### Begriff`, `**Begriff**` |
+| Leerzeile nach Heading | Keine | Leerzeile bricht den Filter still |
+| Body | Ein prägnanter Definitionsabsatz | Mehrere Absätze, Headings, Listen |
+| Mehrere Cards | Separate, benachbarte Divs | Verschachtelung |
+
+```
+✓ ::: {.flip-card}
+  #### Moral Hazard
+  Risiko, dass der Agent nach Vertragsschluss Handlungen vornimmt, die der Prinzipal nicht beobachten kann.
+  :::
+```
+
+**Korrektur:** Leerzeile entfernen; `###`/`**…**` zu `####` machen.
+
+---
+
+## 3. Drag-Exercises `{.drag-exercise}`
+
+Lückentext: Studierende ziehen die kursiv markierten Terme in Lücken.
+
+| Regel | Korrekt | Falsch |
+|---|---|---|
+| Kein Heading innen | Nur Fließtext | Jedes `####`/`###` |
+| Format | 1–2 Fließsätze | Bullet-Listen, Tabellen |
+| Ausfüllbare Terme | `*kursiv*` | Unmarkiert oder `**fett**` |
+| **Eindeutige Lücken** | Jede Lücke ist durch den Satzkontext eindeutig bestimmt | Vertauschbare Terme |
+
+**Kommutativitätsregel (wichtig):** Der Filter wertet jede Lücke positionsfest. Sind zwei Lücken logisch vertauschbar — symmetrische Aufzählungen wie *„Eine Bilanz besteht aus \*Aktiva\* und \*Passiva\*"* —, wird die fachlich ebenso richtige Reihenfolge als falsch gewertet (a+b = b+a). Deshalb: Jede Lücke braucht einen eindeutigen Anker im Satz, der genau einen Term zulässt.
+
+```
+✗ FALSCH — Lücken vertauschbar:
+Eine Bilanz gliedert sich in *Aktiva* und *Passiva*.
+
+✓ KORREKT — jede Lücke eindeutig verankert:
+Die Mittelverwendung zeigt die *Aktivseite*, die Mittelherkunft die *Passivseite*.
+```
+
+**Korrektur:** Heading löschen; Listen zu Fließsatz umformen; bei fehlenden Markierungen die 2–4 wichtigsten Fachterme kursiv setzen; vertauschbare Lücken umformulieren (eindeutiger Anker) oder auf eine Lücke reduzieren.
+
+---
+
+## 4. Quick-Checks `{.quick-check}`
+
+| Regel | Korrekt | Falsch |
+|---|---|---|
+| Leerzeile nach Frage | Pflicht — zwischen Fragetext und erster `- Option` | Frage und Liste kleben zusammen (bricht Frage-Erkennung) |
 | Antwortformat | Bullet-Liste `- Option` | Nummerierte Liste, Fließtext |
-| Korrekte Antwort | Genau eine Option in `**fett**` | Keine, oder mehrere fett |
-| Kein Heading innen | Nur Fragetext, dann Liste | `####` oder `###` innen |
+| Korrekte Antwort | Genau eine Option `**fett**` | Keine oder mehrere fett |
+| Kein Heading innen | Nur Frage + Liste | `####`/`###` innen |
 
-```
-✓ KORREKT:
-::: {.quick-check}
-Welche Aussage ist korrekt?
-
-- Falsche Option A.
-- **Richtige Option — in fett.**
-- Falsche Option C.
-:::
-
-✗ FALSCH (fehlende Leerzeile bricht Frage-Erkennung im Filter):
-::: {.quick-check}
-Welche Aussage ist korrekt?
-- Falsche Option A.
-- **Richtige Option.**
-:::
-```
+**Korrektur:** Leerzeile einfügen; bei fehlender Fett-Markierung die plausibelste Option fetten und **im Report zur manuellen Prüfung markieren**.
 
 ---
 
----
+## 5. Case Studies `{.case-study}`
 
-## LaTeX Math — Euro Sign Checklist
+Ohne `.solution`-Block rendert der Moodle-Filter die Lösung offen — Studierende sehen die Antwort sofort.
 
-Check every `$$...$$` (display math) and `$...$` (inline math) block that contains a `€` character.
-
-| Regel | Korrekt | Falsch (korrigieren) |
+| Regel | Korrekt | Falsch |
 |---|---|---|
-| `€` in LaTeX-Mathblock | `\text{€}` | Bare `€` ohne `\text{}` |
-| `€` in `\mathbf{}` | `\mathbf{\text{€}\,363}` | `\mathbf{€\,363}` |
-| `€` außerhalb Math (plain text) | `€ 100` oder `€\,100` | Kein Problem — bleibt wie es ist |
+| Heading | `#### Case: [Titel]` (H4) | Fehlend oder andere Ebene |
+| Lösung | Verschachteltes `::: {.solution}` mit `**Lösung:**`/`**Solution:**`-Lead | Lösung offen im Text |
 
 ```
-✓ KORREKT:
-$$NPV = \mathbf{+\text{€}\,10{,}153}$$
-$I_0 = \text{€}\,100{,}000$
+✓ ::: {.case-study}
+  #### Case: Müller GmbH
+  Sachverhalt...
 
-✗ FALSCH — LaTeX kennt € nicht als Zeichen ohne \text{}:
-$$NPV = \mathbf{€\,10{,}153}$$
-$I_0 = €\,100{,}000$
+  ::: {.solution}
+  **Lösung:** Nach § 249 Abs. 1 HGB ...
+  :::
+  :::
 ```
 
-**Hintergrund:** LaTeX behandelt `€` als unbekanntes Symbol und produziert einen Math-Output-Fehler. In den Kapiteln des BUA3-Projekts (Part 2, Chapter 5–9) ist dieser Fehler aufgetreten. Die korrekte Schreibweise aus Part 1 (Chapter 1–4) ist immer `\text{€}`.
+**Korrektur:** Inline-Lösungstext in `.solution`-Div einwickeln; fehlt jede Lösung: Platzhalter `**Lösung:** TODO` einfügen und zur manuellen Prüfung markieren.
 
 ---
 
-Alle Verstöße inline beheben, bevor die Datei gespeichert wird. Bei Unsicherheit über ein Element: Syntaxregeln im `quarto-lecture` Skill nachlesen.
+## 6. Deep Dives `{.details}`
+
+| Regel | Korrekt | Falsch |
+|---|---|---|
+| Heading | `#### Deep Dive: [Konzept]` oder `#### Exkurs: [Titel]` (H4) | Fehlend, andere Ebene |
+
+**Korrektur:** H4-Heading mit passendem Präfix ergänzen oder Ebene anpassen.
+
+---
+
+## 7. Videos `{.video}`
+
+Quarto-Shortcode, kein rohes HTML:
+
+```
+::: {.video}
+{{< video https://youtu.be/ID >}}
+:::
+```
+
+**Korrektur:** Rohe YouTube-URLs oder `<iframe>`/`<video>`-Tags in Shortcode umwandeln.
+
+---
+
+## 8. Widgets `{.widget}` + IFrame-Syntax
+
+| Regel | Korrekt | Falsch |
+|---|---|---|
+| Wrapper | `::: {.widget}` um jedes iframe | Bare iframe |
+| `src` | Relativer Pfad (`widgets/kapitel-NN/…`) | `http://…`, absolute Dateisystempfade |
+| Attribute | `width="100%"`, `height="…px"`, `frameborder="0"`, `title="…"` | Fehlende Attribute |
+
+**Korrektur:** Absolute Pfade auf relative kürzen; fehlende Attribute ergänzen (`title` barrierefrei, in Dokumentsprache); bare iframes wrappen.
+
+---
+
+## 9. LaTeX Math — Währungszeichen
+
+Zwei Situationen, zwei Regeln:
+
+**Beim Schreiben neuer Inhalte (quarto-lecture, lecture-factory):** Währungssymbole gehören **nicht in die Formel**. Beträge als reine Zahl im Mathblock, Währung im umgebenden Fließtext. Das ist über alle Renderer hinweg die robusteste Form:
+
+```
+**Beispiel:** Anschaffungskosten 110.000 €, Restwert 5.000 €, Nutzungsdauer 5 Jahre.
+
+$$\text{Jährliche AfA} = \frac{110{,}000 - 5{,}000}{5} = 21{,}000$$
+```
+
+**Beim Korrigieren bestehender Inhalte (qmd-corrector):** Steht bereits ein `€` in einem Mathblock, nicht umbauen, sondern minimal-invasiv reparieren — bare `€` → `\text{€}`:
+
+| Problem | Korrektur |
+|---|---|
+| `\mathbf{€\,500}` | `\mathbf{\text{€}\,500}` |
+| `= €\,363` in `$...$` | `= \text{€}\,363` |
+| `\text{€}` bereits vorhanden | ✓ keine Aktion |
+| `€` außerhalb von Math | ✓ keine Aktion |
+
+**Hintergrund:** LaTeX/MathJax kennt `€` nicht als Math-Symbol — bare `€` erzeugt einen Math-Output-Fehler (aufgetreten in BUA3 Part 2, Kap. 5–9). `\text{€}` funktioniert im Projekt-Setup, ist aber nicht über alle Renderer garantiert — deshalb bei Neuschreibungen die Währung ganz aus der Formel halten.
+
+---
+
+## 10. Heading-Hierarchie
+
+Eine Heading-Ebene ist nur gerechtfertigt, wenn mindestens zwei Geschwister auf ihr existieren. Enthält eine H2-Section genau eine H3-Untersektion, den Inhalt auf H2-Ebene heben und die leere Verschachtelung eliminieren.
+
+---
+
+## 11. Normzitat-Granularität
+
+Definiert `_curriculum.md` eine Zitierkonvention (z. B. „Normzitate immer mit Absatz"), jedes §-Zitat im Dokument dagegen prüfen. Ohne Konvention gilt als Default: Die **erste** Zitation einer Norm im Kapitel nennt Absatz (und Satz, wenn die Aussage satzspezifisch ist); Folgezitate derselben Stelle dürfen verkürzt sein, sofern eindeutig.
+
+| Korrekt | Falsch (korrigieren) |
+|---|---|
+| „§ 249 Abs. 1 Satz 1 HGB verpflichtet …" (Erstnennung) | „§ 249 HGB verpflichtet …" (Erstnennung ohne Abs., obwohl die Aussage absatzspezifisch ist) |
+
+**Korrektur:** Absatz/Satz aus dem Kontext bzw. `accounting-qa/references/common-norms.md` ergänzen; bei Unklarheit zur manuellen Prüfung markieren statt raten.
+
+---
+
+## Anwendung
+
+**Als Gate (vor dem Speichern):** Alle 11 Abschnitte prüfen, jeden Verstoß sofort inline beheben, dann erst speichern.
+
+**Als Audit (qmd-corrector):** Checklisten in Reihenfolge 1→11 abarbeiten, alle Instanzen je Elementtyp erfassen, Fixes anwenden, Quality Report ausgeben (Format im qmd-corrector SKILL.md).
