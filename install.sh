@@ -17,6 +17,8 @@ mkdir -p "$SKILLS_DIR"
 for skill_dir in "$REPO_DIR"/*/; do
   skill_name=$(basename "$skill_dir")
   [[ "$skill_name" == .* ]] && continue
+  [[ "$skill_name" == *-workspace ]] && continue   # Eval-/Test-Workspaces sind keine Skills
+  [ -f "$skill_dir/SKILL.md" ] || { echo "⚠️  $skill_name hat keine SKILL.md — übersprungen"; continue; }
   target="$SKILLS_DIR/$skill_name"
   [ -L "$target" ] && rm "$target" && echo "↺  Update: $skill_name" || true
   [ -d "$target" ] && echo "⚠️  $skill_name existiert als Ordner — übersprungen" && continue
