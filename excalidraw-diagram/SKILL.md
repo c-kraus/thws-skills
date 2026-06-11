@@ -26,6 +26,30 @@ Generate `.excalidraw` JSON files that **argue visually**, not just display info
 
 No planning phase, no sketching, no 6-step design process for template-shaped diagrams.
 
+### Spec Cheat-Sheet (vollständig — nichts raten, nicht erst die Docstring lesen)
+
+```json
+{
+  "elements": [
+    {"kind": "text",  "x": 100, "y": 30, "text": "Titel", "level": "title"},
+    {"kind": "box",   "id": "a", "x": 100, "y": 100, "label": "Zeile 1\nZeile 2",
+     "role": "primary", "shape": "rectangle", "w": 240},
+    {"kind": "arrow", "from": "a", "to": "b", "label": "führt zu"},
+    {"kind": "arrow", "from": "a", "to": "b", "fromSide": "bottom", "toSide": "top",
+     "shift": -50},
+    {"kind": "line",  "points": [[100, 300], [500, 300]], "dashed": true},
+    {"kind": "dot",   "x": 200, "y": 300}
+  ]
+}
+```
+
+Merkpunkte (die drei häufigsten Fehlgriffe):
+- Schlüssel heißen `kind` / `label` / `role` — **nicht** `type` / `text` / `color` bei Boxen.
+- **Gegenrichtungs-Pfeile zwischen denselben Boxen:** `fromSide`/`toSide` + entgegengesetztes `shift` (z. B. −50 und +50) → zwei parallele Spuren, keine Überlappung, keine `points`-Mathematik. Niemals versuchen, das über manuelle Wegpunkte zu lösen.
+- Explizite `points` (wenn doch nötig, z. B. Umrouten um ein Hindernis) sind **absolute** Canvas-Koordinaten — der Generator relativiert intern.
+
+Rollen: `primary · secondary · tertiary · start · end · warning · decision · ai · inactive · error · evidence` — Farben hinterlegt, nie selbst setzen. Text-Level: `title · subtitle · body`. `w`/`h` sind Mindestmaße; zu kleiner Text-Platz wird automatisch vergrößert, gleiche `w` über eine Box-Spalte ergibt bündige Layouts.
+
 **Use the full Design Process below only when:**
 - The concept genuinely doesn't fit any template
 - The diagram is a complex technical architecture requiring evidence artifacts

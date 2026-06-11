@@ -31,9 +31,21 @@ Optionale Felder:
          "fontSize" (default 16), "fill"/"stroke" (überschreiben role)
   text:  "fontSize" überschreibt level-Default, "color" überschreibt level-Farbe,
          "align" (left|center, default left)
-  arrow: "points" (explizite Wegpunkte statt Auto-Routing), "color",
-         "dashed", "strokeWidth"
+  arrow: "fromSide"/"toSide" ("top|bottom|left|right" — Anker auf der Boxseite
+             statt Auto-Routing Zentrum→Zentrum),
+         "shift" (px, verschiebt beide Anker entlang ihrer Seite — DER Mechanismus
+             für Gegenrichtungs-Pfeile zwischen denselben Boxen, s.u.),
+         "points" (explizite Wegpunkte — ABSOLUTE Canvas-Koordinaten; die interne
+             Relativierung übernimmt der Generator),
+         "color", "dashed", "strokeWidth"
   line:  "color", "strokeWidth"
+
+Rezept — bidirektionale Pfeile (Delegation runter, Information hoch):
+  {"kind":"arrow","from":"vorstand","to":"bereich","fromSide":"bottom","toSide":"top",
+   "shift":-45,"label":"delegiert"},
+  {"kind":"arrow","from":"bereich","to":"vorstand","fromSide":"top","toSide":"bottom",
+   "shift":45,"dashed":true,"label":"berichtet"}
+  → beide Pfeile laufen parallel versetzt, nichts überlappt, keine points-Mathematik.
 
 Rollen (Fill/Stroke aus references/color-palette.md, THWS):
   primary, secondary, tertiary, start, end, warning, decision, ai,
@@ -198,13 +210,27 @@ def build(spec):
         t = min(sx, sy)
         return cx + dx * t, cy + dy * t
 
+    def side_anchor(el, side, shift=0):
+        """Mittelpunkt der genannten Boxseite, optional entlang der Seite verschoben."""
+        x, y, w, h = el["x"], el["y"], el["width"], el["height"]
+        return {
+            "top":    (x + w / 2 + shift, y),
+            "bottom": (x + w / 2 + shift, y + h),
+            "left":   (x, y + h / 2 + shift),
+            "right":  (x + w, y + h / 2 + shift),
+        }[side]
+
     for s in spec.get("elements", []):
         if s.get("kind") != "arrow":
             continue
         src, dst = by_id.get(s.get("from")), by_id.get(s.get("to"))
+        shift = s.get("shift", 0)
         if s.get("points"):
-            pts = s["points"]
-            start, end = pts[0], pts[-1]
+            pts = [list(p) for p in s["points"]]  # absolute Canvas-Koordinaten
+        elif src and dst and (s.get("fromSide") or s.get("toSide")):
+            start = side_anchor(src, s.get("fromSide", "bottom"), shift)
+            end = side_anchor(dst, s.get("toSide", "top"), shift)
+            pts = [list(start), list(end)]
         elif src and dst:
             scx = (src["x"] + src["width"] / 2, src["y"] + src["height"] / 2)
             dcx = (dst["x"] + dst["width"] / 2, dst["y"] + dst["height"] / 2)
