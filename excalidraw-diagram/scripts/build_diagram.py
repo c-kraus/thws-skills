@@ -302,6 +302,25 @@ def sanity(doc):
             c = by_id[e["containerId"]]
             if c["type"] in ("rectangle",) and (e["width"] > c["width"] or e["height"] > c["height"]):
                 issues.append(f"Text {e['id']} überläuft Container {c['id']}")
+
+    # Kollisionsprüfung: freie Texte dürfen weder einander noch Shapes überlappen
+    def bbox(e):
+        return (e["x"], e["y"], e["x"] + e["width"], e["y"] + e["height"])
+
+    def overlap(a, b, margin=4):
+        ax0, ay0, ax1, ay1 = bbox(a); bx0, by0, bx1, by1 = bbox(b)
+        return ax0 < bx1 - margin and bx0 < ax1 - margin and ay0 < by1 - margin and by0 < ay1 - margin
+
+    free_texts = [e for e in doc["elements"] if e["type"] == "text" and not e.get("containerId")]
+    shapes = [e for e in doc["elements"] if e["type"] in ("rectangle", "ellipse", "diamond")
+              and not (e["width"] <= 40 and e["height"] <= 40)]  # Dots ausnehmen
+    for i, t in enumerate(free_texts):
+        for u in free_texts[i + 1:]:
+            if overlap(t, u):
+                issues.append(f"Freie Texte kollidieren: {t['text'][:25]!r} ↔ {u['text'][:25]!r} — x/y-Anker auseinanderziehen")
+        for sh in shapes:
+            if overlap(t, sh):
+                issues.append(f"Freier Text {t['text'][:25]!r} überlappt Shape {sh['id']} — verschieben")
     return issues
 
 # ---------------------------------------------------------------- CLI
