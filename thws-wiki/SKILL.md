@@ -423,9 +423,12 @@ Lint ohne log.md-Eintrag ist unvollständig.
 
 ## Integration mit lecture-factory
 
-`lecture-factory`/`quarto-lecture` binden das Wiki über einen **Pointer** ein: die optionale
-Metazeile `**Wiki:** <pfad>` in `_curriculum.md`. Gesetzt → **Wiki-Modus**; fehlt sie → klassischer
-Ablauf ohne jede Wiki-Erwähnung (Kolleg:innen ohne Wiki merken nichts).
+`lecture-factory`/`quarto-lecture` binden das Wiki über einen **skill-verwalteten Pointer** ein:
+die Metazeile `**Wiki:** <pfad>` in `_curriculum.md`. Der Nutzer trägt sie **nicht von Hand** ein —
+fehlt sie, fragt der Skill **einmal** „Wo liegt das Wiki? (Pfad / keins)" und schreibt die Antwort
+selbst hinein (`**Wiki:** <pfad>` bzw. `**Wiki:** none`). Danach gilt: Pfad → **Wiki-Modus**;
+`none` → klassischer Ablauf ohne jede Wiki-Erwähnung (Kolleg:innen ohne Wiki merken nichts, und es
+wird nicht erneut gefragt).
 
 **Ablauf im Wiki-Modus** (vor dem Schreiben jedes Kapitels):
 1. `query wiki: [Kapitelthema]` gegen den Pointer-Pfad ausführen → **Wissensbriefing**. Die

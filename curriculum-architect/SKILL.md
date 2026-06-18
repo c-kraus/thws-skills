@@ -67,6 +67,9 @@ If not derivable from Pre-Flight sources, ask as a single grouped question:
 > 3. Zielgruppe: Studiengang, Niveau, Was bringen die Studierenden mit?
 > 4. Sprache (de / en / zweisprachig)?
 > 5. Semester oder Zeitrahmen (oder „—" wenn offen)?
+> 6. Liegt für den Kurs ein thws-wiki vor? Wenn ja: absoluter Pfad zum Wiki-Ordner — wenn nein: „keins".
+
+Die Antwort auf Frage 6 in die `**Wiki:**`-Zeile des Kopfblocks schreiben (`**Wiki:** <pfad>` bzw. `**Wiki:** none`). Falls Pre-Flight Step 3 bereits ein `wiki/index.md` gefunden hat, dessen Pfad als Default vorschlagen statt offen zu fragen. So ist der Wiki-Pfad ab dann gespeichert und `lecture-factory` muss nicht erneut nachfragen.
 
 If the briefing file answered some of these, show the derived values and only ask about gaps:
 > "Aus der Briefing-Datei habe ich abgeleitet: [Kurs-Titel], [ECTS], [Zielgruppe]. Stimmt das — oder gibt es Korrekturen?"
@@ -143,7 +146,7 @@ After all blocks are complete (or as much as the user provided), generate the fi
 **Studiengang:** [Studiengang / z.B. Micro-Credential (X ECTS), interdisziplinär]
 **Semester:** [Semester oder —]
 **Sprache:** [de / en]
-**Wiki:** [Pfad zum thws-wiki-Ordner]  ← (nur wenn ein Wiki existiert; aktiviert in lecture-factory den Wiki-Modus — sonst Zeile ganz weglassen)
+**Wiki:** [absoluter Pfad zum thws-wiki-Ordner ODER `none`]  ← Pfad aktiviert den Wiki-Modus in lecture-factory, `none` deaktiviert ihn; immer schreiben, damit die Wahl gespeichert ist
 
 ---
 
