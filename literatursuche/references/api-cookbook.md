@@ -10,6 +10,7 @@ Inhalt:
 5. PubMed — esearch + esummary
 6. Merge, Dedupe, Ranking-Helfer
 7. Beispiel-Pipeline (Standard-Workflow in ~20 Zeilen)
+8. OA-Volltext finden (Unpaywall) & automatisch an Zotero anhängen
 
 ---
 
@@ -221,3 +222,76 @@ pool = merge_dedupe(grundlagen, aktuell, preprints,
 ranked = rank_for_teaching(pool)
 # → daraus redaktionell 5–8 für die Shortlist wählen (Mix der Typen), DOIs bei Bedarf via crossref_by_doi prüfen.
 ```
+
+---
+
+## 8. OA-Volltext finden & automatisch an Zotero anhängen
+
+**Prinzip:** Beim Übernahme-Befehl gehört der frei verfügbare Volltext dazu. Für jedes Werk mit DOI per **Unpaywall** den offenen PDF-Link suchen; ist einer da, das PDF herunterladen und als gespeichertes Attachment ans Zotero-Item hängen — genau wie Zoteros „Add Available PDF". Paywalled? Dann nur Metadaten, ohne Drama.
+
+```python
+def unpaywall_pdf(doi, email="flaneure.com@gmail.com"):
+    """Gibt die beste OA-PDF-URL zurück oder None."""
+    try:
+        d = _get(f"https://api.unpaywall.org/v2/{urllib.parse.quote(doi)}?email={email}")
+    except Exception:
+        return None
+    loc = d.get("best_oa_location") or {}
+    return loc.get("url_for_pdf") if d.get("is_oa") else None
+```
+
+Anhängen via Zotero Web API (vierstufiger Upload-Flow; braucht `ZOTERO_API_KEY`/`ZOTERO_USER_ID`):
+
+```python
+import hashlib
+
+def zotero_attach_pdf(parent_key, pdf_bytes, filename, key=None, uid=None):
+    """Hängt pdf_bytes als gespeichertes 'Full Text PDF' an parent_key. Idempotent:
+    Zotero dedupliziert per MD5 → existiert die Datei schon, wird sie nur verknüpft."""
+    key = key or os.environ["ZOTERO_API_KEY"]; uid = uid or os.environ["ZOTERO_USER_ID"]
+    H = {"Zotero-API-Key": key, "Zotero-API-Version": "3"}
+    def _api(method, path, data=None, extra=None):
+        h = dict(H); h.update(extra or {})
+        req = urllib.request.Request(f"https://api.zotero.org{path}", data=data, headers=h, method=method)
+        with urllib.request.urlopen(req, timeout=120) as r:
+            b = r.read(); return r.status, (json.loads(b) if b else {})
+    md5 = hashlib.md5(pdf_bytes).hexdigest(); size = len(pdf_bytes); mtime = 0
+    # 1) Attachment-Item anlegen
+    att = [{"itemType": "attachment", "parentItem": parent_key, "linkMode": "imported_file",
+            "title": "Full Text PDF", "filename": filename, "contentType": "application/pdf",
+            "charset": "", "note": "", "tags": [], "relations": {}}]
+    _, res = _api("POST", f"/users/{uid}/items", json.dumps(att).encode(), {"Content-Type": "application/json"})
+    attkey = res["success"]["0"]
+    # 2) Upload-Autorisierung
+    form = urllib.parse.urlencode({"md5": md5, "filename": filename, "filesize": size,
+                                   "mtime": mtime, "params": 1}).encode()
+    _, auth = _api("POST", f"/users/{uid}/items/{attkey}/file", form,
+                   {"Content-Type": "application/x-www-form-urlencoded", "If-None-Match": "*"})
+    if auth.get("exists"):
+        return attkey  # Datei schon im Storage → bereits verknüpft, fertig
+    # 3) zum Storage hochladen (prefix + Datei + suffix)
+    body = auth["prefix"].encode() + pdf_bytes + auth["suffix"].encode()
+    req = urllib.request.Request(auth["url"], data=body, headers={"Content-Type": auth["contentType"]}, method="POST")
+    urllib.request.urlopen(req, timeout=180)
+    # 4) Upload registrieren
+    reg = urllib.parse.urlencode({"upload": auth["uploadKey"]}).encode()
+    _api("POST", f"/users/{uid}/items/{attkey}/file", reg,
+         {"Content-Type": "application/x-www-form-urlencoded", "If-None-Match": "*"})
+    return attkey
+
+def attach_oa_fulltext(parent_key, doi, filename):
+    """Komfort: OA suchen → laden → anhängen. Gibt 'attached' | 'no-oa' | 'error:..'."""
+    url = unpaywall_pdf(doi)
+    if not url: return "no-oa"
+    try:
+        data = urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": UA}), timeout=60).read()
+        if data[:5] != b"%PDF-": return "no-oa"      # HTML-Landingpage statt PDF
+        zotero_attach_pdf(parent_key, data, filename)
+        return "attached"
+    except Exception as e:
+        return f"error:{type(e).__name__}"
+```
+
+**Dateiname** sprechend wählen, z. B. `f"{erstautor} {jahr} - {kurztitel}.pdf"` (Sonderzeichen entfernen), statt einer kryptischen ID — das erleichtert die spätere Nutzung in Zotero.
+
+**Reihenfolge im Handoff:** Item via `crossref_by_doi` + Zotero-`POST /items` anlegen → Item-Key merken → `attach_oa_fulltext(item_key, doi, filename)`. Ist kein OA da, bleibt es bei den Metadaten (kein Fehler). So kommt der Volltext beim Übernehmen automatisch mit.

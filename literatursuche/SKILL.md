@@ -93,7 +93,8 @@ Wenn der Nutzer auf dem Stand bleiben will („was gibt's Neues zu Y", „Entwic
 
 Nach der Trefferliste anbieten — und auf Antwort warten, bevor irgendetwas geschrieben wird:
 
-1. **Nach Zotero** (über den `zotero-skill`): Ausgewählte Werke anlegen. Vorgehen reuse aus dem zotero-skill — `POST https://api.zotero.org/users/{uid}/items` mit Creds aus `ZOTERO_API_KEY`/`ZOTERO_USER_ID`; Ziel-Collection vorher erfragen und ihren Key im Feld `collections` mitgeben. Sind die Web-API-Creds nicht gesetzt, den lokalen Connector-Pfad des zotero-skill nutzen. Itemtyp korrekt setzen (`journalArticle`, `book`, `preprint`) und DOI/arXiv-ID füllen, damit später ein Volltext-Abgleich möglich ist.
+1. **Nach Zotero** (über den `zotero-skill`): Ausgewählte Werke anlegen. Vorgehen reuse aus dem zotero-skill — `POST https://api.zotero.org/users/{uid}/items` mit Creds aus `ZOTERO_API_KEY`/`ZOTERO_USER_ID`; Ziel-Collection vorher erfragen und ihren Key im Feld `collections` mitgeben. Sind die Web-API-Creds nicht gesetzt, den lokalen Connector-Pfad des zotero-skill nutzen. Itemtyp korrekt setzen (`journalArticle`, `book`, `preprint`) und DOI/arXiv-ID füllen.
+   **Volltext gehört dazu:** Direkt nach dem Anlegen für jedes Werk mit DOI/arXiv-ID den frei verfügbaren Volltext suchen (Unpaywall bzw. arXiv) und, falls vorhanden, automatisch als gespeichertes „Full Text PDF" ans Item hängen — wie Zoteros „Add Available PDF". Funktionen `unpaywall_pdf` / `attach_oa_fulltext` / `zotero_attach_pdf` siehe `references/api-cookbook.md` (Abschnitt 8). Paywalled → nur Metadaten, das ist in Ordnung; nicht künstlich versuchen, hinter eine Paywall zu kommen.
 2. **Ins thws-wiki** (über den `thws-wiki`-Skill): Erst nachdem das Werk in Zotero liegt und einen Better-BibTeX-Citekey hat, den Trigger **`ingest @citekey`** anbieten. Themaordner-Mapping: **Ethik** → `wiki/Ethik/`, **Rechnungswesen/Finance** → `wiki/Rechnungswesen/`. Für **Business Intelligence** existiert noch **kein** Themaordner — hier den Nutzer auf die Wiki-Expansionsregel hinweisen (neuer Ordner ab ~2–3 absehbaren Konzepten), statt BI gewaltsam in einen bestehenden Ordner zu pressen.
 
 Reihenfolge der Kette: **Suche → (fragen) Zotero → (fragen) Wiki-Ingest.** Jeder Schritt einzeln bestätigt.
@@ -116,6 +117,7 @@ CrossRef          https://api.crossref.org/works?query=...&filter=from-pub-date:
 arXiv             http://export.arxiv.org/api/query?search_query=all:...&sortBy=submittedDate&max_results=...
 PubMed            https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=...&retmode=json
                   .../esummary.fcgi?db=pubmed&id=...&retmode=json
+Unpaywall (OA)    https://api.unpaywall.org/v2/<doi>?email=...   → best_oa_location.url_for_pdf
 ```
 
 Details, Felderlisten und fertige Python-Funktionen: **`references/api-cookbook.md`**.
