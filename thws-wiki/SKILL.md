@@ -81,8 +81,23 @@ with urllib.request.urlopen(req, timeout=10) as r:
     items = json.load(r)
 ```
 
-Immer lesen: Metadaten + Abstract + Volltext. Nur-Metadaten-Ingest in log.md
-mit `[kein Volltext]` markieren. Bei Büchern: Inhaltsverzeichnis + relevante Kapitel.
+**Volltext ist Pflicht — sonst Stopp und Rückfrage.** Eine belastbare Wiki-Seite
+entsteht aus dem **Volltext**, nicht aus dem Abstract: Abstracts verschweigen Methode,
+Einwände und Differenzierungen, und eine Seite, die vorgibt, aus der Quelle gearbeitet
+zu sein, obwohl nur der Abstract vorlag, untergräbt das Vertrauen ins ganze Wiki. Daher:
+
+- **Volltext vorhanden** (PDF-Attachment in Zotero, OA-Quelle oder raw/-Datei) → normal
+  ingesten (Metadaten + Abstract + Volltext lesen).
+- **Kein Volltext** → **nicht still mit dem Abstract weitermachen.** Den Nutzer warnen
+  und fragen, wie zu verfahren ist:
+  1. **Volltext beschaffen** — z. B. über den `literatursuche`-Skill den frei verfügbaren
+     OA-Volltext (Unpaywall/arXiv) suchen und ans Zotero-Item hängen, dann ingesten;
+  2. **ausnahmsweise nur aus Abstract/Metadaten** ingesten — dann die Seite bewusst knapp
+     halten und in log.md mit `[kein Volltext]` markieren;
+  3. **überspringen.**
+  Erst nach der Antwort weiterarbeiten.
+
+Bei Büchern zählt Inhaltsverzeichnis + relevante Kapitel als Volltext.
 
 ---
 
@@ -130,6 +145,12 @@ gibt, fragen:
 
 Bei „ohne Rückfrage": Schritt 2 für alle Quellen überspringen und
 am Ende einen Gesamt-Report ausgeben.
+
+**Volltext-Regel gilt auch im Bulk-Modus** (s. Schritt 1a): Quellen **ohne** Volltext
+werden im Automatik-Lauf **nicht** still aus dem Abstract ingestet, sondern
+übersprungen und am Ende gesammelt gemeldet („N Quellen ohne Volltext —
+beschaffen/nur-Abstract/überspringen?"). So entscheidet der Nutzer gebündelt,
+statt dass dünne Abstract-Seiten unbemerkt ins Wiki wandern.
 
 ---
 
