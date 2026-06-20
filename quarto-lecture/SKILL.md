@@ -45,7 +45,7 @@ Name an author explicitly only when the attribution IS the point (contrasting ph
 Drei Quellen kalibrieren das Kapitel. Alle drei **aktiv suchen**, nicht auf Zuruf warten:
 
 1. **`_curriculum.md`** im Projektverzeichnis: Zielgruppen-Block (Studiengang, Semester, Vorwissen), Kapitelliste, Terminologie-Konventionen. Nicht gefunden → einmalig fragen, ob sie angelegt werden soll (`curriculum-architect` Skill); bei Nein ohne fortfahren.
-2. **Wiki-Kontext** `context/kapitel-{nn}/wiki/` (second-brain-Output): Falls vorhanden, als vorstrukturiertes Wissen mit **höherem Gewicht** als rohe PDFs/Notizen behandeln. Begriffsdefinitionen aus dem Wiki sind die kursverbindlichen Formulierungen — nicht neu erfinden.
+2. **Wiki-Kontext** `context/kapitel-{nn}/wiki/` (second-brain-Output) **oder ein übergebenes Wissensbriefing** (aus `lecture-factory`s `query wiki:`-Lauf): Falls vorhanden, als vorstrukturiertes Wissen mit **höherem Gewicht** als rohe PDFs/Notizen behandeln. Begriffsdefinitionen aus dem Wiki sind die kursverbindlichen Formulierungen — nicht neu erfinden, generisches Modellwissen ihnen unterordnen. Eine harte Fachaussage/Norm, die nur aus Trainingswissen stammt und im Wiki nicht belegt ist, mit `<!-- ergänzt (nicht im Wiki): [Begriff] -->` markieren.
 3. **`context/shared/`**: kursweite Normen und Glossare, immer mitlesen falls vorhanden.
 
 **Default-Zielgruppe** (wenn kein Curriculum existiert): Bachelor Wirtschaftsingenieurwesen, 4. Semester, Grundlagen BWL/ReWe vorhanden.

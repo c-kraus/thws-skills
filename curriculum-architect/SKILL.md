@@ -44,7 +44,7 @@ Before presenting any questions, silently gather what's already available. Repor
 
 **Step 2 — Briefing file**: Check for `raw/briefing.md`, `raw/brief.md`, or any `raw/*.md` that looks like a course brief. Read it. It likely contains course concept, target audience, module structure, and learning objectives. Extract what you can before asking.
 
-**Step 3 — Wiki index**: Check for `wiki/index.md`. If found, read it. Synthesis and concept pages may reveal the course's conceptual architecture. Use this to derive chapter themes.
+**Step 3 — Wiki index**: Check for `wiki/index.md`. If found, read it. Synthesis and concept pages may reveal the course's conceptual architecture. Use this to derive chapter themes. **Also record its folder path** and emit it as the optional `**Wiki:** <pfad>` metaline in the generated `_curriculum.md` — this is what switches `lecture-factory` into Wiki-Modus. No wiki found → omit the line entirely.
 
 **Step 4 — Existing .qmd files**: List all `kap-*.qmd` in the output directory. For each, read the YAML frontmatter (title, subtitle) to derive chapter names, slugs, and tentative status. A file that exists is at least 🔄 aktiv; use judgment based on file content.
 
@@ -67,6 +67,9 @@ If not derivable from Pre-Flight sources, ask as a single grouped question:
 > 3. Zielgruppe: Studiengang, Niveau, Was bringen die Studierenden mit?
 > 4. Sprache (de / en / zweisprachig)?
 > 5. Semester oder Zeitrahmen (oder „—" wenn offen)?
+> 6. Liegt für den Kurs ein thws-wiki vor? Wenn ja: absoluter Pfad zum Wiki-Ordner — wenn nein: „keins".
+
+Bei genanntem Pfad (Frage 6): (a) `wiki`-Symlink im Projektordner anlegen (`ln -sfn <pfad> wiki`), (b) `wiki` in die `.gitignore` eintragen, (c) **`**Wiki:** ./wiki`** (relativ) in den Kopfblock schreiben. Bei „keins": `**Wiki:** none`. Falls Pre-Flight Step 3 schon ein `wiki/index.md` gefunden hat, dessen Pfad als Default vorschlagen. So bleibt nur der Symlink maschinen-lokal (gitignored), die Curriculum-Zeile ist portabel — und `lecture-factory` fragt nie erneut.
 
 If the briefing file answered some of these, show the derived values and only ask about gaps:
 > "Aus der Briefing-Datei habe ich abgeleitet: [Kurs-Titel], [ECTS], [Zielgruppe]. Stimmt das — oder gibt es Korrekturen?"
@@ -143,6 +146,7 @@ After all blocks are complete (or as much as the user provided), generate the fi
 **Studiengang:** [Studiengang / z.B. Micro-Credential (X ECTS), interdisziplinär]
 **Semester:** [Semester oder —]
 **Sprache:** [de / en]
+**Wiki:** [`./wiki` (relativ, zeigt via gitignored Symlink aufs Wiki) ODER `none`]  ← aktiviert (`./wiki`) bzw. deaktiviert (`none`) den Wiki-Modus in lecture-factory; immer schreiben, damit die Wahl gespeichert ist
 
 ---
 

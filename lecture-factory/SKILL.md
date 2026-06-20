@@ -36,8 +36,13 @@ Es gibt keinen separaten „Full"-Trigger in CREATE: Der Weg zum Veröffentlichu
 
 ### Pre-Flight (verbindlich, vor dem Intake)
 
-1. **Curriculum:** `_curriculum.md` im Ausgabe-/Projektverzeichnis suchen. Gefunden → still laden: Zielgruppen-Block, Vorgänger-/Nachfolger-Kapitel (Titel + Kernthemen), Terminologie-Konventionen. Nicht gefunden → **einmalig aktiv fragen**: „Ich habe keine `_curriculum.md` gefunden — sie definiert Zielgruppe, Kapitelfolge und Terminologie. Soll ich sie mit dem `curriculum-architect` Skill anlegen?" Bei Nein: mit Default-Zielgruppe fortfahren (siehe quarto-lecture).
+1. **Curriculum:** `_curriculum.md` im Ausgabe-/Projektverzeichnis suchen. Gefunden → still laden: Zielgruppen-Block, Vorgänger-/Nachfolger-Kapitel (Titel + Kernthemen), Terminologie-Konventionen sowie die Metazeile `**Wiki:** <pfad>`. **Wiki-Erkennung (fragen & merken, portabel):**
+   - Zeile gesetzt **und** Pfad (relativ zum `_curriculum.md`-Ordner) existiert → **Wiki-Modus** (siehe Schritt 3).
+   - Zeile gesetzt, aber Pfad existiert **nicht** (z.B. Kolleg:in ohne lokalen Symlink) **oder** `**Wiki:** none` → klassischer Ablauf, **nicht fragen**.
+   - Zeile **fehlt ganz → einmal fragen** „Wo liegt das Wiki für diesen Kurs? (absoluter Pfad — oder ‚keins')". Bei genanntem Pfad: (a) einen `wiki`-Symlink im Projektordner auf diesen Pfad anlegen (`ln -sfn <pfad> wiki`), (b) `wiki` in die `.gitignore` des Projekts eintragen, (c) **`**Wiki:** ./wiki`** (relativ!) unter `**Sprache:**` ins `_curriculum.md` schreiben. Bei „keins": `**Wiki:** none` schreiben. So bleibt nur der Symlink maschinen-lokal (gitignored), die Curriculum-Zeile ist portabel/pushbar — der Nutzer editiert nie von Hand und wird nie wieder gefragt.
+   - Kein `_curriculum.md` gefunden → **einmalig aktiv fragen**: „Ich habe keine `_curriculum.md` gefunden — sie definiert Zielgruppe, Kapitelfolge und Terminologie. Soll ich sie mit dem `curriculum-architect` Skill anlegen?" Bei Nein: mit Default-Zielgruppe fortfahren (siehe quarto-lecture).
 2. **Kontext-Materialien:** `context/kapitel-{nn}/` suchen. Gefunden und nicht leer → Dateiliste zeigen, fragen ob als Quellen verwenden. Enthält der Ordner `wiki/` (second-brain-Output): diese Dateien mit **höherem Gewicht** behandeln als rohe PDFs/Notizen — Wiki-Definitionen sind kursverbindlich. `context/shared/` immer mitlesen, falls vorhanden.
+3. **Wiki-Vorwissen (nur im Wiki-Modus, sonst diesen Schritt überspringen):** Den `query wiki:`-Ablauf des `thws-wiki` Skills (Index → Grep → Synthese mit Provenienz) auf das Kapitelthema gegen den `**Wiki:**`-Pfad ausführen. Ergebnis ist ein **Wissensbriefing**, das jede Aussage trennt in *Wiki-belegt* (`[[Wikilink]]`) und *nicht im Wiki* (Eigenwissen) — diese Markierung wird in Stage 1 weitergetragen. Das Briefing geht als höchstgewichtetes Material in Stage 1 ein. Hat das Wiki zum Thema **keine** Seiten → nicht-blockierender Hinweis: „Das Wiki ist zu [Thema] noch leer — erst relevante Quellen ingesten (`update wiki`), oder ohne Wiki-Grundierung fortfahren?"
 
 ### Intake
 
@@ -65,6 +70,7 @@ Verfügbarkeit prüfen (Plannotator-Plugin: Slash-Command bzw. MCP-Tools). Nicht
 
 `quarto-lecture` SKILL.md laden und dessen Workflow **vollständig** ausführen (Schritte 1–8), mit Orchestrierungs-Hinweisen:
 
+- **Wiki-Modus:** Das Wissensbriefing (Pre-Flight 3) als höchstgewichtetes Material übergeben. **Hybrid-Regel:** wiki-belegte Definitionen/Normen sind **bindend** und überschreiben generisches Modellwissen; Didaktik, Beispiele, Aufbau und Breite kommen frei aus dem Trainingswissen. Wo eine **harte** neue Fachaussage oder Norm aus Trainingswissen ergänzt wird (im Wiki nicht belegt), dahinter einen render-unsichtbaren Marker setzen: `<!-- ergänzt (nicht im Wiki): [Begriff] -->`. Widersprüche Wiki↔Training nicht glätten, sondern im Text ausweisen. Kein Wiki-Modus → dieser Punkt entfällt.
 - Nach Schritt 4 (Architect): Gliederungs-Freigabe via Plannotator anbieten (siehe oben), bevor Schritt 5 startet.
 - Schritt 5a (Excalidraw-Dispatch), 5b (Review) und Schritt 8 (Widget-Angebot) übernimmmt die Factory — quarto-lecture überspringt sie laut eigener Skip-Regel. Excalidraw-Placeholder bleiben im Draft stehen.
 - Nach quarto-lecture Schritt 7 (Save) führt die Factory aus:
@@ -114,9 +120,14 @@ Beide Visualisierungsarten entstehen erst **nach** der Textfreigabe — so wird 
 2. [Diagramm-Name] — diagrams/kapitel-{nn}/diagram-[slug].png · [gerendert / PNG ausstehend]
 3. …
 
+### Wiki-Lücken (nur Wiki-Modus, sonst weglassen)
+- [Begriff] — aus Trainingswissen ergänzt, noch nicht im Wiki belegt
+
 ### Nächste Schritte
 → Kapitel inhaltlich prüfen · Widgets im Browser testen · quarto render kap-{nn}-{slug}.qmd
 ```
+
+**Wiki-Modus — Rückfluss:** Vor dem Summary das fertige `.qmd` nach `<!-- ergänzt (nicht im Wiki): … -->`-Markern greppen → diese Begriffe als „Wiki-Lücken" listen und anbieten: „Sollen diese Begriffe jetzt via `update wiki`/`ingest` ins Wiki aufgenommen werden?" — so wächst das Wiki beim Schreiben. Ohne Wiki-Modus entfällt der Block ersatzlos.
 
 Wenn `present_files` verfügbar: alle Output-Dateien präsentieren.
 
