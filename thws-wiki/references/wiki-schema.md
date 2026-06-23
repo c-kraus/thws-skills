@@ -126,6 +126,13 @@ nicht der Quelle. Eine Quelle darf die Seite verankern, aber:
   Schlüsselwerken ist eine Ein-Quellen-Seite ein Zwischenstand: kommt später ein weiteres Werk
   dazu → bestehende Seite **ergänzen** (`quellen:` erweitern), keine Parallelseite anlegen.
 
+**Quellenlocator** (optional, für die Lehre): Eine präzise Fundstelle darf angegeben werden, damit
+Leser die Stelle im Paper finden — aber **nur am Zitat-Bracket**, nie als Fließtext-Gerüst. Format
+Pandoc/Quarto-citeproc-kompatibel: `[@citekey, S. 77]` · `[@citekey, Gl. 1]` · `[@citekey, Tab. 9]` ·
+`[@citekey, Abschn. 4]`. Nur an **überprüfbare Spezifika** (wörtliches Zitat, konkrete Zahl, benannte
+Formel/Theorem), sparsam (~2–4 pro Seite). Quelleninterne Nummern im **Fließtext** bleiben verboten —
+der Locator reitet auf der Zitatklammer, nicht in der Prosa.
+
 **Tiefe je Abschnitt**:
 - **Definition / Einordnung**: 1 Absatz (4–6 Sätze). Was es ist, Herkunft/Entwicklung, Abgrenzung.
 - **Kernaspekte**: **3 (max. 4)** benannte `###`-Abschnitte à 3–5 Sätze, je mit konkretem Inhalt
@@ -140,7 +147,7 @@ klarer fassen als Fließtext. Prüfe bei jedem Ingest, ob **eine Tabelle** einen
 
 **Red Flags — du schreibst ein Paper-Exzerpt statt einer Konzeptseite**:
 hinter (fast) jedem Satz derselbe Citekey · „die Autoren zeigen…/das Paper" als Default-Stimme ·
-Figuren-/Fußnoten-/Abschnittsnummern einer Quelle · > 900 Wörter oder 5+ `###` · eine kanonische
+Figuren-/Fußnoten-/Abschnittsnummern einer Quelle **im Fließtext** (statt am Zitat-Bracket) · > 900 Wörter oder 5+ `###` · eine kanonische
 Theorie hängt an genau einer Quelle.
 → **Gegenmittel**: Sachverhalt voranstellen, Quelle zurücknehmen, auf 3 Kernaspekte verdichten, Tabelle erwägen.
 
