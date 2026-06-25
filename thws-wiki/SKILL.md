@@ -218,6 +218,14 @@ updated: YYYY-MM-DD
 [[@citekey1]]
 ```
 
+**Tiefe & Altitude (Konzept-Atom, nicht Paper-Exzerpt)**: Eine Seite gehört dem *Begriff*,
+nicht der Quelle. Richtwert **500–850 Wörter**, **3 (max. 4)** `###`-Kernaspekte; kanonische Lesart
+statt Nacherzählung einer Quelle; **kein Citekey hinter jedem Satz** und keine Referenten-Stimme
+(„die Autoren zeigen…"); Tabellen/Hausstil erwünscht. Präzise Fundstellen nur als Locator am
+Zitat-Bracket (`[@key, S. 77]`), nie im Fließtext. Kommt später ein weiteres Schlüsselwerk dazu →
+bestehende Seite **ergänzen** (`quellen:` erweitern), keine Parallelseite. Vollständige Kriterien +
+Red Flags: **`wiki-schema.md` → „Tiefenstandard & Altitude"**.
+
 **Normen-Annotation**: Aussagen, die direkt auf einer Rechtsnorm, einem
 Rechnungslegungsstandard oder einer technischen Norm beruhen:
 ```

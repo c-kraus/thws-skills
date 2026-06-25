@@ -105,22 +105,51 @@ updated: YYYY-MM-DD
 
 ---
 
-## Tiefenstandard
+## Tiefenstandard & Altitude
 
-Wiki-Seiten sind akademisch substanziell — nicht nur zusammenfassend,
-sondern klassifizierend, differenzierend und vernetzend.
+Wiki-Seiten sind akademisch substanziell — klassifizierend, differenzierend, vernetzend —
+aber **Konzeptseiten, keine Paper-Exzerpte**.
 
-**Definition / Einordnung**: Mindestens ein vollständiger Absatz (4–6 Sätze).
-Systematische Einordnung (Fachbereich, Konzeptfamilie), Herkunft/Entwicklung,
-Abgrenzung zu verwandten Begriffen.
+**Umfang**: Richtwert **500–850 Wörter** Fließtext. Unter ~350 ist die Seite zu dünn;
+über ~900 kippt sie in ein Literaturreferat. Lieber **3 dichte Kernaspekte als 5 dünne**.
 
-**Kernaspekte**: Mindestens 3 benannte Unterabschnitte à 3–5 Sätze.
-Konkrete Normreferenzen wo relevant. Jede zentrale Aussage belegt.
+**Konzept-Atom, nicht Paper-Exzerpt** (wichtigster Punkt): Die Seite gehört dem *Begriff*,
+nicht der Quelle. Eine Quelle darf die Seite verankern, aber:
+- Schreibe die **kanonische Lesart** des Konzepts, keine Nacherzählung eines Papers. Übernimm
+  **nicht** die quellenspezifische Notation, Figuren-/Fußnoten-/Abschnittsnummern einer einzelnen
+  Quelle („Figur 9", „Fußnote 22", „in Abschnitt 3.6").
+- Stelle den **Sachverhalt** dar, nicht das Paper. Vermeide die **Referenten-Stimme** als Default
+  („die Autoren zeigen…", „nach Aussage der Autoren", „das Paper").
+- Belege auf **Abschnitts-/Kernaussagen-Ebene**, **nicht hinter jedem Satz**. Ein Citekey pro
+  Absatz bzw. pro zentraler Aussage genügt.
+- Schreibe so, dass `quellen:` **wachsen** kann. Bei einem kanonischen Begriff mit mehreren
+  Schlüsselwerken ist eine Ein-Quellen-Seite ein Zwischenstand: kommt später ein weiteres Werk
+  dazu → bestehende Seite **ergänzen** (`quellen:` erweitern), keine Parallelseite anlegen.
 
-**Bezüge & Kontroversen**: Mindestens 2 konkrete Diskussionspunkte oder
-Abgrenzungsfragen. Gegenpositionen, offene Fragen, Praxisprobleme.
+**Quellenlocator** (optional, für die Lehre): Eine präzise Fundstelle darf angegeben werden, damit
+Leser die Stelle im Paper finden — aber **nur am Zitat-Bracket**, nie als Fließtext-Gerüst. Format
+Pandoc/Quarto-citeproc-kompatibel: `[@citekey, S. 77]` · `[@citekey, Gl. 1]` · `[@citekey, Tab. 9]` ·
+`[@citekey, Abschn. 4]`. Nur an **überprüfbare Spezifika** (wörtliches Zitat, konkrete Zahl, benannte
+Formel/Theorem), sparsam (~2–4 pro Seite). Quelleninterne Nummern im **Fließtext** bleiben verboten —
+der Locator reitet auf der Zitatklammer, nicht in der Prosa.
 
-**Verwandte Konzepte**: Mindestens 3 Wikilinks, davon mindestens einer themenübergreifend.
+**Tiefe je Abschnitt**:
+- **Definition / Einordnung**: 1 Absatz (4–6 Sätze). Was es ist, Herkunft/Entwicklung, Abgrenzung.
+- **Kernaspekte**: **3 (max. 4)** benannte `###`-Abschnitte à 3–5 Sätze, je mit konkretem Inhalt
+  (Mechanismus, Kennzahl, Argument) — nicht generischer Beschreibung. Konkrete Normreferenzen wo relevant.
+- **Bezüge & Kontroversen**: ≥2 konkrete Streit-/Abgrenzungspunkte.
+- **Verwandte Konzepte**: ≥3 Wikilinks, davon ≥1 themenübergreifend, mit Beziehungsvokabular.
+
+**Hausstil**: Das Skelett (Definition → Kernaspekte → Bezüge & Kontroversen → Verwandte Konzepte →
+Quellen) ist Standard, aber **nicht heilig** — Sektionsnamen dürfen *themengetrieben* sein, wenn der
+Stoff es trägt. **Tabellen, fette Run-in-Lead-ins und kompakte Bullets sind erwünscht**, wo sie Stoff
+klarer fassen als Fließtext. Prüfe bei jedem Ingest, ob **eine Tabelle** einen Kernaspekt besser darstellt.
+
+**Red Flags — du schreibst ein Paper-Exzerpt statt einer Konzeptseite**:
+hinter (fast) jedem Satz derselbe Citekey · „die Autoren zeigen…/das Paper" als Default-Stimme ·
+Figuren-/Fußnoten-/Abschnittsnummern einer Quelle **im Fließtext** (statt am Zitat-Bracket) · > 900 Wörter oder 5+ `###` · eine kanonische
+Theorie hängt an genau einer Quelle.
+→ **Gegenmittel**: Sachverhalt voranstellen, Quelle zurücknehmen, auf 3 Kernaspekte verdichten, Tabelle erwägen.
 
 ---
 
