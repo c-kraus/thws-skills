@@ -1,6 +1,6 @@
 ---
 name: marp-slides
-description: "Create academic presentation slides in MARP format for university lectures at THWS. Use when the user requests: (1) creating presentation slides or MARP files, (2) transforming academic content, outlines, or research notes into lecture slides, (3) slide decks for teaching with THWS styling. Also trigger when the user mentions 'Folien', 'Präsentation', 'Slides', 'MARP', '45 Minuten Vortrag', 'Vorlesungsfolien', or wants to turn any content into a slide deck — even if they don't say 'MARP' explicitly. If the user provides a lecture outline, battle plan, or research summary and seems to want slides from it, use this skill proactively."
+description: "Create academic presentation slides in MARP format for university lectures at THWS. Use when the user requests: (1) creating presentation slides or MARP files, (2) transforming academic content, outlines, or research notes into lecture slides, (3) slide decks for teaching with THWS styling. Also trigger when the user mentions 'Folien', 'Präsentation', 'Slides', 'MARP', '45 Minuten Vortrag', 'Vorlesungsfolien', or wants to turn any content into a slide deck — even if they don't say 'MARP' explicitly. If the user provides a lecture outline, battle plan, or research summary and seems to want slides from it, use this skill proactively. Exception: if the deck needs in-class quizzes, tabsets, live annotation, or should be published as a website, use the 'revealjs-slides' skill instead — same THWS design, interactive."
 ---
 
 # MARP Slides Creator
