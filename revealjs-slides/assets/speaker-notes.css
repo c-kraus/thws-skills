@@ -1,0 +1,29 @@
+/* Speaker-Notes im THWS-Look (Plugin: shafayetShafee/style-speaker-note).
+   Wird über `speaker_notes_style: speaker-notes.css` im YAML eingebunden. */
+.speaker-controls-notes,
+.reveal .speaker-notes {
+  font-family: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 20px;
+  font-weight: 300;
+  line-height: 1.45;
+  color: #1a1a1a;
+}
+
+.speaker-controls-notes strong,
+.reveal .speaker-notes strong {
+  font-weight: 700;
+  color: #ff6a00;
+}
+
+.speaker-controls-notes ul li::marker,
+.reveal .speaker-notes ul li::marker {
+  color: #ff6a00;
+}
+
+.speaker-controls-notes blockquote,
+.reveal .speaker-notes blockquote {
+  border-left: 4px solid #ff6a00;
+  padding-left: 12px;
+  margin-left: 0;
+  color: #343a40;
+}
