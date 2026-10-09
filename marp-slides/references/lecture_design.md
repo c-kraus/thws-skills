@@ -126,6 +126,7 @@ Muster aus dem Kapitel „Portfolio Theory" (`example_deck_calc_en.md`):
 - **Der Einfluss einer Größe als kleine Tabelle** (5 Zeilen, `tiny-text`), nicht als fünf Folien.
 - **Erweiterte Beispiele in den Anhang:** n-Fälle, Matrixform, Schritt-für-Schritt-Beispiele mit Excel- oder Python-Hinweis.
 - **Jede Zahl nachrechnen** (Summen, Gewichte, Quadratwurzeln, gewichtete Mittel). Fehler in Altdecks sind häufig (z. B. ungewichtete Summen).
+- **Erfundene Beispielzahlen auf Konsistenz prüfen.** Selbst gewählte Werte müssen zusammen möglich sein (Korrelation zwischen −1 und +1, Beta und Risiko passen zum Marktrisiko, Gewichte summieren sich zu 1, Wahrscheinlichkeiten zu 100 %, Bilanz geht auf). Die Konsistenzrechnung (z. B. welches ρ zu β = 1,4 bei σ = 20 % und Marktrisiko 12 % gehört) steht in der Sprecher-Notiz.
 - **Intuition vor Formel:** Ein Alltagsbild (Airline und Ölkonzern) erklärt, warum die Formel so aussieht.
 - **Formeln** in MathJax (siehe `marp_instructions.md`), ein bis zwei Blockformeln pro Folie.
 

@@ -87,6 +87,7 @@ Interaction and exercise slides take the time of 2–3 content slides each. When
 
 Before delivering, verify and correct:
 - **Arithmetic** in every example table (totals, averages, weighted values). Recompute.
+- **Invented example numbers** for internal consistency (correlations within −1…+1, weights and probabilities that add up, balance sheets that balance, beta and volatility compatible with the market volatility). Put the consistency check in the speaker notes.
 - **Quotes**: verbatim or labelled as paraphrase.
 - **Biographical and historical details**, numbers of victims, dates.
 - **Time-sensitive facts** (laws, thresholds, case status): search the web, state the date of the state, and add "Stand vor dem Einsatz prüfen" in the notes.
