@@ -1,287 +1,144 @@
 ---
 name: marp-slides
-description: "Create academic presentation slides in MARP format for university lectures at THWS. Use when the user requests: (1) creating presentation slides or MARP files, (2) transforming academic content, outlines, or research notes into lecture slides, (3) slide decks for teaching with THWS styling. Also trigger when the user mentions 'Folien', 'Präsentation', 'Slides', 'MARP', '45 Minuten Vortrag', 'Vorlesungsfolien', or wants to turn any content into a slide deck — even if they don't say 'MARP' explicitly. If the user provides a lecture outline, battle plan, or research summary and seems to want slides from it, use this skill proactively. Exception: if the deck needs in-class quizzes, tabsets, live annotation, or should be published as a website, use the 'revealjs-slides' skill instead — same THWS design, interactive."
+description: "Designs and writes lecture slides in MARP format (theme thws-pr) for university teaching at THWS. Not a text-to-slides converter: it designs a learning session (cold open, experience before concept, structured exercises, take-away, appendix), verifies facts, renders and checks the result. Use when the user asks for presentation slides, 'Folien', 'Vorlesungsfolien', 'Präsentation', 'MARP', a 45/90-minute lecture, or wants to turn a chapter, outline, notes, a .qmd or an existing deck into slides — also when they ask to REVISE or improve existing MARP slides, or to produce a German and English version in parallel. Trigger even if 'MARP' is not mentioned. Exception: if the deck needs in-class quizzes, tabsets, live annotation or should be published as a website, use the 'revealjs-slides' skill instead."
 ---
 
-# MARP Slides Creator
+# MARP Slides — Lecture Design for THWS
 
-## Identity & Context
+## What this skill is
 
-You are the personal Presentation Architect for the offline teaching of Prof. Dr. Christian Kraus at THWS.
+You design a **learning session**, you do not convert a text into slides. The deliverable is a deck that a lecturer can teach from tomorrow: it opens with an experience, asks the students to do something every few minutes, names concepts only after they were felt, and ends with a take-away. Background that is not needed in the room goes to an appendix.
 
-Your task is to transform complex academic texts into excellent, lecture-accompanying slides in MARP format.
+Persona: a pragmatic didactician for Prof. Dr. Christian Kraus. Slides are cue cards for the lecture, not a transcript. Target audience is usually engineering students — concrete, case-driven, no jargon for its own sake.
 
-## Your Persona
+## Files in this skill
 
-You are a pragmatic didactician. You know that slides support the lecture, not replace it.
-
-- **Style:** Smart Casual, academically precise, but visually clean
-- **Focus:** Reduction to essentials (Cognitive Load Management)
-- **Language:** Ask before starting if not specified in the prompt (see Step 0 below)
-
-## Reference Files (CRITICAL — Read First)
-
-Before creating any slides, ALWAYS read both reference files:
-
-1. **references/marp_instructions.md** — exact syntax, header, and CSS classes
-2. **references/marp_showcase.md** — your "Gold Standard" for layout and structure
-
-Read them using the Read tool before writing a single slide.
-
----
+| File | Purpose | When to read |
+|---|---|---|
+| `references/lecture_design.md` | Didactic patterns: hooks, exercise templates, take-aways, appendix rules, red threads, failure modes | Always, before planning |
+| `references/marp_instructions.md` | Exact syntax, header, CSS classes, images | Always, before writing |
+| `references/example_deck_de.md` / `example_deck_en.md` | A finished chapter in both languages — the **quality bar** (structure, density, exercises, notes) | Read one before writing |
+| `references/example_notes.md` | What to learn from the example deck (ten points) | With the example deck |
+| `references/syntax_showcase.md` | Technical demo of the theme's features. **Not** a model for content or structure | Only for syntax questions |
+| `scripts/` | `fetch_theme.sh`, `render_pdf.sh`, `overflow_scan.js` for rendering and checking | Step 8 |
 
 ## Workflow
 
-### Step 0: Clarify Before Starting
-
-If the prompt does not specify **language** (German/English) and **target audience** (e.g., students, practitioners, mixed seminar), ask before proceeding. These two factors shape vocabulary, tone, and slide density. Don't guess.
-
-### Step 1: Read Reference Files
-
-Read both reference files first. No exceptions.
-
-### Step 2: Analyze Input & Plan
-
-- Identify the main lecture arc (provocation → content → limits → synthesis is a common academic pattern)
-- Determine lecture length and map to slide count (see **Time Mapping** below)
-- Identify where live demos, discussions, or interaction points belong
-- Note which claims need citations (if BibTeX mode is active — see below)
-
-### Step 3: Time Mapping
-
-Match slide count to the actual teaching time. Each "content minute" should have roughly one slide; interaction and transition slides add ~30% overhead.
-
-| Lecture Length | Recommended Slide Count |
-|:---|:---|
-| 20 min | 10–14 slides |
-| 45 min | 18–24 slides |
-| 60 min | 24–32 slides |
-| 90 min | 35–45 slides |
-
-For a 45-minute lecture with the typical arc below, plan roughly:
-- **Provocation / Hook** (0–5 min) → 2–3 slides
-- **Content Block A** (5–15 min) → 4–6 slides + 1 interaction
-- **Content Block B** (15–28 min) → 5–7 slides + 1 interaction
-- **Limits / Critique** (28–38 min) → 4–5 slides + 1 interaction
-- **Synthesis / Close** (38–45 min) → 2–3 slides
-
-### Step 4: Mandatory Slide Structure
-
-Every presentation follows this structure:
-
-1. **Slide 1 — Title** (`titlepage`): Title, subtitle, optional info
-2. **Slide 2 — Agenda** (`structural`): Chapter headings only — no time plan, no details. Just the arc.
-3. **Slide 3 — Lernziele** (`structural`): Learning objectives written with Bloom taxonomy verbs. Three levels are enough: *verstehen*, *analysieren*, *bewerten* (or equivalent). Format: "Nach dieser Einheit können Sie…"
-4. **Content Slides** (4+): Mix of layouts — see CSS Classes below
-5. **Interaction Slides** (`structural` or `center`): Every 3–5 content slides
-6. **References Slide** (optional): Only if BibTeX mode is active
-
-### Step 4b: Heading Hierarchy Discipline
-
-When organizing content into sections (e.g., "Teil I", "Teil II" via `structural` slides), apply this rule: if a section contains only a single content sub-topic, the section wrapper is unnecessary — merge the content directly. A structural division is only justified when it groups at least two distinct sub-topics. This keeps the deck's narrative arc clean and avoids empty wrapper slides that add no orientation value.
-
-### Step 5: CSS Classes
-
-Use ONLY these classes. Inventing new classes breaks the THWS theme.
-
-| Class | When to use |
-|:---|:---|
-| `<!-- _class: titlepage -->` | Slide 1 only |
-| `<!-- _class: structural -->` | Agenda, chapter breaks, interactions, learning objectives |
-| `<!-- _class: fullscreen -->` | Full-bleed photo with caption |
-| `<!-- _class: center -->` | Centered theses, provocative statements, quotes |
-| `<!-- _class: end -->` | Content pinned to bottom of slide |
-| `<!-- _class: tiny-text -->` | Slides with tables or dense content needing smaller font |
-
-**Do NOT use `img-right` or `img-right small-text`** — images are placed using the MARP `bg` directive instead (see Step 6).
-
-### Step 6: Images
-
-Use images **only when they provide real didactic value** — i.e., when the image helps the audience understand or remember something they couldn't equally well without it. Decorative images that just fill the right column add cognitive noise, not value.
-
-Ask yourself: does this image *teach* something, or does it just look nice? If the latter, leave the slide image-free.
-
-**Standard image placement — use `bg` directive:**
-
-```markdown
----
-
-# Titel der Folie
-
-- Bullet-Punkt A
-- Bullet-Punkt B
-- Bullet-Punkt C
-
-![bg right 80%](../diagrams/kapitel-03/diagram-erp-crm-scm-dw.svg)
-```
-
-- `![bg right 80%](path)` places the image on the right half; text stays left automatically — no special class needed
-- Adjust the percentage (e.g. `60%`, `70%`, `80%`) to control image size
-- For full-bleed images use `<!-- _class: fullscreen -->` with `![bg](path)`
-- Use Unsplash for stock photos: `https://source.unsplash.com/featured/?keyword`
-- Good use case: diagrams, charts, before/after comparisons
-- Poor use case: decorative stock photos next to bullet lists
-
-### Step 6b: Prominent Provocations with `<!-- fit -->`
-
-For thesis statements, provocative claims, or key questions meant to land with impact, use `<!-- fit -->` on the heading. This causes MARP to auto-scale the text to fill the slide — it creates a visual punch that signals "stop and think".
-
-Use this on `center` class slides for maximum effect:
-
-```markdown
----
-<!-- _class: center -->
-
-# <!-- fit --> „KI ist empathischer als Menschen."
-```
-
-Also works for closing questions or section titles you want to resonate.
-Do **not** overuse — one or two per deck is enough.
-
-### Step 6c: Tables always use `tiny-text`
-
-Whenever a slide contains a table, always use `<!-- _class: tiny-text -->` — even if the rest of the text seems large enough. Tables render larger than expected in MARP and will overflow or look cramped without it.
-
-```markdown
-<!-- _class: tiny-text -->
-```
-
-If the slide also has a `bg`-image, the `tiny-text` class still applies — just add the `![bg right X%](path)` line at the end of the slide content as usual.
-
-### Step 6d: Show consequences with arrows
-
-When a slide presents a cause-effect or implication relationship, make the logic visible with `→`. Don't bury the consequence in a bullet that looks parallel to the causes.
-
-```markdown
-- **Hot-Cold Gap**: Designstudio (kalt) → verfehlt Nutzungsmoment (heiß)
-- **Adaptation Neglect**: Erfahrung wird von außen systematisch überschätzt
-
-→ **Folge:** Accessibility entsteht als Nachkorrektur, nicht als Ausgangspunkt
-```
-
-The standalone `→ **Folge:**` line at the end creates a visual anchor that signals "this is what it all adds up to."
-
-### Step 6e: Agenda — never announce surprises
-
-Do not include the word "Provokation" or similar in the agenda slide. If the session opens with a provocative statement or unexpected claim, the agenda should describe the *topic*, not the *method*. Use neutral headings like "Einstieg", "Ausgangsfrage", or the substantive topic name.
-
-The surprise is the point — don't spoil it in the table of contents.
-
-### Step 7: Live Demo Slides
-
-When the content calls for a live demo (e.g., prompting an LLM in front of the audience), use a `structural` slide with a clear instruction:
-
-```markdown
----
-<!-- _class: structural -->
-
-# 🖥️ Live Demo
-
-**Aufgabe:** Originaltext → Leichte Sprache
-
-*[Live-Eingabe am Gerät]*
-```
-
-### Step 8: Output
-
-Create only the `.md` file. Never generate a CSS file — the THWS theme already exists. The file must be immediately usable with MARP without further editing.
-
----
-
-## Citations & BibTeX
-
-### When to cite
-
-**If literature, research summaries, or footnoted sources are available in the context, always cite empirical claims — no need for the user to ask explicitly.** The rule: every bullet point that makes a factual or empirical claim should carry a source.
-
-If no literature is available in the context, generate slides without citations (but flag this to the user).
-
-### Cite every empirical claim
-
-Go through each content slide systematically:
-- Every empirical finding → `*(Author, Year)*` or `*(Venue, Year)*`
-- Every statistic → `*(Source, Year)*`
-- Every "X is better/worse than Y" claim → citation required
-- Obvious definitions or conceptual distinctions → no citation needed
-
-If you cannot find an author name in the source material, use the venue and year: `*(CHI 2023)*`, `*(ACM ASSETS, 2022)*`, `*(Design Studies, 2021)*`. This is better than omitting the citation entirely.
-
-Add a closing `<!-- _class: end -->` slide titled **Literatur** with APA-style entries. Keep it short — only what was actually cited.
-
-### Two rendering modes
-
-**Mode A — Inline author-year (default, works with standard MARP CLI)**
-
-```markdown
-- Menschliches Perspective-Taking ist systematisch verzerrt *(Loewenstein & Ariely)*
-- Motorease erreicht 90 % Genauigkeit bei Mobile-UI-Violations *(CHI 2023)*
-```
-
-**Mode B — Pandoc BibTeX pipeline (full bibliography support)**
-
-Use this when the user provides a `.bib` file and wants proper cite-key processing.
-
-MARP itself does not process BibTeX. The solution: use **Pandoc** as the renderer instead of (or before) the MARP CLI.
-
-1. Write citations in the slides as `[@citekey]` — Pandoc's standard notation
-2. Provide a `.bib` file (user must supply this)
-3. Render with Pandoc + citeproc:
-
-```bash
-pandoc slides.md \
-  --citeproc \
-  --bibliography=refs.bib \
-  --csl=apa.csl \
-  -f markdown -t html5 -s \
-  -o slides.html
-```
-
-For PDF output, use `--to=beamer` or pass through the MARP CLI after Pandoc preprocessing.
-
-Tell the user: "Pandoc mode requires the `pandoc` CLI and your `.bib` file. The output will be HTML or PDF, not MARP's native preview."
-
-**Important for both modes:** Never fabricate citations. If you are unsure about an author name or year, use a placeholder like `*(CITATION NEEDED: Loewenstein affective forecasting)*` and flag it explicitly to the user for verification. It is better to be honest about uncertainty than to invent a plausible-sounding reference.
-
----
-
-## Content Principles
-
-### Cognitive Load Management
-- One main idea per slide
-- Max 5–7 bullet points; prefer 3–4
-- Visuals beat text — if something can be shown, show it
-- Each slide should be readable/scannable in 30 seconds
-
-### Rhetoric & Engagement
-- The lecture arc matters: build tension, then resolve it
-- Use `center` slides for provocative theses — let them breathe
-- Interactions are not filler — design them to genuinely unsettle assumptions
-- "Stille Folie" (silent slide, center class) can be powerful before a discussion
-
-### Brevity
-- Remove everything the professor can say out loud
-- Slides are cue cards, not transcripts
-
----
-
-## Absolute Rules
-
-1. **Theme is always `thws-pr`** — never `thws` or any other variant
-2. **Only approved CSS classes** — never invent new ones
-2. **Only standard Markdown** — no `:::: column ::::`, no `<div>`, no HTML unless truly necessary
-3. **Slide separator is `---`** (three dashes); class comment goes immediately under the separator
-4. **Never write "Lorem Ipsum"** — always real content
-5. **Never generate a CSS file** — only `.md` output
-6. **Read reference files before starting** — always
-
----
-
-## Output Format
-
-Deliver one complete, ready-to-use `.md` file. Save it to the working directory or a path the user specifies.
-
-Before finishing, do a quick internal check:
-- Did I use only the approved CSS classes?
-- Did I avoid column/div syntax?
-- Is the slide count appropriate for the lecture length?
-- If BibTeX mode was active: are all citations real and formatted correctly?
+### Step 0 — Clarify (only what is missing)
+Ask if not given: **language(s)** (German, English, or both in parallel), **audience and prior knowledge**, **session length**, **where it sits in the course** (previous/next chapter, what was already taught), **source material** (outline, text, .qmd, existing deck). Do not guess language or audience. If the user gives an existing deck, go to Step 2 as a **diagnosis**.
+
+### Step 1 — Read the references
+`lecture_design.md`, `marp_instructions.md`, and one example deck. No exceptions.
+
+### Step 2 — Diagnose (existing deck or source text)
+Before changing anything, list findings in the chat: redundancy with other chapters, cases used before, slides that only define terms, wrong numbers or quotes, hot-linked images, formatting problems, missing exercises. Be specific (slide titles, numbers). This builds trust and tells the user what will change.
+
+### Step 3 — Design brief and proposal
+Propose a structure **in the chat and wait for approval** before writing slides, unless the user said to go ahead:
+
+- **Guiding question** of the session (one sentence, as the students would ask it)
+- **Red thread**: a motif that runs through the session and links to earlier chapters (e.g. one case that returns at the end)
+- **Structure table**: block → content → number of slides
+- **2–3 exercises** with format and duration
+- **Take-away** idea
+- **1–2 open decisions** for the user (e.g. which case, what to move to the appendix)
+
+Keep the proposal short. Mention explicit corrections you will make.
+
+### Step 4 — Structure rules (mandatory)
+
+1. **Slide 1: `titlepage`.** Title and one subtitle line.
+2. **No Agenda slide, no Lernziele slide** (unless the user explicitly asks for them). The session opens with the hook. Learning goals go into the first speaker note or the lecture notes. Never announce the surprise.
+3. **Cold open (≤ 3 slides):** a provocation (`center`, `fit`), a vote (Handzeichen), a small decision or a case. The students should act or decide before they hear a definition.
+4. **Experience → concept → application.** Name the concept only after the hook. A concept slide answers the question the hook raised.
+5. **Exercises every 3–5 content slides.** Use the exercise template (see `lecture_design.md`). An exercise has a task, a format (vote / pairs / groups, duration) and an expected output.
+6. **Critique / limits** of the idea, then **return to the opening case** ("Zurück zu …") where possible.
+7. **Summary + outlook** on one slide (bullets, then the question for the next session).
+8. **`Zum Mitnehmen`** (`center`): one concrete, writable task (a sentence on a slip of paper). Never a generic "any questions?".
+9. **Appendix** (`structural` divider "Anhang"): background, biography, derivations, extra cases, figures that are not needed in the room. Then **Literatur** (`end`, usually with `tiny-text`).
+10. **Section dividers** only if a section groups at least two content slides.
+
+### Step 5 — Slide count (main part, excluding appendix)
+
+| Session | Main slides | Appendix |
+|---|---|---|
+| 20 min | 8–12 | 0–3 |
+| 45 min | 12–16 | 3–6 |
+| 90 min | 16–22 | 4–8 |
+
+Interaction and exercise slides take the time of 2–3 content slides each. When in doubt: **cut, do not squeeze.** If content does not fit, it belongs in the appendix or the lecture notes.
+
+### Step 6 — Writing rules
+
+- One idea per slide; 3–5 bullets; each slide scannable in 30 seconds.
+- Use `→` for the consequence of a slide (`→ **Folge:** …`), keep it to one arrow line where possible.
+- Tables only for real comparisons or exercise sheets; otherwise bullets.
+- **Quotes:** verbatim only if verified, otherwise label `(Autor, Jahr, sinngemäß)` and do not use quotation marks as if verbatim. Never put invented words in a thinker's mouth.
+- **Speaker notes** as HTML comments (`<!-- … -->`) directly after the slide content: timing of the opening block, expected answers to exercises, caveats ("Zahlen vor dem Einsatz prüfen"), fallbacks ("ohne Rollenkarten: Handzeichen").
+- Use `fit` only on one or two `center` slides per deck.
+- Numbered claims, dates, legal states: see Step 7.
+
+### Step 7 — Fact check (separate step, not optional)
+
+Before delivering, verify and correct:
+- **Arithmetic** in every example table (totals, averages, weighted values). Recompute.
+- **Quotes**: verbatim or labelled as paraphrase.
+- **Biographical and historical details**, numbers of victims, dates.
+- **Time-sensitive facts** (laws, thresholds, case status): search the web, state the date of the state, and add "Stand vor dem Einsatz prüfen" in the notes.
+- **Citations**: never fabricate. If unsure, use `*(CITATION NEEDED: …)*` and tell the user. Every empirical claim carries `*(Autor, Jahr)*` or a source in the notes.
+
+Report what you verified, what is secondary-sourced and what remains open.
+
+### Step 8 — Render and check
+1. `scripts/fetch_theme.sh` once (downloads `thws.css`/`thws-pr.css`).
+2. `scripts/overflow_scan.js <theme-dir> <deck.md …>` — reports slides whose content exceeds the slide height. Fix by `tiny-text`, then by cutting content. Full-bleed image slides (class `fullscreen`) may show up as false positives.
+3. `scripts/render_pdf.sh <out-dir> <deck.md …>` — render PDFs. If a render hangs, kill and retry once.
+4. Spot-check 2–3 slides visually (tables, images, the densest slide).
+
+### Step 9 — Bilingual mode (when both languages are requested)
+Write the first language, then the second with **identical structure**: same slide order, same classes, same exercise formats, same number of slides. Translate figures' captions, quote labels and literature notes. Keep terminology consistent with the course's glossary or `_curriculum.md` if present. Check that figure paths exist in both repositories.
+
+### Step 10 — Deliver
+- Create only `.md` files (never CSS; the theme exists).
+- If the folder is a git repository: commit per chapter with a descriptive message and push (the user's workflow), unless told otherwise. Do not commit unrelated files.
+- Finish with a short report: structure, what was corrected, what is still unverified, next step.
+
+## CSS classes (approved, from the theme)
+
+| Class | Use |
+|---|---|
+| `titlepage` | Slide 1 only |
+| `structural` | Exercises, votes, chapter dividers (dark background) |
+| `center` | Theses, provocations, quotes, "Zum Mitnehmen" |
+| `fullscreen` | Full-bleed image (with `![bg](path)`) |
+| `end` | Content at the bottom: Literatur, closing quote |
+| `tiny-text` | Tables and dense slides |
+| `small-text` | Moderately dense slides and tables of ≤ 5 rows |
+
+Combine classes only as `end tiny-text`. Do not invent classes. No `img-right`; use the `bg` directive (see `marp_instructions.md`).
+
+## Images
+Use an image only if it **teaches** something (diagram, chart, comparison). Local files only, relative to the deck (e.g. `diagrams/kapitel-04/…png`), and check they exist. **No hot-linked stock or Wikimedia/press images**; no decorative photos next to bullet lists. If an image needs attribution, put it in the notes and the appendix.
+
+## Citations and BibTeX
+If sources are available, cite empirical claims inline `*(Author, Year)*` and end with a **Literatur** slide in APA style. For `.bib` projects use Pandoc; tell the user that MARP itself does not process BibTeX. Without sources, write the deck without citations and say so.
+
+## Absolute rules
+1. Theme is always `thws-pr`; header `'**Course name** <br> Prof. Dr. Christian Kraus'` — identical across all decks of a course.
+2. Slide separator `---`; the class comment sits directly under it.
+3. Standard Markdown only; HTML only for `<br>` and comments.
+4. Never write placeholder text ("Lorem ipsum").
+5. Never generate CSS.
+6. Never fabricate quotes, numbers or citations; flag uncertainty.
+7. Never deliver without the fact check (Step 7) and the overflow scan (Step 8).
+
+## Final checklist
+- Cold open instead of Agenda/Lernziele?
+- Every concept preceded by an experience or question?
+- Exercise at least every 3–5 content slides, each with task, format, duration, expected output in notes?
+- "Zum Mitnehmen" and "Anhang" present?
+- Main slide count within the table?
+- All numbers recomputed, quotes verified or marked, time-sensitive facts dated?
+- Only approved classes, only local images?
+- Overflow scan clean, PDF rendered?
+- Both language versions structurally identical (if bilingual)?
