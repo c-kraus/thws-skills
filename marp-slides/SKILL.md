@@ -34,6 +34,8 @@ Ask if not given: **language(s)** (German, English, or both in parallel), **audi
 ### Step 2 — Diagnose (existing deck or source text)
 Before changing anything, list findings in the chat: redundancy with other chapters, cases used before, slides that only define terms, wrong numbers or quotes, hot-linked images, formatting problems, missing exercises. Be specific (slide titles, numbers). This builds trust and tells the user what will change.
 
+Report errors in the **source text** (script, `.qmd`, notes) as a **separate finding** and change the source only if the user agrees. Typical cases: rounding that does not match, a figure attributed to the wrong study, an example that does not fit its label. Never silently correct the source and never silently copy its mistake into the slides.
+
 For an **existing deck** also check the legacy conventions (see `lecture_design.md`, section "Altdecks migrieren"): old classes (`img-right`), emojis in titles, missing course name in the header, relative image paths that no longer resolve, step-by-step calculation slides, "Questions?" as the last slide. Keep the old deck as reference and write the new deck to a new folder (e.g. `marp/`) next to it; never overwrite or delete the old file.
 
 ### Step 3 — Design brief and proposal
@@ -47,6 +49,8 @@ Propose a structure **in the chat and wait for approval** before writing slides,
 - **1–2 open decisions** for the user (e.g. which case, what to move to the appendix)
 
 Keep the proposal short. Mention explicit corrections you will make.
+
+**Series mode:** When the user asks for several chapters of one course, agree **once** on the pattern (header, course name, language, format, exercise style, appendix rule, take-away style, where files go). Then propose each further chapter with the **short** table plus only the decisions that are specific to it. Do not repeat decisions already made for the series. Still wait for approval per chapter unless the user says to go ahead for the whole series.
 
 ### Step 4 — Structure rules (mandatory)
 
@@ -78,6 +82,7 @@ Interaction and exercise slides take the time of 2–3 content slides each. When
 - Tables only for real comparisons or exercise sheets; otherwise bullets.
 - **Quotes:** verbatim only if verified, otherwise label `(Autor, Jahr, sinngemäß)` and do not use quotation marks as if verbatim. Never put invented words in a thinker's mouth.
 - **Speaker notes** as HTML comments (`<!-- … -->`) directly after the slide content: timing of the opening block, expected answers to exercises, caveats ("Zahlen vor dem Einsatz prüfen"), fallbacks ("ohne Rollenkarten: Handzeichen").
+- **Preparation (Material):** When a session needs paper or setup (slips, role cards, a split room, printed versions of a case), say so in the speaker note of the slide where it is used, starting with `Vorbereitung:` / `Preparation:`, with the exact text to print and a version **without** material. Mention it once more in the final report so the lecturer can prepare in time.
 - Use `fit` only on one or two `center` slides per deck.
 - **Quantitative content:** estimate first, then calculate; show the result **and** the formula, not every intermediate step; at most 2–3 calculation steps per slide; longer derivations and extended worked examples go to the appendix or become an exercise; give students the numbers to compute themselves; use MathJax (see `marp_instructions.md`); recompute every number (Step 7). See `lecture_design.md`, section "Rechenlastige Einheiten".
 - **Live demos and widgets:** MARP cannot embed interactive pages (no iframes). Mention the demo as an italic line (`*Live demo: open the widget "…" and change …*`) on the content slide it belongs to, or on a `structural` slide if the demo is the exercise. Put the parameters to try and the expected observation into the speaker notes. Check that the widget file exists.
@@ -99,8 +104,8 @@ Report what you verified, what is secondary-sourced and what remains open.
 
 ### Step 8 — Render and check
 1. `scripts/fetch_theme.sh` once (downloads `thws.css`/`thws-pr.css`).
-2. `scripts/overflow_scan.js <theme-dir> <deck.md …>` — reports slides whose content exceeds the slide height. Fix by `tiny-text`, then by cutting content. Full-bleed image slides (class `fullscreen`) may show up as false positives.
-3. `scripts/render_pdf.sh <out-dir> <deck.md …>` — render PDFs. If a render hangs, kill and retry once.
+2. `scripts/overflow_scan.js <theme-dir> <deck.md …>` — reports slides whose content exceeds the slide height **and render errors** (a line starting with `FEHLER`, exit code 1, e.g. a MathJax command that cannot be parsed). Fix errors first, then overflow: `tiny-text`, then cut content. Full-bleed image slides (class `fullscreen`) may show up as false positives.
+3. `scripts/render_pdf.sh <out-dir> <deck.md …>` — render PDFs. The script ends a hanging render after `RENDER_TIMEOUT` seconds (default 100) and retries once; it fails with `FEHLER` if no PDF was produced.
 4. Spot-check 2–3 slides visually (tables, images, the densest slide).
 
 ### Step 9 — Bilingual mode (when both languages are requested)

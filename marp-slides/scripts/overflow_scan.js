@@ -2,6 +2,7 @@
 // overflow_scan.js — meldet Folien, deren Inhalt über den unteren Rand hinausreicht.
 // Aufruf: node overflow_scan.js THEME_DIR datei1.md [datei2.md ...]
 // Voraussetzung: @marp-team/marp-cli global installiert (npm i -g @marp-team/marp-cli), Chrome vorhanden.
+// Rendert die Dateien in Chrome, meldet Überlauf und Renderfehler (Exit-Code 1 bei Fehler).
 // Hinweise: Vollbild-Bildfolien (class: fullscreen) können als Fehlalarm erscheinen.
 //           Schwelle: Inhalt bis weniger als 12 px vor dem Folienrand wird gemeldet.
 const fs = require('fs'), path = require('path'), { execSync } = require('child_process');
@@ -19,7 +20,18 @@ const chrome = process.env.CHROME_PATH || '/Applications/Google Chrome.app/Conte
     const marp = new Marp({ html: true, math: 'mathjax' });
     marp.themeSet.add(fs.readFileSync(path.join(themeDir, 'thws.css'), 'utf8'));
     marp.themeSet.add(fs.readFileSync(path.join(themeDir, 'thws-pr.css'), 'utf8'));
-    const { html, css } = marp.render(fs.readFileSync(f, 'utf8'));
+    // Renderfehler (z. B. MathJax) abfangen: Marp meldet sie nur auf console.error und rendert weiter.
+    const errors = [];
+    const saved = { error: console.error, warn: console.warn, log: console.log, write: process.stderr.write.bind(process.stderr) };
+    const grab = (...a) => { errors.push(a.map(String).join(' ').split('\n')[0]); };
+    console.error = grab; console.warn = grab; console.log = grab;
+    process.stderr.write = (chunk) => { errors.push(String(chunk).split('\n')[0]); return true; };
+    let rendered;
+    try { rendered = marp.render(fs.readFileSync(f, 'utf8')); } catch (e) { errors.push(String(e).split('\n')[0]); }
+    console.error = saved.error; console.warn = saved.warn; console.log = saved.log; process.stderr.write = saved.write;
+    if (errors.length) { console.log(path.basename(f) + ': FEHLER beim Rendern: ' + [...new Set(errors)].join(' | ')); process.exitCode = 1; }
+    if (!rendered) continue;
+    const { html, css } = rendered;
     fs.writeFileSync(tmp, `<!doctype html><meta charset=utf-8><base href="file://${path.dirname(path.resolve(f))}/"><style>${css}</style>${html}`);
     const page = await browser.newPage();
     await page.setViewport({ width: 1400, height: 900 });

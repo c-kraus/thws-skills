@@ -159,3 +159,19 @@ Vorgehen, wenn bereits Folien existieren:
 4. **Inhalte neu ordnen, nicht abschreiben.** Zuerst der Haken, dann Begriff, dann Übung. Vom Altdeck bleibt, was didaktisch trägt (z. B. ein gutes Rechenbeispiel).
 5. **Quelltext (.qmd, Skript) mitlesen.** Dort stehen oft Fälle, Lösungen und Widgets. Fehlen Lösungen („TODO"), selbst ableiten und in den Notizen belegen.
 
+## 14. Material und Vorbereitung für die Lehrperson
+
+Manche Einstiege brauchen Papier oder eine Raumaufteilung. Das gehört in die Sprecher-Notiz der Folie, **mit dem genauen Text zum Ausdrucken**:
+
+| Muster | Vorbereitung | Fallback ohne Material |
+|---|---|---|
+| **Versuch mit zwei Versionen** (z. B. Framing: Version A und B) | Zettel mit Version A und B drucken, zufällig verteilen, Hände getrennt zählen | Raum in zwei Hälften teilen, jede Hälfte sieht nur eine Version |
+| **Rollenkarten** (z. B. Schleier des Nichtwissens) | Karten mit Rolle, Verteilung passend zur Gruppengröße | Handzeichen als Gedankenspiel |
+| **Zettel zum Mitnehmen** | Zettel am Ausgang einsammeln, anonym | Kurze Notiz im Lernmanagementsystem |
+| **Schätzfrage** | Zettel oder Abstimmungstool, Ergebnis auf dem Board festhalten | Handzeichen mit Bereichen |
+
+Regeln:
+- Die Notiz beginnt mit `Vorbereitung:`. Beide Versionen des Textes stehen vollständig darin.
+- Ergebnisse des Originalversuchs (z. B. Prozentwerte aus der Studie) stehen mit Quelle in der Notiz, damit die Lehrperson sie mit dem eigenen Ergebnis vergleichen kann.
+- Im Abschlussbericht an den User einmal auflisten, **was vor der Stunde vorzubereiten ist**.
+

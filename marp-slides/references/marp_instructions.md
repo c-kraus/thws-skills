@@ -95,6 +95,7 @@ Als HTML-Kommentar direkt nach dem Folieninhalt (erscheint nicht in der Folie):
 
 ```markdown
 <!--
+Vorbereitung: Zettel mit Version A und B drucken (Text siehe unten). Ohne Material: Raum in zwei Hälften teilen.
 Moderation (ca. 10 min, Folien 2-4): Sofort einsteigen, keine Agenda.
 Erwartete Antworten: …
 Fallback ohne Rollenkarten: Handzeichen.
