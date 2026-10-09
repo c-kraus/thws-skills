@@ -85,6 +85,7 @@ $$\sigma_p^2 = w_A^2\sigma_A^2 + w_B^2\sigma_B^2 + \underbrace{2\,w_A w_B\,\rho_
 - Operatoren mit `\operatorname{Cov}`, Text mit `\text{...}`, Fettdruck mit `\mathbf{...}`
 - Klammern, die mitwachsen: `\left( ... \right)`
 - Währungs-Dollarzeichen kollidieren mit Inline-Mathe: `\$` schreiben oder „USD" ausschreiben
+- **Keine Nicht-ASCII-Zeichen in Befehlen wie `\mathbf{…}`** (z. B. `\mathbf{€35m}` bricht das Rendern ab). Währung und Einheiten fett **außerhalb** der Formel setzen: `$V \approx$ **€35m**`
 - Pro Folie höchstens zwei Blockformeln; eine Herleitung gehört in den Anhang
 - Nach dem Rendern mindestens eine Formelfolie ansehen, ob alles erscheint (Skript `overflow_scan.js` prüft nur die Höhe)
 
