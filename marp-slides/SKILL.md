@@ -18,6 +18,7 @@ Persona: a pragmatic didactician for Prof. Dr. Christian Kraus. Slides are cue c
 | `references/lecture_design.md` | Didactic patterns: hooks, exercise templates, take-aways, appendix rules, red threads, failure modes | Always, before planning |
 | `references/marp_instructions.md` | Exact syntax, header, CSS classes, images | Always, before writing |
 | `references/example_deck_de.md` / `example_deck_en.md` | A finished chapter in both languages — the **quality bar** (structure, density, exercises, notes) | Read one before writing |
+| `references/example_deck_calc_en.md` | A **calculation-heavy** chapter (finance, English): estimate first, result and formula on the slide, exercises, live demos, appendix for worked examples | When the content is quantitative |
 | `references/example_notes.md` | What to learn from the example deck (ten points) | With the example deck |
 | `references/syntax_showcase.md` | Technical demo of the theme's features. **Not** a model for content or structure | Only for syntax questions |
 | `scripts/` | `fetch_theme.sh`, `render_pdf.sh`, `overflow_scan.js` for rendering and checking | Step 8 |
@@ -25,13 +26,15 @@ Persona: a pragmatic didactician for Prof. Dr. Christian Kraus. Slides are cue c
 ## Workflow
 
 ### Step 0 — Clarify (only what is missing)
-Ask if not given: **language(s)** (German, English, or both in parallel), **audience and prior knowledge**, **session length**, **where it sits in the course** (previous/next chapter, what was already taught), **source material** (outline, text, .qmd, existing deck). Do not guess language or audience. If the user gives an existing deck, go to Step 2 as a **diagnosis**.
+Ask if not given: **language(s)** (German, English, or both in parallel), **audience and prior knowledge**, **session length**, **where it sits in the course** (previous/next chapter, what was already taught), **format** (live session, recorded video, self-study / online track), **source material** (outline, text, .qmd, existing deck). Do not guess language or audience. If the user gives an existing deck, go to Step 2 as a **diagnosis**.
 
 ### Step 1 — Read the references
 `lecture_design.md`, `marp_instructions.md`, and one example deck. No exceptions.
 
 ### Step 2 — Diagnose (existing deck or source text)
 Before changing anything, list findings in the chat: redundancy with other chapters, cases used before, slides that only define terms, wrong numbers or quotes, hot-linked images, formatting problems, missing exercises. Be specific (slide titles, numbers). This builds trust and tells the user what will change.
+
+For an **existing deck** also check the legacy conventions (see `lecture_design.md`, section "Altdecks migrieren"): old classes (`img-right`), emojis in titles, missing course name in the header, relative image paths that no longer resolve, step-by-step calculation slides, "Questions?" as the last slide. Keep the old deck as reference and write the new deck to a new folder (e.g. `marp/`) next to it; never overwrite or delete the old file.
 
 ### Step 3 — Design brief and proposal
 Propose a structure **in the chat and wait for approval** before writing slides, unless the user said to go ahead:
@@ -76,6 +79,8 @@ Interaction and exercise slides take the time of 2–3 content slides each. When
 - **Quotes:** verbatim only if verified, otherwise label `(Autor, Jahr, sinngemäß)` and do not use quotation marks as if verbatim. Never put invented words in a thinker's mouth.
 - **Speaker notes** as HTML comments (`<!-- … -->`) directly after the slide content: timing of the opening block, expected answers to exercises, caveats ("Zahlen vor dem Einsatz prüfen"), fallbacks ("ohne Rollenkarten: Handzeichen").
 - Use `fit` only on one or two `center` slides per deck.
+- **Quantitative content:** estimate first, then calculate; show the result **and** the formula, not every intermediate step; at most 2–3 calculation steps per slide; longer derivations and extended worked examples go to the appendix or become an exercise; give students the numbers to compute themselves; use MathJax (see `marp_instructions.md`); recompute every number (Step 7). See `lecture_design.md`, section "Rechenlastige Einheiten".
+- **Live demos and widgets:** MARP cannot embed interactive pages (no iframes). Mention the demo as an italic line (`*Live demo: open the widget "…" and change …*`) on the content slide it belongs to, or on a `structural` slide if the demo is the exercise. Put the parameters to try and the expected observation into the speaker notes. Check that the widget file exists.
 - Numbered claims, dates, legal states: see Step 7.
 
 ### Step 7 — Fact check (separate step, not optional)
@@ -86,6 +91,8 @@ Before delivering, verify and correct:
 - **Biographical and historical details**, numbers of victims, dates.
 - **Time-sensitive facts** (laws, thresholds, case status): search the web, state the date of the state, and add "Stand vor dem Einsatz prüfen" in the notes.
 - **Citations**: never fabricate. If unsure, use `*(CITATION NEEDED: …)*` and tell the user. Every empirical claim carries `*(Autor, Jahr)*` or a source in the notes.
+
+If the source text contains placeholder solutions ("TODO — sample answers"), derive and verify the answers yourself and put them in the speaker notes; tell the user which source solutions were missing.
 
 Report what you verified, what is secondary-sourced and what remains open.
 
@@ -126,7 +133,7 @@ If sources are available, cite empirical claims inline `*(Author, Year)*` and en
 ## Absolute rules
 1. Theme is always `thws-pr`; header `'**Course name** <br> Prof. Dr. Christian Kraus'` — identical across all decks of a course.
 2. Slide separator `---`; the class comment sits directly under it.
-3. Standard Markdown only; HTML only for `<br>` and comments.
+3. Standard Markdown plus MathJax for formulas; HTML only for `<br>` and comments.
 4. Never write placeholder text ("Lorem ipsum").
 5. Never generate CSS.
 6. Never fabricate quotes, numbers or citations; flag uncertainty.

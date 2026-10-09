@@ -114,3 +114,47 @@ Die Entscheidung „Hauptteil oder Anhang" trifft die Frage: *Brauchen die Studi
 - Gemeinsamer Header, gleiche Klassen, gleiche Kapitelnummerierung.
 - Rote Fäden über die Einheiten: ein Motiv, das zurückkehrt (Freiheit, Schleier, Boeing, Worst Case).
 - Beim Überarbeiten bestehender Kurse zuerst eine **Doppelungsübersicht** erstellen (welcher Fall, welche Folie, welches Rahmenwerk steht wo), dann umbauen. Wenn zwei Einheiten dieselbe Frage beantworten, zusammenlegen, wenn sie verschiedene Fragen beantworten, schärfer abgrenzen.
+
+## 11. Rechenlastige Einheiten (Finance, Rechnungswesen, Statistik)
+
+Muster aus dem Kapitel „Portfolio Theory" (`example_deck_calc_en.md`):
+
+- **Schätzen, dann rechnen.** Der Einstieg ist eine Schätzfrage mit Handzeichen („Liegt das Portfoliorisiko darunter, gleich oder darüber?"). Die Rechnung kommt danach und bestätigt oder widerlegt die Schätzung.
+- **Ergebnis und Formel auf die Folie, nicht jeden Zwischenschritt.** Eine Folie zeigt entweder die Formel mit Erklärung oder ein durchgerechnetes Beispiel in höchstens 2–3 Schritten.
+- **Ein Rechenbeispiel trägt die ganze Einheit.** Gleiche Zahlen (A und B) kehren in Einstieg, Tabelle, Übung und „Zurück zum Ausgangsfall" wieder. Keine neuen Zahlen auf jeder Folie.
+- **Studierende rechnen selbst.** Übungen geben die Formel oder die Gleichung vor und verlangen ein **Urteil** („Welche Korrelation brauchen Sie?"), nicht das Nachrechnen einer gezeigten Lösung. Erwartete Ergebnisse stehen in der Sprecher-Notiz mit Rechenweg.
+- **Der Einfluss einer Größe als kleine Tabelle** (5 Zeilen, `tiny-text`), nicht als fünf Folien.
+- **Erweiterte Beispiele in den Anhang:** n-Fälle, Matrixform, Schritt-für-Schritt-Beispiele mit Excel- oder Python-Hinweis.
+- **Jede Zahl nachrechnen** (Summen, Gewichte, Quadratwurzeln, gewichtete Mittel). Fehler in Altdecks sind häufig (z. B. ungewichtete Summen).
+- **Intuition vor Formel:** Ein Alltagsbild (Airline und Ölkonzern) erklärt, warum die Formel so aussieht.
+- **Formeln** in MathJax (siehe `marp_instructions.md`), ein bis zwei Blockformeln pro Folie.
+
+## 12. Live-Demos und Widgets
+
+Marp kann keine interaktiven Seiten einbetten. Muster:
+
+- Die Folie nennt die Demo in einer kursiven Zeile: *Live demo: open the widget "…" and move …*
+- In der Sprecher-Notiz: **Parameter zum Ausprobieren** und **erwartete Beobachtung** (z. B. „ρ von +1 auf −1 stellen: Risiko fällt von 6,6 % auf 4,2 %").
+- Ist die Demo selbst die Übung, bekommt sie eine `structural`-Folie mit Aufgabe und Zeit.
+- Vor dem Schreiben prüfen, ob die Widget-Datei existiert und was sie kann.
+
+## 13. Altdecks migrieren
+
+Vorgehen, wenn bereits Folien existieren:
+
+1. **Altdeck als Vorlage lassen.** Neue Folien in einen neuen Ordner (z. B. `marp/`), nichts überschreiben oder löschen.
+2. **Befund auflisten** (Folientitel, Zahlen): Länge, Rechenfehler, doppelte Beispiele, Agenda und „Questions?", Hotlinks.
+3. **Konventionen angleichen:**
+
+| Altdeck | Neu |
+|---|---|
+| `img-right`, `img-right small-text` | `![bg right 80%](pfad)` oder weglassen |
+| Emojis in Titeln | weglassen (konsistent mit den anderen Decks) |
+| Header ohne Kursnamen oder „Modul Name" | `'**Kursname** <br> Prof. Dr. Christian Kraus'` |
+| Bildpfad `../Assets/…` | lokale Datei im Repo, Pfad prüfen |
+| „Recap", „Excel Tip", „Step 1/2a/2b/3" als einzelne Folien | ein durchgerechnetes Beispiel, Rest in Anhang oder Übung |
+| „Questions?" als Schlussfolie | „Zum Mitnehmen" |
+
+4. **Inhalte neu ordnen, nicht abschreiben.** Zuerst der Haken, dann Begriff, dann Übung. Vom Altdeck bleibt, was didaktisch trägt (z. B. ein gutes Rechenbeispiel).
+5. **Quelltext (.qmd, Skript) mitlesen.** Dort stehen oft Fälle, Lösungen und Widgets. Fehlen Lösungen („TODO"), selbst ableiten und in den Notizen belegen.
+

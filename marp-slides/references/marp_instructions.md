@@ -68,10 +68,27 @@ Bilder nur, wenn sie etwas **erklären** (Diagramm, Vergleich, Daten). Keine Sto
 - Folgerung: eine Zeile `→ **Folge:** …` am Folienende
 - Zitate: `> Zitat` (wörtlich nur, wenn geprüft; sonst „sinngemäß")
 - Provokation: `# <!-- fit --> Text <br> mit Umbruch` auf einer `center`-Folie (ein- bis zweimal pro Deck)
-- Formeln: `$$a = b + c$$`
+- Formeln: siehe Abschnitt 5 (MathJax)
 - Gedankenstrich im Fließtext als `--`, Pfeil als `→`
 
-## 5. Sprecher-Notizen
+## 5. Formeln (MathJax)
+
+Der Header enthält `math: mathjax`. Formeln funktionieren in Folien, Listen und Tabellen.
+
+```markdown
+Inline: $\mu_p = w_A \mu_A + w_B \mu_B$
+
+Block:
+$$\sigma_p^2 = w_A^2\sigma_A^2 + w_B^2\sigma_B^2 + \underbrace{2\,w_A w_B\,\rho_{AB}\,\sigma_A\sigma_B}_{\text{diversification term}}$$
+```
+
+- Operatoren mit `\operatorname{Cov}`, Text mit `\text{...}`, Fettdruck mit `\mathbf{...}`
+- Klammern, die mitwachsen: `\left( ... \right)`
+- Währungs-Dollarzeichen kollidieren mit Inline-Mathe: `\$` schreiben oder „USD" ausschreiben
+- Pro Folie höchstens zwei Blockformeln; eine Herleitung gehört in den Anhang
+- Nach dem Rendern mindestens eine Formelfolie ansehen, ob alles erscheint (Skript `overflow_scan.js` prüft nur die Höhe)
+
+## 6. Sprecher-Notizen
 
 Als HTML-Kommentar direkt nach dem Folieninhalt (erscheint nicht in der Folie):
 
@@ -84,7 +101,7 @@ Quelle: …; Zahlen vor dem Einsatz prüfen.
 -->
 ```
 
-## 6. Technische Hinweise
+## 7. Technische Hinweise
 
 - Trenner ist `---` auf eigener Zeile; die Klasse direkt darunter.
 - In Tabellen vor und nach dem Block eine Leerzeile.
