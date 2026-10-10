@@ -1,0 +1,170 @@
+---
+title: "Teaching Note 5: Monte Carlo Simulation"
+subtitle: "Risk: An Introduction -- Vorbereitung für Dozent:in (90 min), deutsch mit englischen Fachbegriffen"
+lang: de
+format:
+  html:
+    toc: true
+    number-sections: false
+---
+
+::: {.callout-note}
+**Zweck:** Lesen Sie diese Note 20--30 Minuten vor der Vorlesung. Sie ergänzt die Folien (`marp/05_monte_carlo_simulation_slides.md`) um Ablauf, erwartete Antworten, Zahlen zum Nachschlagen, typische Rückfragen und Querverweise. Alle Zahlen wurden unabhängig nachgerechnet (Simulation mit 400.000 Läufen).
+:::
+
+## 1. Auf einen Blick
+
+| | |
+|---|---|
+| **Leitfrage** *(guiding question)* | „Der Durchschnitt sagt: Break-even. Wie riskant ist das Projekt wirklich?" |
+| **Roter Faden** *(red thread)* | Das Café: Einstiegsabstimmung (Verlustwahrscheinlichkeit, *probability of loss*) → Auflösung auf Folie 7 → Schlussfolie 13 |
+| **Lernziele** | (1) Logik von Monte Carlo erklären; (2) Verteilungen (*probability distributions*) begründet wählen; (3) Ergebnisverteilung (*output distribution*) lesen: Mittel, Standardabweichung (*standard deviation*, SD), VaR, Expected Shortfall (ES), P(NPV<0); (4) Risikotreiber (*risk drivers*) über Rangkorrelation (*rank correlation*) finden; (5) Grenzen kennen |
+| **Vorwissen** | Kapitalwert (*net present value*, NPV) und Annuitäten (*annuities*, Kap. 1--2), Normalverteilung (*normal distribution*), Standardabweichung, Value at Risk (Kap. 3), Sensitivitäts- und Szenarioanalyse (*sensitivity and scenario analysis*, Kap. 4) |
+| **Material** | Keines. Laptop mit den drei Widgets aus `widgets/05_monte_carlo/` |
+| **Folien** | 15 im Hauptteil, 4 im Anhang |
+
+## 2. Zeitplan (90 Minuten)
+
+| Min. | Folie | Block | Format |
+|---|---|---|---|
+| 0--12 | 2 | Café-Abstimmung: NPV schätzen, Verlustwahrscheinlichkeit raten | Handzeichen, Tafel |
+| 12--17 | 3 | Algorithmus in fünf Schritten (*simulation steps*) | Impuls |
+| 17--22 | 4 | Verteilungen: normal, Dreieck (*triangular*), Gleich (*uniform*) | Impuls + Widget „Distribution Explorer" |
+| 22--29 | 5 | Übung: Welche Verteilung? | Paare, 5 min |
+| 29--34 | 6 | Ein Lauf von Hand (*one run, one draw*) | Impuls |
+| 34--42 | 7 | Auflösung der Abstimmung, 10.000 Läufe | Widget live |
+| 42--47 | 8 | Ergebnis lesen: fünf Kennzahlen (*output metrics*) | Impuls |
+| 47--58 | 9 | Übung: Zwei Standorte | Gruppen, 6 min + Diskussion |
+| 58--64 | 10 | Risikotreiber (*risk drivers*, Rangkorrelation) | Impuls |
+| 64--75 | 11 | Übung: Vorhersagen, dann laufen lassen | Paare, 5 min + Widget |
+| 75--80 | 12 | Grenzen der Methode (*limitations*) | Impuls |
+| 80--90 | 13--15 | Pointe, Zusammenfassung (*summary*), Take-Away | Zettel |
+
+**Puffer:** Wenn die Zeit knapp wird, streichen Sie Folie 8 (Kennzahlen werden in Folie 7 ohnehin gelesen) und kürzen Sie Folie 6 auf den Satz „Ein Lauf ergibt einen NPV".
+
+## 3. Ablauf im Detail
+
+### Block 1 -- Einstieg (Folie 2, 12 min)
+
+- **Nicht** erklären, was Monte Carlo ist. Lassen Sie rechnen: 50.000 € × 3,9927 − 200.000 € = **−365 €**, also ≈ 0.
+- Dann die Frage: „Wie wahrscheinlich ist ein Verlust?" Antworten per Handzeichen an die Tafel schreiben (10 / 30 / 50 / 70 %).
+- **Erwartung:** Die meisten tippen auf 30 %, einige auf 10 %. Wer „50 %" sagt, hat intuitiv verstanden, dass Erwartungswert (*expected value*) 0 bei symmetrischer Verteilung eine Münze ist. Fragen Sie diese Person nach der Begründung.
+- Auflösung **erst auf Folie 7**. Halten Sie die Spannung aus.
+
+### Block 2 -- Methode und Verteilungen (Folien 3--5)
+
+- Die fünf Schritte nicht vorlesen; ein Student/eine Studentin soll sie in eigenen Worten wiedergeben.
+- Verteilungswahl: Entscheidend ist die *Begründung*, nicht die „richtige" Antwort. Die Dreieckverteilung (*triangular*) steht für „nur Expertenschätzung" (*expert estimate*), die Gleichverteilung (*uniform*) für „echte Unkenntnis", die Normalverteilung für „Daten, symmetrisch".
+- **Erwartete Antworten Übung:** Umsatz (*revenue*) normal (Lognormal erst ab σ/μ > 0,3); Kosten Dreieck; Zinssatz gleich; Lieferzeit Dreieck mit Rechtsschiefe. Nicht simuliert: die feste Investition (€200.000) und die Laufzeit.
+
+### Block 3 -- Ein Lauf, dann 10.000 (Folien 6--7)
+
+- Folie 6: Die Tabelle ist **ein** Würfelwurf. NPV = **€11.269** (der zufällig gezogene Zins ist 7,3 %).
+- Folie 7: Öffnen Sie das Widget `monte-carlo-simulator.html` mit den Voreinstellungen (200.000 / 100.000 / 15.000 / Dreieck 40-50-60k / Zins 6--10 %, 10.000 Läufe). Klicken Sie **zweimal** auf „Run": Die Zahlen wackeln um einige hundert Euro. Das ist das Stichprobenrauschen (*sampling error*), später Thema der Folie 12.
+- **Zahlen, die herauskommen sollten:** Mittel ≈ 0, SD ≈ 29.000, 5%-Perzentil ≈ −47.000, 95%-Perzentil ≈ +47.000, P(NPV<0) ≈ 50 %.
+
+### Block 4 -- Zwei Standorte (Folie 9)
+
+Das ist die wichtigste Übung. Die Pointe: **B hat die höhere SD (46.000 vs. 29.000) und trotzdem das bessere Risikoprofil** (VaR −36.000 vs. −47.000; P(Verlust) 20 % vs. 50 %). Die SD zählt Auf- und Abwärtsrisiko gleich. Fragen Sie: „Welche Zahl nehmen Sie zur Bank?" (*What would you tell the lender?*) Erwartet: Verlustwahrscheinlichkeit und VaR, nicht die SD.
+
+### Block 5 -- Vorhersagen, dann laufen lassen (Folie 11)
+
+Die Studierenden sollen **zuerst** aufschreiben, was sich bei höherer Umsatzunsicherheit (σ 15.000 → 25.000) ändert. Auflösung: Mittel **unverändert**, P(Verlust) **unverändert (50 %)**, VaR **von −47.000 auf ≈ −75.000**, SD von 29.000 auf 46.000. Die Lehre: Liegt der Erwartungswert am Break-even, ändert mehr Streuung die *Höhe* des Verlusts, nicht seine *Wahrscheinlichkeit*.
+
+## 4. Zahlen zum Nachschlagen
+
+| Größe | Wert | Anmerkung |
+|---|---|---|
+| Annuitätenfaktor (*annuity factor*) 5 Jahre, 8 % | 3,9927 | NPV bei Mittelwerten ≈ −365 € |
+| Standort A (Basis) | Mittel ≈ 0; SD ≈ 29.000; VaR 95 % ≈ −47.000; ES ≈ −59.000; P(<0) ≈ 50 % | 400.000 Läufe |
+| Standort B (Umsatz N(110k; 25k)) | Mittel ≈ 40.000; SD ≈ 46.000; VaR ≈ −36.000; ES ≈ −55.000; P(<0) ≈ 20 % | 400.000 Läufe |
+| σ = 25.000 bei sonst gleichem Café | Mittel ≈ 0; VaR ≈ −75.000; P(<0) ≈ 50 % | |
+| Umsatz mit €110k (σ 15k) | Mittel ≈ 40.000; P(<0) ≈ 8 % | |
+| Rangkorrelationen (*Spearman rank correlations*; Umsatz / Kosten / Zins) | +0,93 / −0,25 / −0,21 | Mittel der fünf Jahreswerte je Input |
+| Standardfehler des Mittels (*standard error*) | ≈ 900 € bei 1.000 Läufen; ≈ 290 € bei 10.000 | σ/√N |
+| Einzellauf Folie 6 | NPV 11.269 | Skript hatte 11.341 (korrigiert) |
+
+## 5. Typische Rückfragen und Antworten
+
+**„Warum steht im Skript nicht mehr 18.500 € Mittelwert?"** Die ursprünglichen Ergebnisse passten nicht zu den Eingaben; das Skript und das VaR-Widget sind korrigiert. Falls Studierende alte Versionen (PDF) haben, kurz darauf hinweisen.
+
+**„Warum wird der Zins nur einmal pro Lauf gezogen?"** Weil er für das ganze Projekt gilt (ein Marktzinsniveau), während Umsatz und Kosten jedes Jahr neu gezogen werden. Alternative: jedes Jahr ein eigener Zins -- das wäre ein anderes Modell.
+
+**„Sind Umsatz und Kosten nicht korreliert?"** Ja, in der Realität (Inflation, Konjunktur). Das Basismodell nimmt Unabhängigkeit an; das ist eine Grenze (Folie 12). Die Richtung hängt vom Zusammenhang ab: Bewegen sich Umsatz und Kosten gleichgerichtet, verkleinert das die Streuung des Cashflows (Var(R−C) = Var R + Var C − 2·Cov), bewegen sie sich gegenläufig, vergrößert es sie.
+
+**„Kann der Umsatz negativ werden?"** Mit μ = 100.000 und σ = 15.000 ist das ein 6,7-Sigma-Ereignis, praktisch ausgeschlossen. Bei σ/μ > 0,3 würde man die Lognormalverteilung nehmen.
+
+**„Reichen 1.000 Läufe?"** (*How many iterations?*) Für Mittelwert und Wahrscheinlichkeiten meist ja; für Perzentile (*percentiles*) im Rand (VaR 99 %) braucht man deutlich mehr. Prüfen Sie die Konvergenz (*convergence*) durch Wiederholung.
+
+**„Ist 50 % Verlustrisiko ein Grund abzulehnen?"** Nicht automatisch. Entscheidend sind Risikotragfähigkeit, Diversifikation und ob der NPV ohne Beschäftigungsnutzen berechnet wurde. Verweisen Sie auf Kap. 6: Der Zins von 8 % enthält bereits eine Risikoprämie; die Simulation zeigt zusätzlich die *Verteilung*.
+
+**„Was ist der Unterschied zu Szenarioanalyse (Kap. 4)?"** Drei handgemachte, kohärente Geschichten (*scenarios*) gegenüber tausend gezogenen Zukünften. Szenarien liefern keine Wahrscheinlichkeiten, Monte Carlo schon -- aber nur so gut wie die angenommenen Verteilungen.
+
+## 6. Fallstricke
+
+- **Excel `RAND()` rechnet bei jeder Eingabe neu.** Werte vor dem Auswerten als Zahlen einfügen oder `F9` bewusst nutzen.
+- **Falsche Parameter in `LOGNORM.INV`:** erwartet die Parameter des Logarithmus, nicht Mittel und SD (Anhang, Folie 17).
+- **Scheinpräzision (*false precision*):** „50 %" sagen, nicht „50,41 %".
+- **VaR-Vorzeichen:** Hier ist der VaR ein NPV (negativ), keine „Verlustzahl". Einheitlich bleiben.
+- **Widget-Läufe schwanken:** Das ist gewollt; nicht als Fehler erscheinen lassen.
+
+## 7. Querverweise
+
+- **Zurück zu Kap. 3 (Risk and Return):** Normalverteilung, SD, VaR; hier wird die Verteilung nicht angenommen, sondern *erzeugt*.
+- **Zurück zu Kap. 4:** Sensitivität und Tornado (dort: Ein-Faktor-Variation), Szenarien (dort drei, hier tausende); „Was bricht die Entscheidung?" wird durch Rangkorrelation systematisch beantwortet.
+- **Vorwärts zu Kap. 6:** Welcher Zins gehört in die Simulation? Der Monte-Carlo-Zins (6--10 %) ist eine Unsicherheitsbandbreite, kein Risikozuschlag.
+- **Vorwärts zu Kap. 8:** Korrelation zwischen Inputs ist das Portfolio-Thema; die Diversifikationslogik taucht dort wieder auf.
+- **Vorwärts zu Kap. 7 (Realoptionen):** Monte Carlo liefert die Volatilität des Projektwerts, die in Binomial- und Black-Scholes-Modelle eingeht.
+
+## 8. Was Sie sich noch ansehen sollten
+
+1. **Widgets** ausprobieren (10 min): `monte-carlo-simulator.html`, `var-visualizer.html` (Voreinstellung jetzt Mittel 0 / SD 29.000), `distribution-explorer.html`.
+2. **Modell in Excel nachbauen** (15 min): fünf Jahre, `NORM.INV(RAND(),100000,15000)`, Dreieck per Inversionsformel, Zins `RAND()*0.04+0.06`, 1.000 Zeilen mit Datentabelle. Dann vergleichen.
+3. **Python-Kontrollrechnung** (zum Vorzeigen oder zur Selbstkontrolle):
+
+```python
+import numpy as np
+rng = np.random.default_rng(1); N = 200_000
+r   = rng.uniform(.06, .10, N)
+rev = rng.normal(100_000, 15_000, (N, 5))
+cst = rng.triangular(40_000, 50_000, 60_000, (N, 5))
+npv = ((rev - cst) / (1 + r)[:, None] ** np.arange(1, 6)).sum(1) - 200_000
+print(npv.mean(), npv.std(), np.percentile(npv, 5), (npv < 0).mean())
+```
+
+
+## 9. Quellenbefunde (bereits im Skript korrigiert)
+
+- Café-Ergebnisse im Skript (Mittel 18.500; SD 42.300; P(Verlust) 32,4 %) folgten nicht aus den Eingaben; neu: Mittel ≈ 0; SD ≈ 29.000; ≈ 50 %.
+- Rangkorrelationen im Skript (+0,82 / −0,45 / −0,31) ersetzt durch +0,93 / −0,25 / −0,21.
+- Einzellauf: 11.269 statt 11.341.
+
+## 10. Vertiefung (geprüfte Quellen)
+
+- Metropolis, N. & Ulam, S. (1949). The Monte Carlo method. *JASA, 44*(247), 335--341. (Ursprung des Namens)
+- Hertz, D. B. (1964). Risk analysis in capital investment. *Harvard Business Review, 42*(1), 95--106. (Klassiker zur Anwendung auf Investitionen)
+- Glasserman, P. (2004). *Monte Carlo Methods in Financial Engineering.* Springer. (Lehrbuch, Anhang/Vertiefung)
+- Acerbi, C. & Tasche, D. (2002). On the coherence of expected shortfall. *Journal of Banking & Finance, 26*(7), 1487--1503. (VaR vs. ES)
+
+*Hinweis zum FRTB (Folie 18):* Der Übergang von VaR 99 % zu Expected Shortfall 97,5 % ist beschlossen; Einführungsdaten wurden mehrfach verschoben. Stand vor der Vorlesung prüfen.
+
+## 11. Begriffe auf einen Blick
+
+| Deutsch | English |
+|---|---|
+| Zufallsziehung | *random draw* |
+| Wahrscheinlichkeitsverteilung | *probability distribution* |
+| Ergebnisverteilung | *output distribution* |
+| Erwartungswert, Mittel | *expected value, mean* |
+| Standardabweichung | *standard deviation* |
+| Perzentil | *percentile* |
+| Verlustwahrscheinlichkeit | *probability of loss* |
+| Risikotreiber | *risk drivers* |
+| Rangkorrelation | *rank correlation (Spearman's ρ)* |
+| Tornado-Diagramm | *tornado chart* |
+| Sensitivitätsanalyse | *sensitivity analysis* |
+| Szenarioanalyse | *scenario analysis* |
+| Unabhängigkeit der Inputs | *independence of inputs* |
+| Scheinpräzision | *false precision* |
+| Stichprobenrauschen, Standardfehler | *sampling error, standard error* |
+| Erwarteter Fehlbetrag | *expected shortfall (ES, CVaR)* |
