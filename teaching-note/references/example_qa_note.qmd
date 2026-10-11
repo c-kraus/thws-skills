@@ -3,9 +3,13 @@ title: "Q&A-Note 1: What Is Financial Accounting?"
 subtitle: "Financial Accounting (BUA1) -- Vorbereitung auf den wöchentlichen Fragentermin (online)"
 lang: de
 format:
-  html:
+  typst:
     toc: true
     number-sections: false
+    papersize: a4
+    margin:
+      x: 2cm
+      y: 2cm
 ---
 
 ::: {.callout-note}

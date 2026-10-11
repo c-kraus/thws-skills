@@ -1,6 +1,19 @@
 # Q&A-Session-Modus (Fragentermin im Online-Studiengang)
 
-Verwenden, wenn die Sitzung **kein Vortrag** ist, sondern ein wöchentlicher Fragentermin zu einem Kapitel, das die Studierenden im Selbststudium bearbeitet haben (z. B. BUA1, Online-Track). Das Ergebnis heißt `NN_<topic>_qa_note.qmd` im Ordner `teaching_notes/` des Kurses. Gleiche Sprachregel wie im Hauptskill (Deutsch, englische Fachbegriffe kursiv in Klammern, Glossar).
+Verwenden, wenn die Sitzung **kein Vortrag** ist, sondern ein wöchentlicher Fragentermin zu einem Kapitel, das die Studierenden im Selbststudium bearbeitet haben (z. B. BUA1, Online-Track). Das Ergebnis heißt `NN_<topic>_qa_note.qmd` im Unterordner **`_teaching_notes/`** des Kurses (der Unterstrich sorgt dafür, dass Quarto den Ordner im Buchprojekt nicht mitrendert). Format: **PDF über Typst**, nicht HTML. YAML:
+
+```yaml
+format:
+  typst:
+    toc: true
+    number-sections: false
+    papersize: a4
+    margin:
+      x: 2cm
+      y: 2cm
+```
+
+Rendern: `quarto render _teaching_notes/NN_<topic>_qa_note.qmd` (PDF liegt daneben, `*.pdf` ist im Kurs-`.gitignore`, also nicht committen; vor dem Commit mit `git status` prüfen). Gleiche Sprachregel wie im Hauptskill (Deutsch, englische Fachbegriffe kursiv in Klammern, Glossar).
 
 ## Eingaben
 
