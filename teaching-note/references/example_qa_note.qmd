@@ -1,0 +1,181 @@
+---
+title: "Q&A-Note 1: What Is Financial Accounting?"
+subtitle: "Financial Accounting (BUA1) -- Vorbereitung auf den wöchentlichen Fragentermin (online)"
+lang: de
+format:
+  html:
+    toc: true
+    number-sections: false
+---
+
+::: {.callout-note}
+**Zweck:** Lesen Sie diese Note 20 Minuten vor dem Fragentermin. Sie sagt Ihnen, welche Fragen zu Kapitel 1 kommen werden, wie Sie antworten, welche Rechenbeispiele Sie parat haben und wo Studierende erfahrungsgemäß scheitern (Probeklausur SS26). Alle Zahlen wurden nachgerechnet.
+
+**Annahmen (bitte korrigieren, wenn sie nicht stimmen):** Termin 60 Minuten, live per Videokonferenz mit Chat; die Studierenden haben das Kapitel gelesen und Tutorial 1 versucht; Fragen werden vorab gesammelt (Moodle-Forum oder Umfrage) und live im Chat ergänzt.
+:::
+
+## 1. Auf einen Blick
+
+| | |
+|---|---|
+| **Kapitel** | 1 -- *What Is Financial Accounting?* (`01_what.qmd`) |
+| **Wochenfokus** | Warum es Rechnungswesen gibt, wer die Zahlen nutzt, die vier Grundannahmen, die Bilanzgleichung (*accounting equation*) |
+| **Lernziele (Curriculum 1--6)** | Informationsasymmetrie erklären; Nutzergruppen unterscheiden; Entity / Period / Going Concern / Accrual anwenden; Bilanzgleichung; vier Abschlussbestandteile |
+| **Material der Studierenden** | Kapitel, 5 Widgets, Tutorial 01 (4 Aufgaben), 10 Moodle-Fragen (CH01-Q01 bis Q10), *Further Learning* (optional) |
+| **Typische Schwachstelle** | Gewinn ≠ Cash; Eigenkapital ≠ „Geld der Eigentümer"; Bilanzgleichung mit Buchungslogik verwechseln |
+| **Vorbereitungsaufwand für Sie** | 20 min Lesen, 5 min Widgets öffnen |
+
+## 2. Ablaufvorschlag (60 Minuten)
+
+| Min. | Block | Format |
+|---|---|---|
+| 0--5 | Ankommen; Eingangsfrage als Umfrage (siehe 4.1) | Poll |
+| 5--15 | **Drei Missverständnisse** erklären: Gewinn vs. Cash; Eigenkapital; „Warum Accrual?" | kurze Erklärung am Bildschirm |
+| 15--40 | **Fragen der Studierenden** nach Priorität (vorab gesammelt, dann Chat) | Dialog |
+| 40--52 | **Live-Rechenbeispiel** RoboDesign (Abschnitt 5): Studierende nennen jeweils Konto und Wirkung im Chat | Chat, Screen-Share |
+| 52--58 | **Mini-Quiz** (2 Fragen aus 4.2) | Poll |
+| 58--60 | Ausblick auf Kapitel 2 (Doppik: warum jede Buchung zwei Seiten hat) und eine Aufgabe | Impuls |
+
+**Wenn viele Fragen kommen:** Block „Drei Missverständnisse" auf 5 Minuten kürzen und nur das Rechenbeispiel behalten.
+**Wenn kaum Fragen kommen:** Abschnitt 6 (Fragen, die Sie selbst stellen).
+
+*Tipp online:* Fragen im Chat in drei Gruppen sortieren (Verständnis / Rechnung / Prüfung) und die Verständnisfragen zuerst beantworten; Rechenfragen mit Bildschirmfreigabe vorrechnen.
+
+## 3. Erwartbare Fragen und Antworten
+
+**„Wenn die Bilanzgleichung immer stimmt, wozu braucht man dann eine Buchhaltung?"**
+Die Gleichung ist die *Invariante*, nicht die Methode. Sie sagt, dass Vermögenswerte (*assets*) immer durch Schulden (*liabilities*) oder Eigenkapital (*equity*) finanziert sind. Die Buchhaltung ist das Verfahren, das jeden Geschäftsvorfall so erfasst, dass diese Invariante nicht verletzt wird (Kapitel 2: Soll und Haben).
+
+**„Warum hat das Startup Bargeld (€11.000), aber ein negatives Ergebnis (−€9.000)?"**
+Cash ist ein Vermögenswert unter mehreren. Es kam Geld durch Eigenkapital (€15.000) und Darlehen (€20.000) herein, das ist keine Ertragsrealisierung. Das negative kumulierte Ergebnis (*retained earnings*) zeigt, dass Aufwendungen größer waren als Erträge. Kontrollrechnung: Cash-Abfluss aus dem Geschäft = Verlust −9.000 − Forderungen 5.000 + Verbindlichkeiten 2.000 = −12.000. Mit 35.000 − 12.000 (Anlagen) − 12.000 bleiben 11.000.
+
+**„Ist Eigenkapital das, was das Unternehmen wert ist?"**
+Nein. Eigenkapital ist der buchmäßige Restanspruch (*residual interest*): Vermögenswerte minus Schulden zu *Buchwerten*. Der Marktwert kann weit abweichen (Beispiel Patent: Buchwert 5.000 vs. geschätzt 800.000).
+
+**„Warum ist das Darlehen von Marcus' Vater keine Einnahme?"**
+Weil es zurückgezahlt werden muss. Es erhöht Cash und Schulden gleichermaßen, das Eigenkapital bleibt gleich. Ertrag (*revenue*) entsteht erst, wenn Leistung erbracht ist.
+
+**„Gehört Chens Garage ins Unternehmen?"**
+Das hängt von der Vereinbarung ab (siehe Flip-Card im Kapitel). Wird sie vom Unternehmen weder gemietet noch eingebracht, hat das Unternehmen sie nicht unter Kontrolle und bilanziert nichts; ökonomisch trägt Chen aber einen Kostenanteil. Merke: *Entity concept* heißt, die Beziehung explizit zu machen (Miete oder Einlage).
+
+**„Warum sind die Softwarekosten bei RoboDesign Aufwand und kein Vermögenswert?"**
+Die Lizenz gilt ein Jahr. Wird sie zu Beginn der Berichtsperiode gekauft und die Periode ist ein Jahr, ist sie am Ende vollständig verbraucht, also Aufwand. Kauft man sie mitten im Jahr, bleibt ein Teil als vorausbezahlter Aufwand (*prepaid expense*, Vermögenswert) bis zum Verbrauch. Die Musterlösung nimmt den Vollaufwand an.
+
+**„Warum IFRS und nicht HGB?"**
+Das Modul basiert auf IFRS (Konzernabschlüsse kapitalmarktorientierter Unternehmen in der EU). HGB gilt für den Einzelabschluss, Steuer- und Ausschüttungsbemessung. Die Grundkonzepte dieses Kapitels sind für beide gleich.
+
+**„Warum darf das Patent nicht mit 800.000 bilanziert werden?"**
+Selbst erstellte immaterielle Werte unterliegen IAS 38: Forschungskosten sind Aufwand, Entwicklungskosten nur bei Erfüllung strenger Kriterien aktivierbar, und eine Neubewertung ist nur bei aktivem Markt erlaubt (selten). Das Kapitel ist an dieser Stelle verkürzt („generally requires the cost model"). Prüfungsrelevant ist hier nur das Spannungsfeld *relevance* vs. *verifiability*.
+
+**„Sind es wirklich vier Abschlussbestandteile?"**
+Das Kapitel nennt vier (Bilanz, Gewinn- und Verlustrechnung, Kapitalflussrechnung, Eigenkapitalveränderungsrechnung). Nach IAS 1 gehören auch der *Anhang* (*notes*) dazu, und die GuV heißt formal *statement of profit or loss and other comprehensive income*. Für die Klausur genügen die vier.
+
+**„Kann ein profitables Unternehmen zahlungsunfähig werden?"**
+Ja (Tutorial 1, Aufgabe 4.2): Gewinn misst Erträge minus Aufwand, Cash misst Zahlungen. Forderungen, Lagerbestände und Tilgungen binden Liquidität. Die Kapitalflussrechnung zeigt das am direktesten.
+
+**„Ist Going Concern dasselbe wie Gewinn machen?"**
+Nein. Going Concern heißt nur, dass keine Liquidation absehbar ist. Ein Verlustunternehmen kann Going Concern sein; es zählt Absicht und Fähigkeit zur Fortführung.
+
+**„Wo ist die ‚Materiality'?"**
+Der Begriff steht in den *Key Terms*, wird im Kapitel aber nicht erklärt (siehe Abschnitt 9). Kurz: Eine Information ist wesentlich, wenn ihr Weglassen oder Verfälschen Entscheidungen der Nutzer beeinflussen könnte. Sie ist ein Aspekt der Relevanz.
+
+## 4. Typische Missverständnisse und Diagnosefragen
+
+### 4.1 Eingangsumfrage (Block 1)
+
+*Ein Unternehmen verkauft im Dezember auf Rechnung Waren für €10.000, der Kunde zahlt im Februar. Wie viel Gewinn gehört in das alte Jahr?* (a) 0, (b) 10.000 abzüglich Kosten, (c) nur der Teil, der bar eingegangen ist.
+**Richtig:** (b). Erträge werden realisiert, wenn die Leistung erbracht ist (Accrual). Wer (c) wählt, denkt in Cash.
+
+### 4.2 Mini-Quiz (Block 5)
+
+1. *Welche Aussage über Kapitalbewegungen ist richtig? Ein Gründer zahlt €10.000 ein.* → Vermögenswert +10.000, Eigenkapital +10.000; **kein** Ertrag.
+2. *Der Barverkauf einer Leistung über €8.000 erhöht ...* → Vermögenswerte und Eigenkapital (Gewinn) um 8.000.
+3. *Ein Darlehen wird getilgt (€5.000).* → Vermögenswerte −5.000, Schulden −5.000; kein Aufwand.
+4. *Wahr oder falsch: „Fundamentale Merkmale nützlicher Information sind Vergleichbarkeit und Zeitnähe."* → Falsch: fundamental sind Relevanz und glaubwürdige Darstellung; Vergleichbarkeit und Zeitnähe sind verstärkende Merkmale (Probeklausur-Frage).
+
+### 4.3 Fehlkonzepte
+
+| Fehlkonzept | Gegenmittel |
+|---|---|
+| „Gewinn = Cash" | Startup-Beispiel (Cash +11.000, Eigenkapitalverlust −9.000) |
+| „Ein Darlehen ist Ertrag" | Gleichung: Vermögenswerte und Schulden steigen, Eigenkapital unverändert |
+| „Eigenkapital = Marktwert" | Patentbeispiel Buchwert vs. Schätzung |
+| „Relevanz heißt fehlerfrei" | Tutorial 1.1d: *free from error* gehört zur glaubwürdigen Darstellung |
+| „Going concern = profitabel" | siehe oben |
+
+## 5. Live-Rechenbeispiel: RoboDesign GmbH
+
+Acht Geschäftsvorfälle (Kapitel, *Exercise: Transaction Analysis*). Studierende nennen je Vorfall Konto und Wirkung; Sie tragen die Gleichung nach.
+
+| Nr. | Vorfall | Cash | Equipment | Darlehen | Eigenkapital |
+|---|---|---|---|---|---|
+| 1 | Einlage 3 × 10.000 | +30.000 | | | +30.000 (Kapital) |
+| 2 | Software-Lizenz bar | −6.000 | | | −6.000 (Aufwand) |
+| 3 | Bankdarlehen | +50.000 | | +50.000 | |
+| 4 | 3D-Drucker bar | −40.000 | +40.000 | | |
+| 5 | Projekt 15.000 (10.000 bar, 5.000 auf Rechnung) | +10.000 | | | +15.000 (Ertrag), Forderung +5.000 |
+| 6 | Löhne | −8.000 | | | −8.000 |
+| 7 | Miete/Nebenkosten | −2.000 | | | −2.000 |
+| 8 | Kunde zahlt Rest | +5.000 | | | Forderung −5.000 |
+
+**Endstand:** Cash **€39.000**, Equipment €40.000, Forderungen 0 → Vermögenswerte **€79.000**. Darlehen **€50.000**. Eigenkapital **€29.000** (30.000 + 15.000 − 6.000 − 8.000 − 2.000). Kontrolle: 79.000 = 50.000 + 29.000 ✓. Ergebnis: 15.000 − 16.000 = **−1.000** (Verlust).
+
+*Achtung:* Die Musterlösung im Kapitel nennt Cash €19.000 und Vermögenswerte €59.000; das ist falsch (siehe Abschnitt 9). Zeigen Sie die korrekte Rechnung.
+
+## 6. Wenn kaum Fragen kommen
+
+- „Finden Sie einen Geschäftsvorfall aus Ihrem Alltag (Handyvertrag, Semesterbeitrag), der Vermögenswerte und Schulden gleichzeitig verändert."
+- „Wer sind die Nutzer der Abschlüsse Ihres Arbeitgebers? Was würde die Bank zuerst wissen wollen?"
+- „Wann wäre Cash-Rechnung besser als Accrual?" (Reflexionsfrage 3 im Kapitel; Antwort: Kleinstbetriebe, reine Liquiditätsplanung, Steuer-EÜR.)
+- Stakeholder-Widget öffnen und eine Gruppe wählen lassen.
+
+## 7. Verweise im Material
+
+| Frage | Abschnitt im Kapitel | Übung | Widget |
+|---|---|---|---|
+| Nutzer / Informationsbedarf | *The Users of Financial Information* | Tutorial 1.1 | `widget-stakeholder-map.html` |
+| Accrual vs. Cash | *The Accrual Concept* | Tutorial 2.2 | `widget-accrual-timeline.html` |
+| Bilanzgleichung | *The Fundamental Accounting Equation* | Tutorial 3.1--3.2 | `widget-equation-stepper.html` |
+| Geschäftsvorfälle | *Common Transactions* | Kapitelübung RoboDesign | `widget-transaction-explorer.html` |
+| Qualitative Merkmale | *The Qualitative Characteristics* | Tutorial 1.1, Moodle Q08/Q09 | `widget-ifrs-characteristics.html` |
+
+Weiterführend für Studierende: `Further_Learning/ch01_...` (Edspira-Video zu Financial vs. Managerial Accounting, IFRS Conceptual Framework Kap. 1--2, OpenStax Kap. 1--3). Nicht prüfungsrelevant.
+
+## 8. Prüfungsbezug (Probeklausur SS26, 16 Teilnehmende, Schnitt 7,0/10)
+
+- Double-Entry-Grundlagen: **74 %** richtig. Fallen: „Ein ausgeglichener Saldenbilanz-Test beweist Fehlerfreiheit" (nur 56 % richtig; richtig ist *falsch*) und die Haben-Seite bei Vorauszahlungen (50 %).
+- In der Klausurdatei (`Klausur_SS26`) sind zu Kapitel 1 u. a. enthalten: *fundamentale vs. verstärkende Merkmale*, *Anzahlung erhalten (Dr Cash / Cr Unearned revenue)*, *welche Buchung ändert die Bilanzsumme nicht*.
+- Empfehlung: Nennen Sie am Ende kurz die zwei Klausurfallen und verweisen Sie auf die Moodle-Fragen Q05--Q07.
+
+## 9. Quellenbefunde (nicht korrigiert, `.qmd` unverändert)
+
+1. **RoboDesign-Lösung ist falsch.** Kapitel nennt Cash €19.000 und Aktiva €59.000. Richtig: Cash **€39.000**, Aktiva **€79.000** (= 50.000 + 29.000). Mit 59.000 geht die Gleichung nicht auf.
+2. **Going concern und accrual als „two underlying assumptions"** (Abschnitt *Going Concern*): Das Konzeptionelle Rahmenwerk von 2018 nennt nur *going concern* als zugrunde liegende Annahme; die Periodenabgrenzung (*accrual basis*) steht in IAS 1 (Absatz 27). Absatznummern vor Gebrauch prüfen.
+3. **Consulting-Fall:** Die Lösung bucht am 1. März „die volle Verbindlichkeit €15.000", obwohl zuvor monatlich 5.000 abgegrenzt wurden. Konsistent wäre: am 1. März Umgliederung der abgegrenzten Verbindlichkeit in Lieferantenverbindlichkeit, am 31. März Zahlung. Außerdem wird bei Kalenderjahr nur Dezember (5.000) im Jahr 2024 erfasst, Jan./Feb. (10.000) in 2025.
+4. **„Materiality"** steht in den Key Terms (`Objectives`), kommt im Kapitelfließtext aber nicht vor.
+5. **Fair Value des Patents:** Der Fall sagt, IAS 38 verlange „generally" das Anschaffungskostenmodell; genauer: selbst geschaffene immaterielle Werte unterliegen den Aktivierungsvoraussetzungen, Neubewertung nur bei aktivem Markt.
+6. **Lösungen mit „TODO"** in den drei Fällen *Who Needs What?*, *Consulting Project* und *Valuation Dilemma* enthalten nur Stichworte (siehe Quelle); die Antworten oben sind ausformuliert.
+
+## 10. Normen und Quellen (vor Gebrauch prüfen)
+
+- IFRS Conceptual Framework for Financial Reporting (2018): Kapitel 1 (Zielsetzung), Kapitel 2 (qualitative Merkmale), Kapitel 4 (Definitionen von Vermögenswert, Schuld, Eigenkapital, Ertrag, Aufwand). *Absatznummern nicht verifiziert.*
+- IAS 1 *Presentation of Financial Statements*: vollständiger Abschluss, Going Concern, Accrual-Basis.
+- IAS 38 *Intangible Assets* (nur als Hintergrund zur Patentfrage).
+- Stand der Standards vor dem Termin prüfen.
+
+## 11. Begriffe auf einen Blick
+
+| Deutsch | English |
+|---|---|
+| Informationsasymmetrie | *information asymmetry* |
+| Bilanzgleichung | *accounting equation* |
+| Vermögenswert | *asset* |
+| Schuld, Verbindlichkeit | *liability* |
+| Eigenkapital | *equity* |
+| Ertrag, Aufwand | *revenue / income, expense* |
+| Periodenabgrenzung | *accrual basis* |
+| Unternehmensfortführung | *going concern* |
+| Rechnungslegungseinheit | *entity* |
+| Relevanz, glaubwürdige Darstellung | *relevance, faithful representation* |
+| Wesentlichkeit | *materiality* |
+| Gewinnrücklagen / kumuliertes Ergebnis | *retained earnings* |

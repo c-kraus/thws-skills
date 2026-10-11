@@ -1,6 +1,6 @@
 ---
 name: teaching-note
-description: "Writes a Teaching Note (Dozenten-Vorbereitungsnotiz) as .qmd for a lecture session: German prose with the key technical terms in English in italic brackets, a minute-by-minute plan, expected answers to every exercise, verified numbers, likely student questions, pitfalls, cross-references to other chapters, things to look at beforehand, and sources. Use when the user wants a note to read BEFORE a lecture, 'Teaching Note', 'Dozentennotiz', 'Vorbereitungsnotiz', 'Handreichung für die Vorlesung', 'was muss ich vor der Vorlesung wissen', or asks for such notes for all chapters of a course. Typically built from an existing MARP deck (marp-slides skill) plus the chapter .qmd. NOT for student-facing companion texts (use slides-to-notes) and NOT for slides (use marp-slides)."
+description: "Writes a Teaching Note (Dozenten-Vorbereitungsnotiz) as .qmd for a lecture session: German prose with the key technical terms in English in italic brackets, a minute-by-minute plan, expected answers to every exercise, verified numbers, likely student questions, pitfalls, cross-references to other chapters, things to look at beforehand, and sources. Use when the user wants a note to read BEFORE a lecture, 'Teaching Note', 'Dozentennotiz', 'Vorbereitungsnotiz', 'Handreichung für die Vorlesung', 'was muss ich vor der Vorlesung wissen', or asks for such notes for all chapters of a course. Two modes: LECTURE (default, minute-by-minute plan for a session with slides) and Q&A SESSION (weekly question session in an online course, e.g. BUA1; see references/qa_session_mode.md: anticipated student questions with answers, diagnostic polls, live worked example, exam pitfalls from mock-exam data). Typically built from an existing MARP deck (marp-slides skill) plus the chapter .qmd, or from the chapter, tutorials and question bank for Q&A mode. NOT for student-facing companion texts (use slides-to-notes) and NOT for slides (use marp-slides)."
 ---
 
 # Teaching Note — Lecturer Preparation for One Session
@@ -10,6 +10,11 @@ description: "Writes a Teaching Note (Dozenten-Vorbereitungsnotiz) as .qmd for a
 A teaching note is what Prof. Kraus reads 20–30 minutes before a session. It is **not** a script for students and **not** a copy of the slides. It answers: *What happens in which minute, what will students say, which number must I have ready, what can go wrong, what do I link to, and what should I look at first?*
 
 Language: **German prose, key technical terms in English in italic brackets at first use**, e.g. Standardabweichung (*standard deviation*). Add a glossary table at the end ("Begriffe auf einen Blick"). If the user asks for English only, translate and keep the same structure. Quotation marks around slide titles stay as on the slides (English).
+
+## Modes
+
+- **Lecture mode** (default): this file.
+- **Q&A-session mode**: when the session is a weekly question appointment for a self-study chapter (online track), read `references/qa_session_mode.md` and follow its section list instead of the 11 sections below. Example: `references/example_qa_note.qmd`.
 
 ## Inputs
 
