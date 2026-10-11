@@ -40,7 +40,7 @@ date: last-modified
 ---
 ```
 
-Render with the course's THWS extension (format `handout-typst`, PDF via Typst): the note folder needs its own `_extensions/` copy of the `c-kraus` extensions (copy it from `Tutorials/_extensions` or `tutorials/_extensions`; Quarto does not find the project-root copy from this folder). Level-1 headings are numbered by the template automatically: do NOT type numbers into headings. Use `::: {.merksatz}` for the opening callout. Do not commit PDFs (`*.pdf` is gitignored in the courses).
+Render with the course's THWS extension (format `handout-typst`, PDF via Typst): the note folder needs its own `_extensions/` copy of the `c-kraus` extensions (copy it from `Tutorials/_extensions` or `tutorials/_extensions`; Quarto does not find the project-root copy from this folder). Level-1 headings are numbered by the template automatically: do NOT type numbers into headings. Use `::: {.merksatz}` for the opening callout. Write quotation marks as plain ASCII pairs (straight double quotes): the Typst template turns typographic German closing quotes into wrong ones. If the table of contents makes the note too long, add `outline-depth: 1` to the YAML. Do not commit PDFs (`*.pdf` is gitignored in the courses).
 
 Start with a short merksatz box stating purpose, source deck and that all numbers were recomputed.
 
