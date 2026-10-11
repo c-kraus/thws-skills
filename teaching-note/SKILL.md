@@ -34,14 +34,15 @@ File: `teaching_notes/NN_<topic>_teaching_note.qmd` next to `chapters/` and `mar
 title: "Teaching Note N: <Chapter title>"
 subtitle: "<Course> -- Vorbereitung für Dozent:in (90 min), deutsch mit englischen Fachbegriffen"
 lang: de
-format:
-  html:
-    toc: true
-    number-sections: false
+format: handout-typst
+author: "Prof. Dr. Christian Kraus, THWS"
+date: last-modified
 ---
 ```
 
-Start with a short `{.callout-note}` stating purpose, source deck and that all numbers were recomputed.
+Render with the course's THWS extension (format `handout-typst`, PDF via Typst): the note folder needs its own `_extensions/` copy of the `c-kraus` extensions (copy it from `Tutorials/_extensions` or `tutorials/_extensions`; Quarto does not find the project-root copy from this folder). Level-1 headings are numbered by the template automatically: do NOT type numbers into headings. Use `::: {.merksatz}` for the opening callout. Do not commit PDFs (`*.pdf` is gitignored in the courses).
+
+Start with a short merksatz box stating purpose, source deck and that all numbers were recomputed.
 
 ## Required sections (in this order)
 
@@ -53,14 +54,15 @@ Start with a short `{.callout-note}` stating purpose, source deck and that all n
 6. **Fallstricke** — tool pitfalls (Excel `RAND()`), sign conventions, wrong-but-common intuitions, widget behaviour (random variation is intended).
 7. **Querverweise** — back to earlier chapters (what to recall), forward (what to seed). Name the chapter numbers and the concept.
 8. **Was Sie sich vorab ansehen sollten** — concrete list with time estimates: widgets to open (with the settings), a calculation to redo (give a short runnable Python or Excel snippet, **run it**), a document or news item to check if the topic is time-sensitive.
-9. **Quellenbefunde** — errors found in the source text that were corrected (or still open), so the lecturer knows why old PDFs differ.
+9. **Offene Punkte** — only what is still open: unverified claims, gaps in chapter/tutorial/widgets, things to research or decide. **No change history** (no old-vs-new, no 'corrected on', no dates of corrections): fixed items simply disappear from the note.
 10. **Vertiefung (geprüfte Quellen)** — only references that appear in the deck or are verified; APA style; mark time-sensitive facts (laws, thresholds) with "Stand vor der Vorlesung prüfen".
 11. **Begriffe auf einen Blick** — two-column table Deutsch / English for the terms of this chapter.
 
 ## Rules
 
 - **No invented facts, quotes or citations.** If a news example or current figure would help, say "vor der Vorlesung recherchieren", do not make one up.
-- Every number in the note must match the deck and the (corrected) chapter. If you find a mismatch, fix the note, report the discrepancy, and list it in section 9.
+- Every number in the note must match the deck and the (corrected) chapter. If you find a mismatch, fix the note, report the discrepancy to the user, and list it in section 9 only while it is still open.
+- **No change history in the note.** State facts in their correct form; never write that something was changed or corrected.
 - Run all code snippets before including them.
 - Expected answers must be complete enough that the lecturer can judge a student answer without opening the deck.
 - Keep it scannable: tables for plan/numbers, short paragraphs elsewhere; target 3–5 printed pages.

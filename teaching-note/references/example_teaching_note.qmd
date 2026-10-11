@@ -2,17 +2,16 @@
 title: "Teaching Note 5: Monte Carlo Simulation"
 subtitle: "Risk: An Introduction -- Vorbereitung für Dozent:in (90 min), deutsch mit englischen Fachbegriffen"
 lang: de
-format:
-  html:
-    toc: true
-    number-sections: false
+format: handout-typst
+author: "Prof. Dr. Christian Kraus, THWS"
+date: last-modified
 ---
 
-::: {.callout-note}
+::: {.merksatz}
 **Zweck:** Lesen Sie diese Note 20--30 Minuten vor der Vorlesung. Sie ergänzt die Folien (`marp/05_monte_carlo_simulation_slides.md`) um Ablauf, erwartete Antworten, Zahlen zum Nachschlagen, typische Rückfragen und Querverweise. Alle Zahlen wurden unabhängig nachgerechnet (Simulation mit 400.000 Läufen).
 :::
 
-## 1. Auf einen Blick
+# Auf einen Blick
 
 | | |
 |---|---|
@@ -23,7 +22,7 @@ format:
 | **Material** | Keines. Laptop mit den drei Widgets aus `widgets/05_monte_carlo/` |
 | **Folien** | 15 im Hauptteil, 4 im Anhang |
 
-## 2. Zeitplan (90 Minuten)
+# Zeitplan (90 Minuten)
 
 | Min. | Folie | Block | Format |
 |---|---|---|---|
@@ -42,36 +41,36 @@ format:
 
 **Puffer:** Wenn die Zeit knapp wird, streichen Sie Folie 8 (Kennzahlen werden in Folie 7 ohnehin gelesen) und kürzen Sie Folie 6 auf den Satz „Ein Lauf ergibt einen NPV".
 
-## 3. Ablauf im Detail
+# Ablauf im Detail
 
-### Block 1 -- Einstieg (Folie 2, 12 min)
+## Block 1 -- Einstieg (Folie 2, 12 min)
 
 - **Nicht** erklären, was Monte Carlo ist. Lassen Sie rechnen: 50.000 € × 3,9927 − 200.000 € = **−365 €**, also ≈ 0.
 - Dann die Frage: „Wie wahrscheinlich ist ein Verlust?" Antworten per Handzeichen an die Tafel schreiben (10 / 30 / 50 / 70 %).
 - **Erwartung:** Die meisten tippen auf 30 %, einige auf 10 %. Wer „50 %" sagt, hat intuitiv verstanden, dass Erwartungswert (*expected value*) 0 bei symmetrischer Verteilung eine Münze ist. Fragen Sie diese Person nach der Begründung.
 - Auflösung **erst auf Folie 7**. Halten Sie die Spannung aus.
 
-### Block 2 -- Methode und Verteilungen (Folien 3--5)
+## Block 2 -- Methode und Verteilungen (Folien 3--5)
 
 - Die fünf Schritte nicht vorlesen; ein Student/eine Studentin soll sie in eigenen Worten wiedergeben.
 - Verteilungswahl: Entscheidend ist die *Begründung*, nicht die „richtige" Antwort. Die Dreieckverteilung (*triangular*) steht für „nur Expertenschätzung" (*expert estimate*), die Gleichverteilung (*uniform*) für „echte Unkenntnis", die Normalverteilung für „Daten, symmetrisch".
 - **Erwartete Antworten Übung:** Umsatz (*revenue*) normal (Lognormal erst ab σ/μ > 0,3); Kosten Dreieck; Zinssatz gleich; Lieferzeit Dreieck mit Rechtsschiefe. Nicht simuliert: die feste Investition (€200.000) und die Laufzeit.
 
-### Block 3 -- Ein Lauf, dann 10.000 (Folien 6--7)
+## Block 3 -- Ein Lauf, dann 10.000 (Folien 6--7)
 
 - Folie 6: Die Tabelle ist **ein** Würfelwurf. NPV = **€11.269** (der zufällig gezogene Zins ist 7,3 %).
 - Folie 7: Öffnen Sie das Widget `monte-carlo-simulator.html` mit den Voreinstellungen (200.000 / 100.000 / 15.000 / Dreieck 40-50-60k / Zins 6--10 %, 10.000 Läufe). Klicken Sie **zweimal** auf „Run": Die Zahlen wackeln um einige hundert Euro. Das ist das Stichprobenrauschen (*sampling error*), später Thema der Folie 12.
 - **Zahlen, die herauskommen sollten:** Mittel ≈ 0, SD ≈ 29.000, 5%-Perzentil ≈ −47.000, 95%-Perzentil ≈ +47.000, P(NPV<0) ≈ 50 %.
 
-### Block 4 -- Zwei Standorte (Folie 9)
+## Block 4 -- Zwei Standorte (Folie 9)
 
 Das ist die wichtigste Übung. Die Pointe: **B hat die höhere SD (46.000 vs. 29.000) und trotzdem das bessere Risikoprofil** (VaR −36.000 vs. −47.000; P(Verlust) 20 % vs. 50 %). Die SD zählt Auf- und Abwärtsrisiko gleich. Fragen Sie: „Welche Zahl nehmen Sie zur Bank?" (*What would you tell the lender?*) Erwartet: Verlustwahrscheinlichkeit und VaR, nicht die SD.
 
-### Block 5 -- Vorhersagen, dann laufen lassen (Folie 11)
+## Block 5 -- Vorhersagen, dann laufen lassen (Folie 11)
 
 Die Studierenden sollen **zuerst** aufschreiben, was sich bei höherer Umsatzunsicherheit (σ 15.000 → 25.000) ändert. Auflösung: Mittel **unverändert**, P(Verlust) **unverändert (50 %)**, VaR **von −47.000 auf ≈ −75.000**, SD von 29.000 auf 46.000. Die Lehre: Liegt der Erwartungswert am Break-even, ändert mehr Streuung die *Höhe* des Verlusts, nicht seine *Wahrscheinlichkeit*.
 
-## 4. Zahlen zum Nachschlagen
+# Zahlen zum Nachschlagen
 
 | Größe | Wert | Anmerkung |
 |---|---|---|
@@ -82,11 +81,9 @@ Die Studierenden sollen **zuerst** aufschreiben, was sich bei höherer Umsatzuns
 | Umsatz mit €110k (σ 15k) | Mittel ≈ 40.000; P(<0) ≈ 8 % | |
 | Rangkorrelationen (*Spearman rank correlations*; Umsatz / Kosten / Zins) | +0,93 / −0,25 / −0,21 | Mittel der fünf Jahreswerte je Input |
 | Standardfehler des Mittels (*standard error*) | ≈ 900 € bei 1.000 Läufen; ≈ 290 € bei 10.000 | σ/√N |
-| Einzellauf Folie 6 | NPV 11.269 | Skript hatte 11.341 (korrigiert) |
+| Einzellauf Folie 6 | NPV 11.269 | gezogener Zins 7,3 % |
 
-## 5. Typische Rückfragen und Antworten
-
-**„Warum steht im Skript nicht mehr 18.500 € Mittelwert?"** Die ursprünglichen Ergebnisse passten nicht zu den Eingaben; das Skript und das VaR-Widget sind korrigiert. Falls Studierende alte Versionen (PDF) haben, kurz darauf hinweisen.
+# Typische Rückfragen und Antworten
 
 **„Warum wird der Zins nur einmal pro Lauf gezogen?"** Weil er für das ganze Projekt gilt (ein Marktzinsniveau), während Umsatz und Kosten jedes Jahr neu gezogen werden. Alternative: jedes Jahr ein eigener Zins -- das wäre ein anderes Modell.
 
@@ -100,7 +97,7 @@ Die Studierenden sollen **zuerst** aufschreiben, was sich bei höherer Umsatzuns
 
 **„Was ist der Unterschied zu Szenarioanalyse (Kap. 4)?"** Drei handgemachte, kohärente Geschichten (*scenarios*) gegenüber tausend gezogenen Zukünften. Szenarien liefern keine Wahrscheinlichkeiten, Monte Carlo schon -- aber nur so gut wie die angenommenen Verteilungen.
 
-## 6. Fallstricke
+# Fallstricke
 
 - **Excel `RAND()` rechnet bei jeder Eingabe neu.** Werte vor dem Auswerten als Zahlen einfügen oder `F9` bewusst nutzen.
 - **Falsche Parameter in `LOGNORM.INV`:** erwartet die Parameter des Logarithmus, nicht Mittel und SD (Anhang, Folie 17).
@@ -108,7 +105,7 @@ Die Studierenden sollen **zuerst** aufschreiben, was sich bei höherer Umsatzuns
 - **VaR-Vorzeichen:** Hier ist der VaR ein NPV (negativ), keine „Verlustzahl". Einheitlich bleiben.
 - **Widget-Läufe schwanken:** Das ist gewollt; nicht als Fehler erscheinen lassen.
 
-## 7. Querverweise
+# Querverweise
 
 - **Zurück zu Kap. 3 (Risk and Return):** Normalverteilung, SD, VaR; hier wird die Verteilung nicht angenommen, sondern *erzeugt*.
 - **Zurück zu Kap. 4:** Sensitivität und Tornado (dort: Ein-Faktor-Variation), Szenarien (dort drei, hier tausende); „Was bricht die Entscheidung?" wird durch Rangkorrelation systematisch beantwortet.
@@ -116,9 +113,9 @@ Die Studierenden sollen **zuerst** aufschreiben, was sich bei höherer Umsatzuns
 - **Vorwärts zu Kap. 8:** Korrelation zwischen Inputs ist das Portfolio-Thema; die Diversifikationslogik taucht dort wieder auf.
 - **Vorwärts zu Kap. 7 (Realoptionen):** Monte Carlo liefert die Volatilität des Projektwerts, die in Binomial- und Black-Scholes-Modelle eingeht.
 
-## 8. Was Sie sich noch ansehen sollten
+# Was Sie sich noch ansehen sollten
 
-1. **Widgets** ausprobieren (10 min): `monte-carlo-simulator.html`, `var-visualizer.html` (Voreinstellung jetzt Mittel 0 / SD 29.000), `distribution-explorer.html`.
+1. **Widgets** ausprobieren (10 min): `monte-carlo-simulator.html`, `var-visualizer.html` (Voreinstellung Mittel 0 / SD 29.000), `distribution-explorer.html`.
 2. **Modell in Excel nachbauen** (15 min): fünf Jahre, `NORM.INV(RAND(),100000,15000)`, Dreieck per Inversionsformel, Zins `RAND()*0.04+0.06`, 1.000 Zeilen mit Datentabelle. Dann vergleichen.
 3. **Python-Kontrollrechnung** (zum Vorzeigen oder zur Selbstkontrolle):
 
@@ -133,13 +130,12 @@ print(npv.mean(), npv.std(), np.percentile(npv, 5), (npv < 0).mean())
 ```
 
 
-## 9. Quellenbefunde (bereits im Skript korrigiert)
+# Offene Punkte
 
-- Café-Ergebnisse im Skript (Mittel 18.500; SD 42.300; P(Verlust) 32,4 %) folgten nicht aus den Eingaben; neu: Mittel ≈ 0; SD ≈ 29.000; ≈ 50 %.
-- Rangkorrelationen im Skript (+0,82 / −0,45 / −0,31) ersetzt durch +0,93 / −0,25 / −0,21.
-- Einzellauf: 11.269 statt 11.341.
+- **FRTB (Folie 18, Anhang):** Der Übergang von VaR 99 % zu Expected Shortfall 97,5 % ist beschlossen, die Einführungsdaten wurden mehrfach verschoben; Stand vor der Vorlesung prüfen.
+- **Schwelle „Lognormal erst ab σ/μ > 0,3":** Faustregel ohne Quellenangabe; vor der Vorlesung belegen oder als Faustregel kennzeichnen.
 
-## 10. Vertiefung (geprüfte Quellen)
+# Vertiefung (geprüfte Quellen)
 
 - Metropolis, N. & Ulam, S. (1949). The Monte Carlo method. *JASA, 44*(247), 335--341. (Ursprung des Namens)
 - Hertz, D. B. (1964). Risk analysis in capital investment. *Harvard Business Review, 42*(1), 95--106. (Klassiker zur Anwendung auf Investitionen)
@@ -148,7 +144,7 @@ print(npv.mean(), npv.std(), np.percentile(npv, 5), (npv < 0).mean())
 
 *Hinweis zum FRTB (Folie 18):* Der Übergang von VaR 99 % zu Expected Shortfall 97,5 % ist beschlossen; Einführungsdaten wurden mehrfach verschoben. Stand vor der Vorlesung prüfen.
 
-## 11. Begriffe auf einen Blick
+# Begriffe auf einen Blick
 
 | Deutsch | English |
 |---|---|

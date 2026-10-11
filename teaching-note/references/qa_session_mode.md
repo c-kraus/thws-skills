@@ -1,17 +1,6 @@
 # Q&A-Session-Modus (Fragentermin im Online-Studiengang)
 
-Verwenden, wenn die Sitzung **kein Vortrag** ist, sondern ein wöchentlicher Fragentermin zu einem Kapitel, das die Studierenden im Selbststudium bearbeitet haben (z. B. BUA1, Online-Track). Das Ergebnis heißt `NN_<topic>_qa_note.qmd` im Unterordner **`_teaching_notes/`** des Kurses (der Unterstrich sorgt dafür, dass Quarto den Ordner im Buchprojekt nicht mitrendert). Format: **PDF über Typst**, nicht HTML. YAML:
-
-```yaml
-format:
-  typst:
-    toc: true
-    number-sections: false
-    papersize: a4
-    margin:
-      x: 2cm
-      y: 2cm
-```
+Verwenden, wenn die Sitzung **kein Vortrag** ist, sondern ein wöchentlicher Fragentermin zu einem Kapitel, das die Studierenden im Selbststudium bearbeitet haben (z. B. BUA1, Online-Track). Das Ergebnis heißt `NN_<topic>_qa_note.qmd` im Unterordner **`_teaching_notes/`** des Kurses (der Unterstrich sorgt dafür, dass Quarto den Ordner im Buchprojekt nicht mitrendert). Format: **PDF über Typst mit der THWS-Extension** (`format: handout-typst`), nicht HTML. YAML-Kopf wie im Hauptskill (`format: handout-typst`, `author`, `date: last-modified`). Der Ordner `_teaching_notes/` braucht eine eigene Kopie von `_extensions/` (aus `tutorials/_extensions` kopieren; Quarto findet die Kopie im Projektwurzelverzeichnis von hier aus nicht). Überschriften ohne Nummern schreiben (das Template nummeriert), Eröffnungsbox als `::: {.merksatz}`.
 
 Rendern: `quarto render _teaching_notes/NN_<topic>_qa_note.qmd` (PDF liegt daneben, `*.pdf` ist im Kurs-`.gitignore`, also nicht committen; vor dem Commit mit `git status` prüfen). Gleiche Sprachregel wie im Hauptskill (Deutsch, englische Fachbegriffe kursiv in Klammern, Glossar).
 
@@ -35,7 +24,7 @@ Dauer (Default 60 min), Plattform (Videokonferenz mit Chat), Vorlauf (Fragen vor
 6. **Wenn kaum Fragen kommen**: 3--4 Aktivierungsfragen oder Aufgaben.
 7. **Verweise im Material**: Tabelle Frage -> Kapitelabschnitt -> Tutorial-Aufgabe -> Widget/Moodle-Frage.
 8. **Prüfungsbezug**: Fehlerquoten aus Probeklausur/Klausur zum Kapitel, Klausurfallen, Hinweis, welche Moodle-Fragen als Übung taugen. Keine Zahlen erfinden; wenn keine Daten vorliegen, schreiben.
-9. **Quellenbefunde**: Fehler und Unschärfen im Kapitel, in den Lösungen und in den Tutorials (nicht korrigieren, außer der Nutzer bittet darum).
+9. **Offene Punkte**: nur, was noch offen ist (ungeprüfte Behauptungen, Lücken in Kapitel/Tutorial/Widgets, Recherche- und Entscheidungsbedarf). **Keine Änderungshistorie** in der Note (kein alt/neu, kein korrigiert-am-Vermerk); Behobenes verschwindet.
 10. **Normen und Quellen** (vor Gebrauch prüfen): Standards mit Namen; Absatznummern nur, wenn verifiziert, sonst kennzeichnen.
 11. **Begriffe auf einen Blick**: Deutsch/Englisch.
 
