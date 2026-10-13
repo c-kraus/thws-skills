@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{{TITLE}}</title>
+<title>Arcade</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: #05051a; color: #f4f4ff; font-family: 'Courier New', Courier, monospace; padding: 8px; }
@@ -40,16 +40,17 @@
 <body>
 <div class="wrap">
   <div class="screen">
-    <canvas id="cv" width="640" height="480" role="img" aria-label="{{TITLE}} game board"></canvas>
+    <canvas id="cv" width="640" height="480" role="img" aria-label="Game board"></canvas>
     <div id="overlay"></div>
   </div>
   <div id="msg" role="status" aria-live="polite">Feedback appears here after every move.</div>
   <div class="pad" aria-label="On-screen controls">{{PAD}}</div>
   <div class="bar">
     <button class="tog" id="muteBtn">🔇 Sound off</button>
+    <button class="tog" id="langBtn">🌐 Deutsch</button>
     <button class="tog" id="slowBtn">🐢 Slow mode: off</button>
   </div>
-  <div class="hint">{{KEYS}} · P = pause</div>
+  <div class="hint" id="hint"></div>
 </div>
 <script>
 {{DATA}}
