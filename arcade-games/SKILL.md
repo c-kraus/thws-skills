@@ -1,6 +1,6 @@
 ---
 name: arcade-games
-description: "Builds small arcade-style knowledge-check games (Space-Invaders shooter, falling-cards sorter, Frogger river crossing, Pac-Man maze, Breakout) as standalone single-file bilingual (German/English) HTML for e-learning gimmicks. Content comes from verified course material (chapters, slides, Moodle question banks); every item carries a short explanation. Output goes into a `Spiele/` folder of the course repo, NOT embedded in the chapters. Use when the user asks for 'Spiele', 'Arcade', 'Wissenskontrollspiel', 'Quiz-Spiel', 'Gamification', 'Gimmick fürs eLearning', or 'ein Spiel zu Kapitel X'."
+description: "Builds small arcade-style knowledge-check games (Space-Invaders shooter, falling-cards sorter, Frogger river crossing, Pac-Man maze, Breakout, timing meter) as standalone single-file bilingual (German/English) HTML for e-learning gimmicks. Content comes from verified course material (chapters, slides, Moodle question banks); every item carries a short explanation. Output goes into a `Spiele/` folder of the course repo, NOT embedded in the chapters. Use when the user asks for 'Spiele', 'Arcade', 'Wissenskontrollspiel', 'Quiz-Spiel', 'Gamification', 'Gimmick fürs eLearning', or 'ein Spiel zu Kapitel X'."
 ---
 
 # Arcade Games for Knowledge Checks (engine v2, bilingual)
@@ -18,7 +18,7 @@ Retro-arcade mini-games that test a chapter's key ideas. One game = one self-con
 
 - `engine/template.html`, `engine/core.js`: page shell and shared engine (input, sound, storage, HUD, overlays, language switch, end screen with review list, main loop).
 - `engine/games/{invaders,drop,hopper,maze,breakout}.js`: the five mechanics. Each contains the generic strings in both languages (`GT`) and the structure of the data it expects (header comment).
-- `engine/build.py`: `python3 engine/build.py --type invaders|drop|hopper|maze|breakout --data Spiele/_src/NN_x.data.js --out Spiele/NN_x_type.html`
+- `engine/build.py`: `python3 engine/build.py --type invaders|drop|hopper|maze|breakout|meter --data Spiele/_src/NN_x.data.js --out Spiele/NN_x_type.html`
 - `examples/sample_*.js`: minimal bilingual data fixtures for each type (test content, not course content).
 
 ## Data file contract
@@ -35,6 +35,7 @@ const DATA = { en: { title, subtitle, keys, ...content }, de: { title, subtitle,
 | drop | `levels: [{ name, lanes: ['A','B',...] (2–5), items: [[card, laneIndex, why], ...] (>= 8) }]` (1–3 levels) |
 | hopper | `rounds: [{ name, rows: [{ prompt, options: [{label, ok, why}, ...] (>= 3, exactly one ok) }] (6–8 rows) }]` |
 | maze | `rounds: [{ target, items: [{label, ok, why}, ...] (4–5 ok + 4–6 wrong, <= 12, labels <= 22 characters) }]` (3 rounds) |
+| meter | `axis: ['TOO LITTLE','TOO MUCH']`, `rounds: [{ situation, mean: 0-4, options: [{label, why} x5] }]` (>= 8 rounds, `mean` varied across rounds; a marker swings over the 5 zones and is stopped; neighbouring zone = "close") |
 | breakout | `prompts: [{ prompt, options: [{label, ok, why}, ...] (>= 4, exactly one ok) }]` (>= 8) |
 
 ## Choosing the mechanic
@@ -46,6 +47,7 @@ const DATA = { en: { title, subtitle, keys, ...content }, de: { title, subtitle,
 | Steps in order, or situation → category | hopper |
 | Collect everything that fits a category, avoid the rest | maze |
 | Match a question or definition to the right answer | breakout |
+| Find the appropriate degree between too little and too much (virtue as the mean, proportionate response) | meter |
 | End of course | invaders with statements from all chapters ("Boss Level") |
 
 ## Workflow
@@ -57,5 +59,6 @@ const DATA = { en: { title, subtitle, keys, ...content }, de: { title, subtitle,
    - drop: set `lane = card.lane` (perfect) or another lane (bad).
    - hopper: set `frog.x` to the centre of the ok log (`logX(row, log.k) + LOG_W/2`) and set `pressed.up = true` before each `update`; skip steps when the log is off-screen.
    - maze: BFS path to the next ok item avoiding wrong items (call `tryMove` with `moveCd = 0`); the engine guarantees that wrong items can be avoided.
+   - meter: set `phase` so that the marker is over the mean zone (`phase = Math.asin((zoneCentre - W/2)/(W/2-14))`), set `pressed.fire = true`, call `update`; call `update(2)` to move to the next round.
    - breakout: `launch()` once, then teleport the ball under the target brick; the bad player targets wrong bricks.
 4. Commit in the course repo (only `Spiele/`); do not touch chapters. Report the items for proofreading.
