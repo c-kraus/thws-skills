@@ -96,7 +96,8 @@ def main():
             ignore = {l.strip() for l in f if l.strip() and not l.startswith("#")}
 
     remote = {s["name"]: s for s in manifest.get("skills", [])
-              if s.get("creatorType") == "user" and s["name"] not in ignore}
+              if s.get("creatorType") == "user" and s.get("enabled", True)
+              and s["name"] not in ignore}
     local = {n: os.path.join(LOCAL_DIR, n) for n in os.listdir(LOCAL_DIR)
              if n not in ignore and os.path.isfile(os.path.join(LOCAL_DIR, n, "SKILL.md"))}
 
