@@ -115,3 +115,19 @@ Skills werden von Claude Code automatisch erkannt sobald der Symlink in `~/.clau
 ---
 
 
+
+---
+
+## Abgleich mit claude.ai
+
+Die Repos sind maßgeblich, claude.ai erhält Kopien (Upload über *Anpassungen → Skills → Hinzufügen → Skill hochladen*, „Hochladen und ersetzen“ behält die Versionshistorie).
+
+`tools/skill-sync-check.py` vergleicht jeden Skill in `~/.claude/skills` mit der Kopie, die die Claude-Desktop-App von deinen claude.ai-Skills anlegt, und meldet je Skill: *gleich*, *Repo neuer* (hochladen), *claude.ai neuer* (ins Repo holen) oder *nur claude.ai*.
+
+```bash
+python3 tools/skill-sync-check.py          # vollständiger Bericht
+python3 tools/skill-sync-check.py --all    # inkl. Skills, die nur lokal existieren
+python3 tools/skill-sync-check.py --hook   # nur Abweichungen (für den SessionStart-Hook)
+```
+
+Als SessionStart-Hook in `~/.claude/settings.json` meldet der Check Abweichungen beim Start jeder Claude-Code-Session. Skills, die bewusst nicht abgeglichen werden, kommen zeilenweise in `~/.claude/skill-sync-ignore`. Die Kopie der Desktop-App wird erst nach deren nächster Synchronisierung aktuell — frische Uploads erscheinen also ggf. noch als „Repo neuer“.
