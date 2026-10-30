@@ -52,7 +52,11 @@ Jedes Kriterium erhält eine Teilnote (1.0–5.0) und wird mit dem Gewicht multi
 
 ## Workflow
 
-### Schritt 1: Arbeit analysieren
+Dieser Skill arbeitet in zwei Phasen mit einem **Haltepunkt** dazwischen. Erstelle die .qmd-Datei erst, wenn der Nutzer die Teilnoten freigegeben hat.
+
+### Phase 1: Analyse und Notenvorschlag
+
+#### Schritt 1: Arbeit analysieren
 
 Lese die PDF-Datei vollständig. Extrahiere:
 - Titel, Art der Arbeit (Bachelor/Master), Seitenanzahl (ohne Anhang)
@@ -61,11 +65,38 @@ Lese die PDF-Datei vollständig. Extrahiere:
 - Wichtigste Quellen (Repräsentativität, Aktualität)
 - Formale Auffälligkeiten (Zitationsstil, Fehlerquote)
 
-### Schritt 2: Kriterien einzeln bewerten
+#### Schritt 2: Teilnoten bestimmen
 
-Gehe die 6 Kriterien durch. Vergib für jedes eine Teilnote (1,0–5,0) und notiere **konkrete Textbelege** (z. B. „Kapitel 3.2 enthält keine methodische Begründung für die Stichprobengröße"). Vermeide Phrasen wie „insgesamt solide" oder „gut gelungen" ohne Substanz dahinter.
+Gehe die 6 Kriterien durch. Vergib für jedes eine Teilnote (1,0–5,0) und halte den zentralen Befund in einem knappen Satz fest. Notiere dir dazu **konkrete Textbelege** (z. B. „Kapitel 3.2 enthält keine methodische Begründung für die Stichprobengröße") für das spätere Gutachten. Vermeide Phrasen wie „insgesamt solide" ohne Substanz dahinter.
 
-### Schritt 3: Gewichtete Gesamtnote berechnen
+#### Schritt 3: Notenvorschlag präsentieren und auf Freigabe warten
+
+**STOPP — noch keine .qmd schreiben.** Präsentiere die vorläufigen Teilnoten im Chat als kompakte Übersicht und frage nach Freigabe oder Korrekturen. Nutze exakt dieses Format:
+
+---
+**Notenvorschlag für: [Titel der Arbeit]**
+
+| Kriterium | Gewicht | Note | Begründung (1 Satz) |
+|---|---|---|---|
+| Relevanz | 20 % | X,X | … |
+| Objektivität | 20 % | X,X | … |
+| Nachvollziehbarkeit | 20 % | X,X | … |
+| Aktualität | 15 % | X,X | … |
+| Übersichtlichkeit | 15 % | X,X | … |
+| Formale Korrektheit | 10 % | X,X | … |
+| **Gewichtete Note** | **100 %** | **X,X** | |
+
+Bitte bestätigen Sie die Teilnoten oder geben Sie Korrekturen an — z. B. „Nachvollziehbarkeit → 2,0" oder „Formale Korrektheit bleibt, Objektivität auf 1,7". Dann erstelle ich das Gutachten.
+
+---
+
+Warte auf die Antwort des Nutzers. Wenn der Nutzer einzelne Noten anpasst, übernimm die Korrekturen, berechne die gewichtete Gesamtnote neu und bestätige kurz die finale Notenübersicht, bevor du mit Phase 2 beginnst.
+
+### Phase 2: Gutachten erstellen
+
+#### Schritt 4: Gewichtete Gesamtnote finalisieren
+
+Verwende ausschließlich die vom Nutzer freigegebenen Teilnoten. Berechne:
 
 ```
 Note = Σ (Teilnote_i × Gewicht_i)
@@ -73,11 +104,11 @@ Note = Σ (Teilnote_i × Gewicht_i)
 
 Runde auf die nächste gültige Hochschulnote (1,0 / 1,3 / 1,7 / 2,0 / 2,3 / 2,7 / 3,0 / 3,3 / 3,7 / 4,0 / 5,0).
 
-Wenn das Ergebnis knapp zwischen zwei Notenstufen liegt (< 0,15 Differenz zur Grenze), prüfe die Grenzfälle: Gibt es ein Kriterium mit herausragender Leistung oder einem k.o.-Mangel, der die Tendenz kippen sollte?
+Wenn das Ergebnis knapp zwischen zwei Notenstufen liegt (< 0,15 Differenz zur Grenze), prüfe: Gibt es ein Kriterium mit herausragender Leistung oder einem k.o.-Mangel, der die Tendenz kippen sollte?
 
-### Schritt 4: .qmd-Datei schreiben
+#### Schritt 5: .qmd-Datei schreiben
 
-Erstelle eine vollständige .qmd-Datei mit dem YAML-Frontmatter (brief-Extension) und dem Gutachten als Briefkörper.
+Erstelle die vollständige .qmd-Datei. Die Fließtexte der einzelnen Kriterien müssen die freigegebenen Teilnoten inhaltlich tragen — wenn der Nutzer eine Note angepasst hat, passe die Argumentation so an, dass sie diese Note plausibel begründet, ohne gekünstelt zu wirken.
 
 ## Output-Format (.qmd mit brief-Extension)
 
@@ -163,12 +194,13 @@ Der Briefkörper folgt exakt dieser Gliederung — keine anderen Überschriften,
 
 `gutachten-[nachname-student]-[YYYY].qmd` — z. B. `gutachten-mueller-2025.qmd`. Falls kein Studentenname bekannt, `gutachten-[thema-slug]-[YYYY].qmd`.
 
-## Qualitätssicherung vor dem Speichern
+## Qualitätssicherung vor dem Speichern (Schritt 5)
 
 Prüfe folgende Punkte, bevor du die Datei schreibst:
 
-1. Haben alle 6 Kriterien einen Fließtext-Abschnitt mit konkreter Begründung und fetter Teilnote in der Überschrift?
-2. Stimmt die gewichtete Rechnung? (Kreuzcheck: 20+20+20+15+15+10 = 100 %)
-3. Gibt es mindestens einen konkreten Textbeleg (Kapitel/Seite) in Stärken oder Schwächen?
-4. Ist die Gesamtnote plausibel kalibriert? (Mittelmaß → 2,7–3,0; Herausragendes → 1,x)
-5. Ist das YAML-Frontmatter vollständig und die brief-Extension korrekt referenziert?
+1. Sind die Teilnoten im Gutachten identisch mit den vom Nutzer freigegebenen Noten?
+2. Haben alle 6 Kriterien einen Fließtext-Abschnitt mit konkreter Begründung und fetter Teilnote in der Überschrift?
+3. Stimmt die gewichtete Rechnung? (Kreuzcheck: 20+20+20+15+15+10 = 100 %)
+4. Gibt es mindestens einen konkreten Textbeleg (Kapitel/Seite) in Stärken oder Schwächen?
+5. Ist die Gesamtnote plausibel kalibriert und im Fazit überzeugend begründet?
+6. Ist das YAML-Frontmatter vollständig und die brief-Extension korrekt referenziert?
