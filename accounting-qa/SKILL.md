@@ -1,202 +1,143 @@
 ---
 name: accounting-qa
-description: "Quality assurance for accounting lecture content. Checks calculations (Python), legal references (HGB, IFRS, IAS, StGB, AktG), and literature citations. Spawns three parallel subagents and produces a structured QA report. Use standalone or integrated into lecture-factory. Trigger phrases: 'QA für das Kapitel', 'Berechnungen prüfen', 'Normen checken', 'Qualitätssicherung Rechnungswesen', 'accounting QA', 'check my calculations', 'Zahlen prüfen'."
+description: "Quality assurance for accounting, finance and other quantitative lecture material: chapter, tutorial and solution, teaching note, case, widget HTML/JS, or a whole course. Rebuilds every number from the case facts (Python), checks widget defaults and slider ranges, norm citations (HGB, IFRS/IAS incl. IFRS 18, IAS 7, EStG, AktG, InsO, AO) against the original text, fact patterns that trigger other norms, literature (APA) and dates. Scopes: Datei, Material-Set, Kurs (course-wide consistency incl. _running_case.md). Runs with subagents or inline inside a subagent or brief (call the skill, do not paraphrase it). Triggers: 'QA für das Kapitel', 'Berechnungen prüfen', 'Normen checken', 'Zahlen prüfen', 'accounting QA', 'check my calculations', 'Finance-Kapitel prüfen', 'NPV/WACC/CAPM prüfen', 'Quellen prüfen', 'APA check', 'Tutorium und Lösung prüfen', 'Widget-Werte prüfen', 'Kurs-QA', 'kursweite Konsistenz prüfen'."
 ---
 
 # Accounting QA Skill
 
-Qualitätssicherung für Accounting-Lehrkapitel. Prüft drei Dimensionen unabhängig und parallel:
+Qualitätssicherung für Lehrmaterial mit Zahlen, Normen und Quellen — Rechnungswesen (HGB/IFRS) ebenso wie Finance und andere quantitative Fächer. Prüfdimensionen:
 
-1. **Kalkulationen** — alle Berechnungen und Zahlenbeispiele rechnerisch verifizieren
-2. **Normen** — alle Rechtsquellen-Verweise (HGB, IFRS, IAS, StGB, AktG …) auf Existenz und Inhaltsgenauigkeit prüfen
-3. **Literatur** — alle Literaturverweise auf Existenz und Aktualität prüfen
+1. **Kalkulationen** — jede Zahl aus den Sachverhaltsdaten neu herleiten, nicht nur die abgedruckte Formel nachrechnen
+2. **Widgets** — Regler, Defaults, Presets und JS-Rechenlogik gegen die Beispiele im Text
+3. **Normen** — Zitate gegen den Originaltext (Existenz, Inhalt, Unterbuchstabe, Fassung)
+4. **Sachverhalt-Trigger** — löst die Fallformulierung unbeabsichtigt eine andere Norm aus, die die Lösung ändert?
+5. **Literatur und Fakten** — Existenz, APA-Zitierweise, Daten und Zeitachse
+6. **Kurs-Konsistenz** — dieselbe Größe, Norm, Parameter ist in allen Artefakten identisch (nur Umfang Kurs)
+
+Die Prüfaufträge im Detail stehen in `references/pruefschritte.md` (Abschnitte A–F). Diese Datei ist für Subagents und Inline-Modus dieselbe.
+
+**Fachmodus ergibt sich aus dem Inhalt:** Accounting (Normen, Buchungssätze) oder Finance/quantitativ (meist keine Normen; dafür Finance-Konventionen in A, Literatur und Fakten in E). Beides kann zusammen vorkommen. Ein Kurs ohne Normzitate ist kein Grund, den Skill nicht aufzurufen.
 
 ---
 
 ## Auslöser
 
-Den Skill aufrufen wenn:
-- Zahlenbeispiele, Formeln oder Berechnungen im Text vorhanden sind
-- §§ oder IFRS/IAS-Normen zitiert werden
-- Literaturverweise vorhanden sind
-- Mindestens eine der drei Dimensionen relevant ist — nicht zwingend alle drei
+Aufrufen, sobald mindestens eins zutrifft: Zahlenbeispiele/Formeln/Buchungssätze, Normzitate, Literaturverweise, datierte Fakten, Widgets mit Rechenlogik — im Kapitel, Tutorium, in der Lösung, Teaching Note, Fallstudie oder im Widget.
 
 ---
 
-## Schritt 1: Inhaltsscan (still, vor dem Dispatch)
+## Umfang
 
-QMD lesen und drei Listen erstellen:
+| Umfang | Was | Wann |
+|---|---|---|
+| **Datei** | eine `.qmd`/`.html`/`.md` | Einzelprüfung, lecture-factory CREATE |
+| **Material-Set** | Kapitel `NN_slug.qmd` + `tutorials/tut_NN_slug.qmd` (mit Lösung) + Teaching Note(s) + Fall/Kurzfall + `widgets/kapitel-NN/*` (+ Folien, Moodle-XML, falls vorhanden) | nach dem Bau eines Kapitels samt Begleitmaterial |
+| **Kurs** | alle Material-Sets + `_curriculum.md` + `_running_case.md` | nach parallelen Builds, vor Veröffentlichung |
 
-**Liste A — Kalkulationen:**
-Alle Passagen mit numerischen Berechnungen, Formeln mit konkreten Werten, Buchungssätzen mit Beträgen. Format: `{Zeile/Abschnitt, Formel, erwartetes Ergebnis laut Text}`.
-
-**Liste B — Normen:**
-Alle Rechtsquellen-Verweise extrahieren. Regex-Muster:
-- HGB: `§ \d+[a-z]?(\s+Abs\.\s+\d+)?(\s+Satz\s+\d+)?(\s+Nr\.\s+\d+)?\s+HGB`
-- IFRS/IAS: `(IFRS|IAS)\s+\d+[A-Z]?(\.\d+[A-Z]?)?`
-- Sonstige: `§ \d+\s+(AktG|GmbHG|StGB|EStG|KStG|UStG|InsO|BGB|HGBalt)`
-
-Format: `{Norm, Behauptung im Text, Fundstelle}`.
-
-**Liste C — Literatur:**
-Alle Literaturverweise (Autor Jahr, Fußnoten, Quellenangaben). Nur prüfen wenn ≥1 Verweis gefunden.
-
-Wenn eine Liste leer ist: den entsprechenden Subagent nicht starten, im Report vermerken.
+Ohne Angabe: Material-Set, wenn zum Kapitel Begleitdateien existieren, sonst Datei. Im Umfang Kurs zusätzlich Abschnitt F (Kurs-Konsistenz).
 
 ---
 
-## Schritt 2: Paralleler Subagent-Dispatch
+## Ausführungsmodus
 
-Alle drei Subagents **gleichzeitig** starten. Prompt-Templates:
+**Parallel (Standard):** Hauptagent macht den Inhaltsscan, startet je Prüfdimension einen Subagent (bei großem Umfang zusätzlich nach Kapiteln aufteilen), führt den Report zusammen. Abschnitt F bleibt beim Hauptagenten.
 
----
+**Inline:** dieselben Schritte A–F nacheinander selbst, ohne Subagents. Pflicht, wenn der Skill in einem Subagent läuft, von einem Orchestrator-Brief aufgerufen wird oder kein Agent-Tool verfügbar ist. Gleiche Prüftiefe, gleiche Ausgabeformate — Inline heißt nicht „kürzer".
 
-### Subagent 1 — Kalkulations-Prüfer
-
-```
-Du prüfst Berechnungen in einem Accounting-Lehrkapitel.
-
-QMD-Pfad: [Pfad]
-Berechnungen zum Prüfen:
-[Liste A aus dem Inhaltsscan]
-
-Vorgehensweise:
-1. Schreibe für jede Berechnung ein kurzes Python-Skript, das die Formel mit den
-   gegebenen Werten ausführt und das Ergebnis zurückgibt.
-2. Führe das Skript via Bash aus.
-3. Vergleiche das Python-Ergebnis mit dem im Text angegebenen Ergebnis.
-4. Toleranzgrenze: ±0,01 € / ±0,01 % — kleinere Differenzen als korrekt werten.
-5. Achte auf Rundungskonventionen (kaufmännisch vs. mathematisch).
-
-Ausgabe-Format (exakt einhalten):
-## Kalkulationen ([N] geprüft)
-✅ [Beschreibung] (Abschn. [X]): [Formel] = [Ergebnis] — korrekt
-⚠️ [Beschreibung] (Abschn. [X]): [Formel] = [Python-Ergebnis], Text gibt [Textwert] an — Rundungsdifferenz, akzeptabel
-❌ [Beschreibung] (Abschn. [X]): [Formel] = [Python-Ergebnis], Text gibt [Textwert] an — FEHLER
-```
+**Regel für Orchestrator-Briefs:** Der Brief **ruft den Skill auf** („Führe `accounting-qa` aus, Modus Inline, Umfang Material-Set Kap. 4"), er ersetzt ihn nicht durch eine eigene Kurzfassung und macht ihn nicht optional („wenn er bei dir läuft"). Kann der Subagent den Skill nicht laden, liest er `SKILL.md` und `references/` dieses Skills per Pfad und arbeitet sie ab. Der QA-Report gehört in die Rückmeldung an den Orchestrator.
 
 ---
 
-### Subagent 2 — Normen-Prüfer
+## Schritt 1: Inhaltsscan (still)
 
-```
-Du prüfst Rechtsquellen-Verweise in einem Accounting-Lehrkapitel.
+Alle Dateien des Umfangs lesen und Listen anlegen (Fundstelle immer `Datei:Zeile`):
 
-QMD-Pfad: [Pfad]
-Normen zum Prüfen:
-[Liste B aus dem Inhaltsscan]
+- **Liste A — Kalkulationen:** jede Rechnung, Formel mit Werten, Tabelle mit Summen, Buchungssatz mit Betrag; dazu die **Sachverhaltsdaten** (Laufzeiten, Daten, Beträge, Sätze), aus denen die Parametertabelle gebaut wird. Bei `_running_case.md`: Kursweite Parameter und Zeitachse übernehmen.
+- **Liste W — Widgets:** je Widget alle Inputs (`id`, `min`, `max`, `step`, `value`), Presets, Konstanten, Rechenfunktion; dazu die Textbeispiele, die mit dem Widget nachvollzogen werden.
+- **Liste B — Normen:** alle Zitate, **gruppiert nach Norm** (alle IFRS-18-Zitate zusammen usw.), auch aus Widgets und Folien. Muster:
+  - HGB/Gesetze: `§ \d+[a-z]?(\s+Abs\.\s+\d+[a-z]?)?(\s+Satz\s+\d+)?(\s+Nr\.\s+\d+)?\s+(HGB|AktG|GmbHG|StGB|EStG|KStG|UStG|InsO|BGB|AO)`
+  - IFRS/IAS: `(IFRS|IAS|IFRIC|SIC)\s+\d+[A-Z]?(\.[A-Z]{0,2}\d+[A-Z]?(\([a-z]+\))*(\([ivx]+\))?)?`, Rahmenkonzept: `(CF|Conceptual Framework|Rahmenkonzept)\s+\d+\.\d+`
+- **Liste T — Sachverhalte:** jeder Fall- oder Aufgabentext mit normrelevanten Tatsachen.
+- **Liste C — Literatur und Fakten:** Zitate/`@keys`, Literaturverzeichnis/`.bib`, datierte Fakten, Statistiken.
 
-Referenz: Lade accounting-qa/references/common-norms.md als Schnellreferenz.
-
-Vorgehensweise für jeden Verweis (Prüfreihenfolge strikt einhalten — Fetches sind der teuerste Schritt):
-1. **Wortlaut-Referenz zuerst:** common-norms.md enthält die fehlerträchtigsten Normen Satz-genau
-   (§ 249, § 253 HGB, § 5 Abs. 4a EStG) — dagegen verifizierte Zuordnungen gelten als geprüft, kein Fetch.
-2. **Kurzinhalt-Tabellen + Trainingswissen:** für alle übrigen Normen; HGB-Trainingswissen ist zuverlässig.
-3. **Live-Fetch nur als letzte Stufe:** wenn die Norm in common-norms.md nicht abgedeckt ist UND
-   Unsicherheit über Existenz, Wortlaut oder Absatz-/Satz-Zuordnung besteht.
-   - Budget: **max. 3 Fetches pro Kapitel**; mehrere nötige Fetches parallel absetzen, nicht sequenziell.
-   - Deutsche Gesetze: https://www.gesetze-im-internet.de/hgb/__249.html
-     (Muster: /[gesetz-kürzel klein]/__[nummer].html); Fallback: https://dejure.org/gesetze/HGB/249.html
-   - IFRS/IAS: kein freier Volltext — aus Trainingswissen prüfen, Stand-Datum nennen, versionssensitive
-     Behauptungen als ⚠️ mit Quelle ifrs.org markieren.
-   - Fetch nicht möglich oder Budget erschöpft: als ⚠️ „nicht live verifiziert" markieren —
-     nie ein unsicheres ✅ vergeben.
-4. Granularität prüfen: Wenn "§ 249 HGB" zitiert wird, aber "§ 249 Abs. 1 Satz 1 HGB" gemeint ist —
-   als Hinweis markieren, nicht als Fehler.
-5. Veraltete Fassungen: Wenn eine Norm nach 2020 wesentlich geändert wurde und die Version relevant ist,
-   als Hinweis markieren.
-
-Ausgabe-Format (exakt einhalten):
-## Normen ([N] geprüft, davon [N] live verifiziert)
-✅ [Norm] — [Kurzbeschreibung des geprüften Inhalts]: korrekt referenziert [· live verifiziert]
-⚠️ [Norm] — [Kurzbeschreibung]: [Präzisierungs-/Granularitätshinweis oder „nicht live verifiziert"]
-❌ [Norm] — FEHLER: [Beschreibung des Problems und ggf. korrekter Verweis]
-```
+Leere Liste → Dimension entfällt, im Report vermerken.
 
 ---
 
-### Subagent 3 — Literatur-Prüfer
+## Schritt 2: Prüfen
+
+Je Dimension den Abschnitt aus `references/pruefschritte.md` abarbeiten: A Kalkulationen (Liste A), B Widgets (Liste W), C Normen (Liste B), D Sachverhalt-Trigger (Listen T + B), E Literatur und Fakten (Liste C), F Kurs-Konsistenz (alle Listen, nur Umfang Kurs).
+
+**Subagent-Prompt (Parallel-Modus):**
 
 ```
-Du prüfst Literaturverweise in einem Accounting-Lehrkapitel.
-
-QMD-Pfad: [Pfad]
-Literatur zum Prüfen:
-[Liste C aus dem Inhaltsscan]
-
-Vorgehensweise für jeden Verweis:
-1. Existenz prüfen: Suche über OpenAlex (curl, siehe unten) oder aus Trainingswissen nach
-   Autor + Jahr + ggf. Titelstichwort.
-2. Aktualität prüfen: Gibt es eine neuere Auflage oder Nachfolgearbeit, die der Text
-   nicht berücksichtigt? (Relevanz: nur wenn ≥3 Jahre neuer und substantiell abweichend)
-3. Wenn eine Quelle nicht gefunden wird: als ⚠️ markieren mit Hinweis
-   "Nicht verifiziert — bitte manuell prüfen", NICHT als Fehler.
-4. Keine Zotero-Integration in diesem Schritt — nur Verifikation.
-
-Ausgabe-Format (exakt einhalten):
-## Literatur ([N] geprüft)
-✅ [Autor Jahr] — gefunden: [Titel, Quelle]
-⚠️ [Autor Jahr] — nicht verifiziert (bitte manuell prüfen)
-⚠️ [Autor Jahr] — neuere Auflage verfügbar: [Autor neueJahr] — [Titel]
-❌ [Autor Jahr] — FEHLER: [z. B. Jahreszahl falsch, Autor nicht gefunden]
+Du prüfst [Dimension] in Lehrmaterial ([Fach], [Sprache]).
+Umfang: [Dateipfade]
+Fact Sheet: [Pfad zu _running_case.md oder „keins"]
+Prüfauftrag: Lies [Pfad zu accounting-qa]/references/pruefschritte.md, Abschnitt [A–E],
+und arbeite ihn vollständig ab. Normen: zusätzlich references/common-norms.md.
+Zu prüfen:
+[Liste aus dem Inhaltsscan]
+Gib exakt das Ausgabeformat des Abschnitts zurück. Nichts als geprüft melden, was nicht geprüft wurde.
 ```
+
+**Budget statt Trefferlimit:** Es wird nicht nach den ersten N Treffern abgeschnitten. Aufwand sparen über Gruppierung (Normen: ein Originaltext je Norm, alle Zitate dagegen; Kalkulationen: eine Parametertabelle je Fall) und Parallelität (Subagents nach Kapiteln). Reicht die Sitzung trotzdem nicht, nach Fehlerrisiko priorisieren und den Rest **namentlich** als `nicht geprüft` listen.
+
+**Quellen:** Originaltext zuerst — IFRS über ifrs.org (Issued Standards, aktuelles Jahr), deutsche Gesetze über gesetze-im-internet.de; URL-Muster in `references/pruefschritte.md` C.2. Kurs-Wiki und Modellwissen nur als Rückfall, dann mit `nicht live geprüft` markieren — nie ein unsicheres ✅.
 
 ---
 
-## Schritt 3: Report zusammenführen
-
-Nach Rückkehr aller Subagents den Gesamt-Report zusammenstellen:
+## Schritt 3: Report
 
 ```markdown
 ---
-## Accounting QA — [filename.qmd]
+## Accounting QA — [Datei | Material-Set Kap. NN | Kurs]
+Modus: [Parallel | Inline] · Umfang: [Dateiliste]
 
 ### Kalkulationen
-[Output Subagent 1, oder: "— keine Berechnungen gefunden"]
-
+### Widgets
 ### Normen
-[Output Subagent 2, oder: "— keine Normen gefunden"]
+### Sachverhalt-Trigger
+### Literatur und Fakten
+### Kurs-Konsistenz          ← nur Umfang Kurs
+[je Abschnitt die Ausgabe aus pruefschritte.md, oder: "— nichts gefunden"]
 
-### Literatur
-[Output Subagent 3, oder: "— keine Literaturverweise gefunden"]
+### Nicht geprüft
+[Punkt — Grund]  ← leer lassen nur, wenn wirklich alles geprüft wurde
 
 ### Zusammenfassung
-[Anzahl ✅ korrekt] · [Anzahl ⚠️ Hinweise] · [Anzahl ❌ Fehler]
+[N] ✅ · [N] ⚠️ · [N] ❌ · [N] nicht geprüft · Normen: [N] gegen Originaltext, [N] nur Modellwissen
 
-[Wenn Fehler > 0:]
-→ Bitte die markierten Fehler vor Veröffentlichung korrigieren.
-
-[Wenn nur Hinweise:]
-→ Hinweise prüfen — kein zwingender Handlungsbedarf, aber empfohlen.
-
-[Wenn alles grün:]
-→ Alle geprüften Punkte korrekt. Bereit zur Veröffentlichung.
+→ Fehler > 0: vor Veröffentlichung korrigieren (Fundstellen oben, alle betroffenen Artefakte).
+→ nur Hinweise: prüfen empfohlen.
+→ alles grün und nichts offen: bereit zur Veröffentlichung.
 ---
 ```
+
+Wenn die QA selbst korrigieren soll: jeden Fehler in **allen** Artefakten beheben, in denen dieselbe Größe oder dasselbe Zitat steht (Kapitel, Tutorium, Lösung, Teaching Note, Widget, Folien).
 
 ---
 
 ## Fehlerbehandlung
 
-**Subagent 1 scheitert (Python-Fehler):** Berechnung als `⚠️ nicht prüfbar (Skript-Fehler)` markieren, manuell prüfen empfehlen.
-
-**Subagent 2: Norm unbekannt und Live-Fetch erfolglos:** Als `⚠️ nicht verifizierbar — Quelle: [gesetze-im-internet.de/...]` markieren, manuelle Prüfung empfehlen.
-
-**Subagent 3: OpenAlex nicht erreichbar:** Literaturprüfung aus Trainingswissen durchführen, im Report vermerken: `Literaturprüfung basiert auf Trainingswissen — keine Live-Suche`.
+- **Python-Fehler:** `⚠️ nicht prüfbar (Skript-Fehler)` und unter „Nicht geprüft" führen.
+- **Originaltext nicht abrufbar** (404, Login, Bot-Schutz): Fallback-Quelle versuchen; sonst Modellwissen mit `⚠️ nicht live geprüft — Quelle: [URL]`.
+- **OpenAlex/CrossRef nicht erreichbar:** Literatur aus Modellwissen, Vermerk `Literaturprüfung ohne Live-Suche`.
 
 ---
 
 ## Standalone vs. integriert
 
-**Standalone:** Direkt mit einem QMD-Pfad oder -Inhalt aufrufen. Report wird dem Nutzer präsentiert.
+**Standalone:** mit Pfad(en) und optional Umfang aufrufen; Report an den Nutzer.
 
-**Integriert in lecture-factory:** Report wird in den Checkpoint-Output eingebettet. Der Nutzer sieht QMD + QA-Ergebnis, bevor er über die Widget-Pipeline entscheidet.
+**Integriert in lecture-factory:** Report in den Checkpoint-Output; Zusammenfassungszeile im Format `{N} ✅ · {N} ⚠️ · {N} ❌`. Im schnellen CREATE-Durchgang ohne Fetches gelten nur `common-norms.md`-Einträge mit gültigem Prüfdatum als verifiziert; alles andere ist `nicht live geprüft`.
 
 ---
 
 ## Qualitäts-Hinweise für Claude
 
-- Subagents nicht auf Vollständigkeit drängen — besser 3 verifizierte Normen als 10 halbgare
-- Normen-Prüfer: Trainingswissen ist für HGB sehr zuverlässig; IFRS-Stand-Datum beachten
-- Kalkulations-Prüfer: Buchungssätze (Soll/Haben) nur auf Betragskorrektheit prüfen, nicht auf Kontierungslogik
-- Bei sehr langen Kapiteln (>3000 Wörter): Nur die ersten 5 Treffer jeder Kategorie dispatch-en, Rest als "weitere [N] nicht geprüft" vermerken
+- Die Parametertabelle kommt vor der Rechnung. Wer nur die abgedruckte Formel nachrechnet, bestätigt Folgefehler.
+- Zahlen in Lösungen und Teaching Notes sind genauso fehleranfällig wie im Kapitel — oft mehr, weil sie zuletzt geschrieben werden.
+- Unterbuchstaben und B-Absätze (IFRS 18.B46 vs. B47) sind die häufigste Normfehlerquelle; immer gegen den Text, nie aus dem Gedächtnis.
+- `common-norms.md` ist ein Index mit Prüfdatum, kein Ersatz für den Originaltext bei abweichenden Behauptungen.
+- Lieber weniger Punkte sauber geprüft und den Rest offen benannt als eine hohe „geprüft"-Zahl ohne Deckung.

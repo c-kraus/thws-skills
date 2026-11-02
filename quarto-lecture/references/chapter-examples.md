@@ -1,6 +1,6 @@
 # Chapter Structure Example
 
-This is a minimal but complete example of a well-structured chapter opening. It demonstrates: frontmatter, prose opening, a flip-card cluster, a details excursus, an inline case study, a formula, and a closing quick-check.
+This is a minimal but complete example of a well-structured chapter opening in **Standalone Mode**. It demonstrates: frontmatter, the learning-objective callout, prose opening, a flip-card cluster, a details excursus, an inline case study, a formula, and a closing quick-check. In **Book Mode** the YAML block is dropped and the H1 is followed by an italic subtitle line (`references/book-mode.md`); for a complete book chapter see `~/Dev/10_Lehre/BUA1/03_transactions.qmd`.
 
 ---
 
@@ -21,6 +21,13 @@ format:
 ---
 
 # Rückstellungen und ungewisse Verbindlichkeiten
+
+::: {.callout-tip title="Lernziele"}
+Nach diesem Kapitel können die Studierenden:
+
+- Rückstellungen von Verbindlichkeiten und Eventualverbindlichkeiten abgrenzen (Lernziel 12),
+- eine Rückstellung nach § 253 Abs. 1 Satz 2 HGB bewerten und abzinsen (Lernziel 13).
+:::
 
 Bilanzen lügen nicht — aber sie verschweigen gerne. Rückstellungen sind der Bereich, in dem kaufmännische Vorsicht auf juristische Unschärfe trifft: Eine Verbindlichkeit existiert, ihr Betrag oder ihr Fälligkeitszeitpunkt steht jedoch noch nicht fest. Wer diesen Mechanismus versteht, liest Jahresabschlüsse anders.
 
@@ -90,10 +97,12 @@ Welche Aussage ist korrekt?
 
 ## Key observations from this example
 
+- The learning-objective callout comes first, with the course-wide numbers from `_curriculum.md` (`references/chapter-patterns.md` §1).
 - The opening paragraph has no heading — it flows directly into the topic.
 - Flip-cards appear in a cluster for closely related concepts, then prose resumes.
 - The `details` excursus handles §-level legal depth without disrupting the main argument.
 - The display formula uses `$$...$$` with variable definitions immediately following.
 - The `drag-exercise` reinforces the formula's key terminology.
-- The chapter ends with a `quick-check` — no summary paragraph.
-- Element count: 2 flip-cards, 1 details, 1 drag-exercise, 1 case-study, 1 quick-check = 6 elements across ~500 words of prose. That's roughly one per 80 words here — denser than normal because this is a definition-heavy section. In analysis-heavy sections, the ratio will be lower.
+- The excerpt ends with a `quick-check` — no summary paragraph (Standalone Mode; a Book Mode chapter may close with a short summary).
+- The formula section is a Norm section, not a Method section; a section that introduces a tool follows the Method pattern in `references/element-placement.md` (everyday question first, derivation in a Deep Dive, tutorial pointer last).
+- Element count: 5 interactive elements (2 flip-cards, 1 drag-exercise, 1 case-study, 1 quick-check) across ~500 words — about one per 100 words. That density only demonstrates the syntax; a real chapter keeps one per 400–600 words (`references/qmd-quality-gate.md` §14).

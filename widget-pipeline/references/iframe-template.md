@@ -90,6 +90,7 @@ Der Lua-Filter der THWS-Quarto-Vorlage wandelt `.widget`-Divs in enthaltene Boxe
 
 ## Pfadkonvention
 
-- Relativ zur .qmd-Datei: `widgets/kapitel-{nn}/widget-{name}.html`
-- Kein absoluter Pfad, keine `../`-Traversierung
-- Kapitel-Präfix aus Dateinamen ableiten: `kap-03-...qmd` → `kapitel-03`
+- Relativ zur .qmd-Datei: `widgets/kapitel-{nn}/widget-{name}.html` (oder die vorhandene Projektkonvention, z. B. `assets/ch{nn}/{name}.html`)
+- Kein absoluter Pfad, keine `../`-Traversierung; Groß-/Kleinschreibung exakt wie im Dateisystem (GitHub Pages unterscheidet)
+- Kapitel-Präfix aus Dateinamen ableiten: `03_impairment.qmd` oder `kap-03-...qmd` → `kapitel-03`
+- Sprache per Parameter, nie per Kopie: englische Fassung `src="widgets/kapitel-{nn}/widget-{name}.html?lang=en"`

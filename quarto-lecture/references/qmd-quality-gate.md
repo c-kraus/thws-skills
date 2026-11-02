@@ -11,6 +11,8 @@ Verstöße brechen den Moodle-Lua-Filter oder den PDF-Renderer meist **still** �
 
 ## 1. YAML Frontmatter
 
+**Zuerst den Modus bestimmen** (`book-mode.md`): Liegt ein `_quarto.yml` mit `project: type: book` vor, hat ein Buchkapitel **kein** YAML — die erste Zeile ist `# Titel {#sec-…}`. Vorhandenes Kapitel-YAML in einem Buch ist ein Verstoß (doppelte Titel): entfernen, `lang`/`format` gehören in `_quarto.yml`. Niemals YAML in ein Buchkapitel einfügen. Die folgenden Regeln gelten nur im Standalone Mode.
+
 Pflichtfelder und Formate:
 
 ```yaml
@@ -202,8 +204,56 @@ Definiert `_curriculum.md` eine Zitierkonvention (z. B. „Normzitate immer mit 
 
 ---
 
+## 12. Lernziel-Callout
+
+Direkt nach dem H1 (Book Mode: nach der kursiven Untertitelzeile) steht ein `::: {.callout-tip title="Lernziele"}` bzw. `title="Learning objectives"` — Format in `chapter-patterns.md` §1.
+
+| Prüfung | Korrektur |
+|---|---|
+| Callout fehlt | Aus `_curriculum.md` ergänzen; ohne Curriculum: zur manuellen Prüfung markieren |
+| Nummern/Texte weichen von `_curriculum.md` ab, lokale Nummerierung (1, 2, 3 in Kapitel 7) oder zweites Schema („LO 6.3") | Kursweite Nummern und Wortlaut aus dem Curriculum übernehmen |
+| Lernziel ohne Beispiel, Fall oder Übung im Kapitel | Im Report melden (Stufe 1) |
+
+---
+
+## 13. Zahlen & Rundung
+
+Zwischenwerte **ungerundet** weiterrechnen, erst die angezeigten Werte runden. Jede Zahl mit Python nachrechnen (`python3 -I`, Skripte im Scratchpad, nicht im Repo) — auch Tabellensummen und Zahlen in Quick-Checks, Drag-Exercises und Lösungen.
+
+| Regel | Korrekt | Falsch |
+|---|---|---|
+| Tabellen | Spalten aus ungerundeten Werten berechnet; Summenzeile = Summe der ungerundeten Werte, gerundet | Varianz aus bereits gerundeten Abweichungen; Summe der angezeigten Rundungswerte |
+| Kennzeichnung | Gerundete Aussage mit „rund"/„ca."/„about": „ein Terminkurs von rund 1,19" (exakt 1,1857) | „Der Terminkurs beträgt 1,19" |
+| Konsistenz | Dieselbe Größe überall mit demselben gerundeten Wert (Text, Tabelle, Quick-Check, Widget-Default, Tutorium) | Erwartungswert 24,2 Mio. € im Text, 24,3 Mio. € in der Tabelle; σ 15,5 % hier, 15,4 % dort |
+| Stellen | Eine Rundungsstufe je Größe im Kapitel (z. B. Zinssätze 2 Nachkommastellen, Beträge in Tsd. € ohne Nachkommastellen) | Wechselnde Stellenzahl für dieselbe Größe |
+| Fakten → Zahl | Jede Zahl folgt aus den genannten Sachverhaltsdaten: 11 Monate Laufzeit → 11 Monatsraten | 12 Raten, weil „ein Jahr" gemeint war; Werte aus einer anderen Fassung des Falls |
+
+**Korrektur:** Neu rechnen, Anzeige aus dem ungerundeten Ergebnis ableiten, „rund"/„about" ergänzen; bei Abweichung zu `_running_case.md` dessen Wert verwenden oder unter `FACT SHEET ADDITIONS` melden.
+
+---
+
+## 14. Umfang, Dichte & Lesezeit
+
+Zählen, nicht schätzen:
+
+```bash
+python3 -I ~/.claude/skills/quarto-lecture/scripts/reading_load.py NN_slug.qmd --budget [Selbststudienzeit in min]
+```
+
+(Skript liegt im Skill-Ordner unter `scripts/`; `--l1` bei Erstsprach-Kohorte.)
+
+| Prüfung | Soll | Bei Verstoß |
+|---|---|---|
+| Umfang | Standalone 1.500–3.000 · Book Mode 3.500–5.000 Wörter (Zweitsprache: 3.500–4.250) | Kürzen — Wiederholungen, zweite Beispiele, Nebenaspekte; nicht in Deep Dives verschieben (zählen mit) |
+| Dichte | 1 interaktives Element je 400–600 Wörter, max. 3 pro Einheit (Standalone H2, Book Mode H3) | Zu dicht (< 400): schwächste Elemente streichen — Flip-Cards für Begriffe, die ein Satz erklärt, doppelte Quick-Checks zum selben Punkt. Zu dünn (> 600): Pflicht-Elemente nach `element-placement.md` ergänzen |
+| Lesezeit | ≤ Selbststudienzeit pro Kapitel (`book-mode.md`) | Kürzen, bis es passt |
+
+Ergebnis im Report: `Umfang: N Wörter · E Elemente (1 je W Wörter) · Lesezeit ≈ M min von S min`.
+
+---
+
 ## Anwendung
 
-**Als Gate (vor dem Speichern):** Alle 11 Abschnitte prüfen, jeden Verstoß sofort inline beheben, dann erst speichern.
+**Als Gate (vor dem Speichern):** Alle 14 Abschnitte prüfen, jeden Verstoß sofort inline beheben, dann erst speichern.
 
-**Als Audit (qmd-corrector):** Checklisten in Reihenfolge 1→11 abarbeiten, alle Instanzen je Elementtyp erfassen, Fixes anwenden, Quality Report ausgeben (Format im qmd-corrector SKILL.md).
+**Als Audit (qmd-corrector):** Checklisten in Reihenfolge 1→14 abarbeiten (12–14 nur melden, nicht umschreiben, wenn der Auftrag eine reine Syntaxkorrektur ist), alle Instanzen je Elementtyp erfassen, Fixes anwenden, Quality Report ausgeben (Format im qmd-corrector SKILL.md).

@@ -121,8 +121,14 @@ Für jede identifizierte Opportunity erstellen:
 - Angezeigte Daten: [z. B. "ROI-Werte von 0–20 %"]
 - Visueller Typ: [z. B. "Liniendiagramm" oder "Netzwerkdiagramm"]
 
+**Testfälle (aus Kapitel und Tutorium):**
+- Default = Rechenbeispiel: [Eingaben] → [erwartete Ergebnisse, Abschnitt]
+- Presets: [Fälle des Kapitels/`_running_case.md`, je mit erwartetem Ergebnis]
+- Slider-Bereiche: [min/max/step, die jeden Wert aus Text, Aufgaben und Folien abdecken]
+- Konventionen: [diskret/stetig, Vorzeichen, Einheiten, Symbole, Namen, Normzitate wie im Kapitel]
+
 **Integration:**
-- Dateiname: `widgets/kapitel-XX/widget-[name].html`
+- Dateiname: `widgets/kapitel-XX/widget-[name].html` (oder die vorhandene Ordnerkonvention des Projekts, z. B. `assets/chNN/`)
 - Platzierung: [Vor/nach welcher Überschrift]
 - Einleitungstext: "[1–2 Sätze, die das Widget in der Dokumentsprache einführen]"
 ```

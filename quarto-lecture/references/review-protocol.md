@@ -2,9 +2,9 @@
 
 Dies ist die **einzige** Quelle für den Perspektiven-Review. `quarto-lecture` (Workflow-Schritt „Review") und `lecture-factory` (CREATE und RE-REVIEW) laden diese Datei und folgen ihr — keine eigenen Prompt-Varianten pflegen.
 
-## Design-Entscheidung: Ein Reviewer, drei Linsen
+## Design-Entscheidung: Ein Reviewer, drei Linsen (plus Linse 4 bei Zweitsprach-Kohorten)
 
-Statt drei paralleler Subagents (3× voller Kapiteltext im Kontext) läuft **ein** Subagent, der nacheinander drei Perspektiven einnimmt und am Ende selbst synthetisiert. Das spart ~2/3 der Review-Tokens bei nahezu gleichem Befundbild — die Linsen prüfen disjunkte Dimensionen, echte Unabhängigkeit bringt hier wenig.
+Statt drei paralleler Subagents (3× voller Kapiteltext im Kontext) läuft **ein** Subagent, der nacheinander drei Perspektiven einnimmt und am Ende selbst synthetisiert. Liest die Kohorte das Kapitel in ihrer Zweitsprache (`book-mode.md`, Lesezeit-Check), kommt Linse 4 dazu. Das spart ~2/3 der Review-Tokens bei nahezu gleichem Befundbild — die Linsen prüfen disjunkte Dimensionen, echte Unabhängigkeit bringt hier wenig.
 
 Der Reviewer liefert eine **fertig priorisierte Verbesserungsliste**; der aufrufende Agent wendet sie nur noch an.
 
@@ -18,18 +18,25 @@ Der Reviewer liefert eine **fertig priorisierte Verbesserungsliste**; der aufruf
 Dem Reviewer mitgeben:
 
 1. Vollständigen Kapiteltext (.qmd-Inhalt)
-2. **Zielgruppen-Block** aus `_curriculum.md` (Studiengang, Semester, Vorwissen) — falls vorhanden. Ohne Curriculum: Default „Bachelor Wirtschaftsingenieurwesen, 4. Semester, Grundlagen BWL/ReWe vorhanden".
+2. **Zielgruppe** aus `_curriculum.md` (Kursdaten: Studiengang, Semester, Sprache) — falls vorhanden. Ohne Curriculum: Default „Bachelor Wirtschaftsingenieurwesen, 4. Semester, Grundlagen BWL/ReWe vorhanden".
 3. Kernthemen des Vorgänger-Kapitels (falls Curriculum vorhanden) — damit der Reviewer beurteilen kann, was als bekannt vorausgesetzt werden darf.
+4. **Kohorte & Vorwissen** aus `_curriculum.md` und die Angabe, ob Linse 4 läuft (Kapitelsprache ≠ Erstsprache der Kohorte).
+5. Falls vorhanden: Abschnitt *Begriffe/Gremien* aus `_running_case.md` und die Aufgabenliste des zugehörigen Tutoriums (Überschriften + Lernziel-Zeilen aus `tutorials/tut_NN_*.qmd`) — für die Prüfung der Tutoriumsverweise.
 
 ## Subagent-Prompt
 
 ```
-Du reviewst ein Quarto-Vorlesungskapitel in drei nacheinander eingenommenen Perspektiven.
+Du reviewst ein Quarto-Vorlesungskapitel in drei (bei LINSE 4: ja vier) nacheinander
+eingenommenen Perspektiven.
 Arbeite jede Linse vollständig ab, bevor du zur nächsten wechselst. Keine Lobhudeleien —
 nur tatsächlich verbesserungswürdige Befunde.
 
-ZIELGRUPPE: [Zielgruppen-Block aus _curriculum.md oder Default]
+ZIELGRUPPE: [Kursdaten aus _curriculum.md oder Default]
+KOHORTE & VORWISSEN: [Abschnitt aus _curriculum.md, oder „unbekannt"]
 VORWISSEN AUS FRÜHEREN KAPITELN: [Kernthemen Vorgänger-Kapitel, oder „unbekannt"]
+LINSE 4: [ja/nein]
+VERBINDLICHE BEGRIFFE: [aus _curriculum.md/_running_case.md, oder „keine"]
+TUTORIUMSAUFGABEN: [Liste, oder „kein Tutorium"]
 
 KAPITELTEXT:
 [vollständiger .qmd-Inhalt]
@@ -40,7 +47,11 @@ LINSE 1 — Kritischer Professor (Fachgebiet: Thema des Kapitels):
 1. Inhaltliche Korrektheit — Sind alle Aussagen fachlich präzise? Kippen Vereinfachungen ins Falsche?
 2. Normgenauigkeit — Werden §§ / IAS / IFRS mit der richtigen Granularität zitiert? Fehlen relevante Normen?
 3. Trinity-Vollständigkeit — Sind Theorie, Norm und Praxis wirklich abgedeckt oder nur angedeutet?
-4. Intellektuelle Tiefe — Wo ist es für Hochschulniveau zu oberflächlich?
+4. Intellektuelle Tiefe — Wo ist es für Hochschulniveau zu oberflächlich? Tiefe entsteht durch
+   präzisere Aussagen, härtere Fälle und Transferfragen. Herleitungen und Beweise gehören in
+   einen Deep Dive — schlage NIE zusätzliche Herleitungsschritte im Haupttext vor.
+5. Quellenlage — Widerspricht eine Aussage dem Normtext? Rangfolge: Normtext > Kurs-Wiki >
+   Modellwissen. Ein Wiki-Beleg allein rettet keine Aussage, die dem Normtext widerspricht.
 → Max. 5 Befunde. Format: Abschnitt → Problem → konkreter Verbesserungsvorschlag.
 
 LINSE 2 — Sehr guter Student (will tief verstehen und auf neue Fälle transferieren):
@@ -58,26 +69,45 @@ gemäß ZIELGRUPPE — nicht mehr):
    durchzuführen, nicht stichprobenartig.
 3. Ankerpunkte — Genug Flip-Cards/Drag-Exercises zur Sicherung der Kernbegriffe? Oder zu viele auf einmal?
 4. Praxisbezug — Ist die Case Study ohne Spezialwissen über das zitierte Unternehmen verständlich?
+5. Werkzeug-Muster — Steht vor jeder Formel ein konkreter Anwendungsfall? Endet der Abschnitt
+   mit dem Tutoriumsverweis (und passt die genannte Aufgabe zu TUTORIUMSAUFGABEN)?
+   Vollständig für jede Formel prüfen.
 → Max. 4 Befunde plus die vollständige Begriffsliste aus Punkt 2.
    Format: „An [Stelle] wäre ich verloren, weil … — Lösung: …"
 
+LINSE 4 — Leserin in der Zweitsprache (nur wenn LINSE 4: ja; Sprachniveau B2/C1, kein
+deutsches oder britisches Kulturwissen, liest langsamer und wörtlicher):
+1. Satzlänge — Sätze über ~25 Wörter oder mit mehr als einem Nebensatz, die geteilt werden
+   sollten (Stellen nennen, nicht jede einzeln als Befund).
+2. Idiome & Bildsprache — Redewendungen, Wortspiele, Phrasal Verbs, kulturelle Anspielungen,
+   die ohne Muttersprache unklar bleiben; jeweils mit schlichter Alternative.
+3. Begriffskonsistenz — Liste JEDES Konzept, das mit mehr als einem Wort bezeichnet wird
+   (z. B. „management board"/„executive board"), und jede Abweichung von VERBINDLICHE BEGRIFFE.
+4. Leselast — Welche Section ist für eine Sitzung im Selbststudium zu lang oder zu dicht?
+→ Max. 4 Befunde plus die vollständige Liste aus Punkt 3.
+
 ---
 
-SYNTHESE (nach allen drei Linsen):
+SYNTHESE (nach allen Linsen):
 1. Konfliktanalyse: Wo widersprechen sich die Linsen? Auflösungsregel: Was der Professor
    als „zu flach" kritisiert und der schwächere Student als „zu dicht" empfindet, gehört in
    ein `.details`-Div — Haupttext für den Durchschnitt, Tiefe für die Starken.
 2. Priorisierung:
-   - Stufe 1 (zwingend): Faktenfehler, falsche/fehlende Normen, unerklärte Erstnennungen
-   - Stufe 2 (wichtig): Strukturprobleme, fehlende Ankerpunkte, zufällig wirkende Quick-Checks
+   - Stufe 1 (zwingend): Faktenfehler, falsche/fehlende Normen, unerklärte Erstnennungen,
+     verletztes Werkzeug-Muster (Formel ohne vorangehenden Anwendungsfall, Herleitung im
+     Haupttext, fehlender oder falscher Tutoriumsverweis), Abweichung von VERBINDLICHE BEGRIFFE
+   - Stufe 2 (wichtig): Strukturprobleme, fehlende Ankerpunkte, zufällig wirkende Quick-Checks,
+     Begriffsvarianten und überlange Sätze aus Linse 4 (je Linse-4-Punkt eine Sammeländerung)
    - Stufe 3 (optional): Anreicherungen, stärkere Beispiele
 
 AUSGABE (exakt dieses Format):
 ## Verbesserungsliste (priorisiert, max. 7)
-1. [Stufe 1|2|3] [Abschnitt] → [präzise Änderungsanweisung] (Linse: [P|S+|S])
+1. [Stufe 1|2|3] [Abschnitt] → [präzise Änderungsanweisung] (Linse: [P|S+|S|L2])
 …
 ## Begriffs-Erstnennungen ohne Erklärung
 - [Begriff] — erste Verwendung in [Abschnitt], Erklärung fehlt/kommt erst in [Abschnitt]
+## Begriffsvarianten (nur bei Linse 4)
+- [Konzept]: [Wort A] / [Wort B] — vereinheitlichen auf [Wort]
 ## Nicht aufgenommene Befunde
 - [Befund] — [Grund der Nichtaufnahme]
 ```
@@ -97,4 +127,4 @@ AUSGABE (exakt dieses Format):
 
 ## Eskalation: Drei unabhängige Subagents
 
-Nur auf explizite Anforderung (z. B. „voller Review vor Veröffentlichung"): die drei Linsen als drei parallele Subagents mit jeweils nur ihrer Linse dispatchen, Synthese dann durch den aufrufenden Agent nach denselben Regeln. Standardfall bleibt der Ein-Reviewer-Modus.
+Nur auf explizite Anforderung (z. B. „voller Review vor Veröffentlichung"): die Linsen als parallele Subagents mit jeweils nur ihrer Linse dispatchen, Synthese dann durch den aufrufenden Agent nach denselben Regeln. Standardfall bleibt der Ein-Reviewer-Modus.

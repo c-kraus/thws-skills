@@ -25,7 +25,7 @@ Optional: `--save-as <path>` saves the corrected version separately, preserving 
 
 1. Load the canonical rules file (see above)
 2. Read the target .qmd
-3. Work through checklists 1→11 in order. For each element type, scan the **entire file** for all instances before moving on — completeness beats speed here
+3. Work through checklists 1→14 in order. For each element type, scan the **entire file** for all instances before moving on — completeness beats speed here
 4. For each violation: note it, apply the fix using the "Korrektur" guidance from the canonical file
 5. Apply fixes with surgical Edit operations — never rewrite whole sections; preserve all original content text exactly, change only structure/syntax
 6. **Verify by render (if Quarto is available):** run `quarto render <file> --to html` in a temp output dir. If it fails, read the error, fix, re-render. If Quarto is not installed, note "Render-Verifikation übersprungen (kein Quarto)" in the report

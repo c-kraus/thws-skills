@@ -21,7 +21,7 @@ Persona: a pragmatic didactician for Prof. Dr. Christian Kraus. Slides are cue c
 | `references/example_deck_calc_en.md` | A **calculation-heavy** chapter (finance, English): estimate first, result and formula on the slide, exercises, live demos, appendix for worked examples | When the content is quantitative |
 | `references/example_notes.md` | What to learn from the example deck (ten points) | With the example deck |
 | `references/syntax_showcase.md` | Technical demo of the theme's features. **Not** a model for content or structure | Only for syntax questions |
-| `scripts/` | `fetch_theme.sh`, `render_pdf.sh`, `overflow_scan.js` for rendering and checking | Step 8 |
+| `scripts/` | `fetch_theme.sh`, `overflow_scan.js`, `render_png.sh`, `render_pdf.sh` for rendering and checking | Step 8 |
 
 ## Workflow
 
@@ -30,6 +30,8 @@ Ask if not given: **language(s)** (German, English, or both in parallel), **audi
 
 ### Step 1 — Read the references
 `lecture_design.md`, `marp_instructions.md`, and one example deck. No exceptions.
+
+**Running case:** if the course has a `_running_case.md`, read it first. Use only its numbers, dates, persons and terms (e.g. "management board", never a synonym), keep its timeline and the order of case sessions, and introduce nothing new silently; any new value goes into the final report under the heading `FACT SHEET ADDITIONS`. Learning objectives keep their course-wide numbers from `_curriculum.md`.
 
 ### Step 2 — Diagnose (existing deck or source text)
 Before changing anything, list findings in the chat: redundancy with other chapters, cases used before, slides that only define terms, wrong numbers or quotes, hot-linked images, formatting problems, missing exercises. Be specific (slide titles, numbers). This builds trust and tells the user what will change.
@@ -104,9 +106,9 @@ Report what you verified, what is secondary-sourced and what remains open.
 
 ### Step 8 — Render and check
 1. `scripts/fetch_theme.sh` once (downloads `thws.css`/`thws-pr.css`).
-2. `scripts/overflow_scan.js <theme-dir> <deck.md …>` — reports slides whose content exceeds the slide height **and render errors** (a line starting with `FEHLER`, exit code 1, e.g. a MathJax command that cannot be parsed). Fix errors first, then overflow: `tiny-text`, then cut content. Full-bleed image slides (class `fullscreen`) may show up as false positives.
-3. `scripts/render_pdf.sh <out-dir> <deck.md …>` — render PDFs. The script ends a hanging render after `RENDER_TIMEOUT` seconds (default 100) and retries once; it fails with `FEHLER` if no PDF was produced.
-4. Spot-check 2–3 slides visually (tables, images, the densest slide).
+2. `scripts/overflow_scan.js <theme-dir> <deck.md …>` — reports slides whose content exceeds the slide height **and render errors** (a line starting with `FEHLER`, exit code 1, e.g. a MathJax command that cannot be parsed). Fix errors first, then overflow: `tiny-text`, then cut content. Full-bleed image slides (class `fullscreen`) may show up as false positives. The scan is a **pre-filter, not the check**: it only compares element boxes with the bottom edge of the slide, so it reports "ok" for slides that are visibly broken — text clipped at the side or under header/footer, overlapping blocks, missing images, unreadable colours (e.g. white table text on a white row). Decks with "ok" scans have been delivered with cut-off slides.
+3. **Look at every slide (mandatory).** `scripts/render_png.sh <scratch-dir> <deck.md …>` renders one PNG per slide (into a scratch directory, never the repo). Open **each** PNG (Read tool) and check: nothing cut off at any edge, tables and formulas readable with enough contrast, images present, nothing overlapping, slide not overfull. Fix and re-render until every slide passes; report "checked N/N slides as PNG".
+4. `scripts/render_pdf.sh <out-dir> <deck.md …>` — render PDFs. The script ends a hanging render after `RENDER_TIMEOUT` seconds (default 100) and retries once; it fails with `FEHLER` if no PDF was produced.
 
 ### Step 9 — Bilingual mode (when both languages are requested)
 Write the first language, then the second with **identical structure**: same slide order, same classes, same exercise formats, same number of slides. Translate figures' captions, quote labels and literature notes. Keep terminology consistent with the course's glossary or `_curriculum.md` if present. Check that figure paths exist in both repositories.
@@ -130,6 +132,8 @@ Write the first language, then the second with **identical structure**: same sli
 
 Combine classes only as `end tiny-text`. Do not invent classes. No `img-right`; use the `bg` directive (see `marp_instructions.md`).
 
+**Tables and theme updates:** tables are safe on default slides (no class), `small-text`, `tiny-text` and `end tiny-text`. On `structural` (exercise sheets) they work only because the theme's dark row colours override the global white table rows (`!important`, c-kraus/thws 165a728; before that fix the text was white on white). `titlepage`, `center` and `fullscreen` are not meant for tables (one statement or one image per slide). After every theme update (`fetch_theme.sh` pulls `main`), render one `structural` slide with a table as PNG and check the contrast before trusting older decks.
+
 ## Images
 Use an image only if it **teaches** something (diagram, chart, comparison). Local files only, relative to the deck (e.g. `diagrams/kapitel-04/…png`), and check they exist. **No hot-linked stock or Wikimedia/press images**; no decorative photos next to bullet lists. If an image needs attribution, put it in the notes and the appendix.
 
@@ -143,7 +147,7 @@ If sources are available, cite empirical claims inline `*(Author, Year)*` and en
 4. Never write placeholder text ("Lorem ipsum").
 5. Never generate CSS.
 6. Never fabricate quotes, numbers or citations; flag uncertainty.
-7. Never deliver without the fact check (Step 7) and the overflow scan (Step 8).
+7. Never deliver without the fact check (Step 7), the overflow scan and the PNG check of every slide (Step 8).
 
 ## Final checklist
 - Cold open instead of Agenda/Lernziele?
@@ -153,5 +157,6 @@ If sources are available, cite empirical claims inline `*(Author, Year)*` and en
 - Main slide count within the table?
 - All numbers recomputed, quotes verified or marked, time-sensitive facts dated?
 - Only approved classes, only local images?
-- Overflow scan clean, PDF rendered?
+- Running-case numbers, dates and terms as in `_running_case.md`; `FACT SHEET ADDITIONS` reported?
+- Overflow scan clean, **every slide looked at as PNG**, PDF rendered?
 - Both language versions structurally identical (if bilingual)?

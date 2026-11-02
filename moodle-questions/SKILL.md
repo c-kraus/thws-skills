@@ -22,6 +22,13 @@ Bevor du XML generierst, prüfe ob diese Parameter bekannt sind. Wenn mindestens
 
 Wenn alle Parameter klar sind (z.B. „5 deutsche MC-Fragen zu IFRS 15"), direkt zur Generierung springen — keine Rückfrage.
 
+---
+
+## Schritt 0a: Kurskontext lesen (wenn vorhanden)
+
+- **`_running_case.md`** zuerst: Fragen mit Fallbezug verwenden nur dessen Zahlen, Daten (Zeitachse), Personen und Begriffe (z. B. "management board", nie ein Synonym). Nichts still neu erfinden; neue Werte am Ende unter der Überschrift `FACT SHEET ADDITIONS` melden.
+- **`_curriculum.md`**: Lernziele des Kapitels mit **kursweiter Nummer und Text** übernehmen (LO 1 … N, fortlaufend über den Kurs; nie eine kapitellokale Zählung wie "LO 6.3"). Jede Frage bekommt das Lernziel, das sie prüft (siehe Namenskonvention).
+
 **Beispiel-Abfrage** (nur wenn nötig):
 > „Kurz bevor ich loslege: Wie viele Fragen brauchst du, in welcher Sprache sollen sie sein, und soll ich den Fragetyp automatisch wählen oder möchtest du einen bestimmten Typ?"
 
@@ -63,9 +70,11 @@ Jeder Begriff muss genau **eine** passende Definition haben — keine Überschne
 
 ## Ausgabe
 
-1. **XML-Block** (vollständig, `<?xml ...?>` bis `</quiz>`)
-2. **Kurze Zusammenfassung** danach (1–2 Zeilen): Anzahl, Typen, Sprache — damit der User weiß was er bekommt, ohne ins XML schauen zu müssen
+1. **XML-Block** (vollständig, `<?xml ...?>` bis `</quiz>`); im Kursprojekt als Datei je Kapitel (z. B. `moodle/questions/ch06_slug.xml`)
+2. **Kurze Zusammenfassung** danach (1–2 Zeilen): Anzahl, Typen, Sprache, Abdeckung Lernziel → Anzahl Fragen — damit der User weiß was er bekommt, ohne ins XML schauen zu müssen
 3. Keine Einleitungstexte vor dem XML-Block
+4. Bei Dateien: XML lokal parsen (`python3 -c "import xml.etree.ElementTree as E; r=E.parse('datei.xml').getroot(); print(len(r.findall('question')))"`) und die Zahl gegen die erwartete Fragenzahl (plus Kategorie-Einträge) prüfen
+5. Hinweis auf den **Testimport** (siehe "Vor der Freigabe")
 
 ---
 
@@ -79,11 +88,26 @@ Jeder Begriff muss genau **eine** passende Definition haben — keine Überschne
 ```
 
 **Universelle Pflichtfelder je Frage:**
-- `<name><text>Thema - Aspekt</text></name>`
+- `<name><text>Thema - Aspekt</text></name>` (im Kurskontext mit Lernziel, siehe unten)
 - `<questiontext format="html"><text><![CDATA[...]]></text></questiontext>`
 - `<defaultgrade>1</defaultgrade>`
 
 **CDATA-Regel:** Alle Fragen- und Feedbacktexte in `<![CDATA[ ... ]]>` einwickeln — HTML in CDATA ist erlaubt.
+
+### Namenskonvention und Lernziel-Tags (Kurskontext)
+
+- Datei beginnt mit einer Kategorie: `<question type="category"><category><text>$course$/top/<Kurs>/CH06 - <Kapiteltitel></text></category></question>`.
+- Fragename: `CH06 - Q07 - LO 24 - <Aspekt>` (EN) bzw. `K06 - F07 - LZ 24 - <Aspekt>` (DE). Kapitel- und Fragenummer immer zweistellig (sonst sortiert Moodle Q10 vor Q2). LO/LZ = kursweite Nummer aus `_curriculum.md`; prüft eine Frage mehrere Lernziele, steht das wichtigste im Namen.
+- Zusätzlich je Lernziel ein Moodle-Tag, damit sich Quizze nach Lernziel exakt filtern lassen (die Namenssuche nach "LO 2" findet auch "LO 24"):
+
+```xml
+<tags>
+  <tag><text>LO 24</text></tag>
+  <tag><text>LO 25</text></tag>
+</tags>
+```
+
+Das `<tags>`-Element steht innerhalb von `<question>` nach den übrigen Feldern (DE: `LZ 24`).
 
 ---
 
@@ -263,7 +287,30 @@ Jede Antwort braucht Feedback, das erklärt **warum** sie richtig oder falsch is
 ## Integration mit Quarto-Kapiteln
 
 Wenn ein `.qmd`-Kapitel als Quelle angegeben wird:
-1. Kapitel lesen, Lernziele identifizieren
-2. Pro Lernziel mindestens eine Frage
+1. Kapitel lesen; Lernziele mit kursweiter Nummer aus `_curriculum.md` übernehmen (nur wenn es keins gibt, aus der Lernziel-Box des Kapitels)
+2. Pro Lernziel mindestens eine Frage, jede mit LO-Nummer im Namen und als Tag
 3. Mix aus Wissens-, Verständnis- und Anwendungsfragen (Bloom-Taxonomie)
-4. Fachterminologie aus dem Kapitel wörtlich übernehmen
+4. Fachterminologie aus dem Kapitel wörtlich übernehmen; Fallzahlen und -daten aus `_running_case.md`
+
+---
+
+## Vor der Freigabe: Testimport
+
+Lokales Parsen findet nur XML-Fehler, nicht, was Moodle daraus macht. Deshalb dem User **immer empfehlen**, jede neue oder geänderte Datei zuerst in einen **Moodle-Sandbox-Kurs** zu importieren (Fragensammlung → Import → Moodle-XML), bevor sie in den echten Kurs geht. Dort prüfen:
+
+- importierte Anzahl = Anzahl in der Datei; Kategorie richtig angelegt
+- Vorschau je Fragetyp einmal: Formeln, Tabellen, Sonderzeichen, Cloze-Lücken, Zuordnungen
+- Numerical: richtige Antwort und Toleranz in der Vorschau getestet, auch eine knapp falsche Eingabe
+- Tags vorhanden (Filter nach `LO 24` findet die erwarteten Fragen)
+
+Erst danach als freigegeben melden; ohne Testimport im Bericht "nicht testimportiert" vermerken.
+
+---
+
+## Nach Änderungen an Zeitachse oder Parametern
+
+Ändern sich `_running_case.md` (Zeitachse, Personen, kursweite Parameter wie Zinssatz oder Steuersatz) oder Zahlen im Kapitel, sind bestehende Fragen veraltet, auch wenn das XML gültig bleibt:
+
+1. Alle Fragendateien des Kurses und die übrigen Moodle-Texte mit Fallbezug (z. B. `moodle/objectives/`) nach den alten Werten durchsuchen (`grep -rn "November 2026" moodle/`): Datumsangaben, Beträge, Namen, Gremien.
+2. Betroffene Fragentexte und Feedbacks anpassen, numerische Antworten mit Python neu rechnen.
+3. Geänderte Dateien wieder testimportieren und im Bericht auflisten.

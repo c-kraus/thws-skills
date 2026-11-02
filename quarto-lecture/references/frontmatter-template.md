@@ -1,6 +1,8 @@
 # Canonical Frontmatter Template
 
-Use this as the starting point for every new `.qmd` file. Adjust `title`, `subtitle`, `lang`, and `date` per chapter. Do not omit fields — they are required by the Moodle output pipeline.
+**Standalone Mode only.** Chapters of a Quarto book (Book Mode, `references/book-mode.md`) have no YAML at all — the book's `_quarto.yml` carries these settings.
+
+Use this as the starting point for every new standalone `.qmd` file. Adjust `title`, `subtitle`, `lang`, and `date` per chapter. Do not omit fields — they are required by the Moodle output pipeline.
 
 ```yaml
 ---

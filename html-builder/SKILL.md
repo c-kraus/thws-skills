@@ -12,6 +12,10 @@ Visualize ONE concept clearly
 Keep it simple and focused
 No author credits, metadata, or unnecessary text
 The surrounding lecture text provides context
+The widget computes exactly what the chapter computes
+
+Before You Build
+A widget belongs to a chapter section. Read that section, its tutorial tasks and `_running_case.md` (if the project has one) first, and write a small test table: the chapter's worked example and cases with their inputs and expected outputs. Defaults, presets, slider ranges, conventions and names follow from it. Details: `references/functional-test.md`, sections 1–2.
 
 Design System (THWS Brand)
 Colors:
@@ -90,9 +94,14 @@ What to Exclude
 ❌ Instructions paragraphs (if controls are self-explanatory)
 
 Text Language
+One file serves every language. Never copy a widget to translate it.
 
-Detect from context (German or English)
-Keep ALL UI text in that language
+All UI strings live in one `I18N` dictionary (`de`, `en`); elements carry `data-i18n="key"`
+The language comes from the URL parameter `?lang=en`, else from `<html lang>`, else the course language
+Numbers via `Intl.NumberFormat` (`de-DE`: 1.234,5 · `en-GB`: 1,234.5)
+Case names, norm citations and units belong in the dictionary too
+An English book embeds `widget-name.html?lang=en`; a translation adds an `en` block to the dictionary
+Fill only the languages the course needs; the structure stays the same
 Use minimal text - let interaction speak
 
 Widget Patterns
@@ -121,6 +130,8 @@ JavaScript
 Use vanilla JS (no frameworks)
 CDN libraries only if absolutely necessary
 Keep code simple and readable
+Put all calculations in pure functions between `// CALC START` and `// CALC END` (no DOM access), so they can be tested with node
+Presets: one button per chapter case (worked example, running case), labelled with the chapter's case name
 
 Canvas/SVG
 
@@ -135,11 +146,7 @@ No fixed pixel widths (use %, max-width)
 Touch-friendly controls (mobile)
 
 Output Format (CRITICAL)
-No Conversation
-
-Output ONLY the HTML code
-NO explanations before/after
-NO "Here's the widget" or similar phrases
+Write the widget to a file (path from the caller or the project's widget folder, e.g. `widgets/kapitel-NN/` or `assets/chNN/`). If there is no file system, output one code block.
 
 Single Code Block
 ```html
@@ -148,13 +155,14 @@ Single Code Block
 </html>
 ```
 Do NOT split the code. One continuous block from <!DOCTYPE> to </html>.
+No explanations around the code. The only text after it is the short functional-test report (`references/functional-test.md`, section 5), including `FACT SHEET ADDITIONS` if `_running_case.md` exists.
 Example: Simple Widget
 html<!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ROI Berechnung</title>
+    <title>ROI</title>
     <style>
         body {
             margin: 0;
@@ -169,6 +177,14 @@ html<!DOCTYPE html>
             width: 100%;
             margin: 10px 0;
         }
+        .presets button {
+            background: white;
+            color: #ff6a00;
+            border: 1px solid #ff6a00;
+            padding: 4px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
         #result {
             font-size: 2rem;
             color: #ff6a00;
@@ -179,39 +195,66 @@ html<!DOCTYPE html>
 </head>
 <body>
     <div class="container">
-        <label>Investition: <span id="inv">10000</span> €</label>
-        <input type="range" id="invSlider" min="1000" max="50000" value="10000" step="1000">
-        
-        <label>Gewinn: <span id="profit">2000</span> €</label>
-        <input type="range" id="profitSlider" min="0" max="10000" value="2000" step="100">
-        
-        <div id="result">ROI: 20%</div>
+        <div class="presets">
+            <button type="button" data-preset="ex31" data-i18n="ex31"></button>
+            <button type="button" data-preset="task2" data-i18n="task2"></button>
+        </div>
+
+        <label><span data-i18n="investment"></span>: <span id="inv"></span> €</label>
+        <input type="range" id="invSlider" min="1000" max="50000" value="10000" step="500">
+
+        <label><span data-i18n="profit"></span>: <span id="profit"></span> €</label>
+        <input type="range" id="profitSlider" min="0" max="10000" value="2000" step="50">
+
+        <div id="result"></div>
     </div>
-    
+
     <script>
+        // CALC START
+        function calc(p) {
+            return { roi: p.profit / p.inv };
+        }
+        // CALC END
+
+        const I18N = {
+            de: { investment: 'Investition', profit: 'Gewinn', ex31: 'Beispiel 3.1', task2: 'Aufgabe 2' },
+            en: { investment: 'Investment', profit: 'Profit', ex31: 'Example 3.1', task2: 'Task 2' }
+        };
+        const LANG = (new URLSearchParams(location.search).get('lang') || document.documentElement.lang || 'de').slice(0, 2);
+        const T = I18N[LANG] || I18N.de;
+        document.documentElement.lang = LANG;
+        document.querySelectorAll('[data-i18n]').forEach(el => el.textContent = T[el.dataset.i18n]);
+        const fmt = new Intl.NumberFormat(LANG === 'de' ? 'de-DE' : 'en-GB', { maximumFractionDigits: 1 });
+
+        // Presets = the chapter's cases; defaults (HTML values) = Beispiel 3.1
+        const PRESETS = { ex31: { inv: 10000, profit: 2000 }, task2: { inv: 24500, profit: 3150 } };
+
         const invSlider = document.getElementById('invSlider');
         const profitSlider = document.getElementById('profitSlider');
-        const invDisplay = document.getElementById('inv');
-        const profitDisplay = document.getElementById('profit');
-        const result = document.getElementById('result');
-        
-        function calculate() {
-            const inv = parseInt(invSlider.value);
-            const profit = parseInt(profitSlider.value);
-            const roi = ((profit / inv) * 100).toFixed(1);
-            
-            invDisplay.textContent = inv;
-            profitDisplay.textContent = profit;
-            result.textContent = `ROI: ${roi}%`;
+
+        function update() {
+            const p = { inv: +invSlider.value, profit: +profitSlider.value };
+            document.getElementById('inv').textContent = fmt.format(p.inv);
+            document.getElementById('profit').textContent = fmt.format(p.profit);
+            document.getElementById('result').textContent = 'ROI: ' + fmt.format(calc(p).roi * 100) + ' %';
         }
-        
-        invSlider.addEventListener('input', calculate);
-        profitSlider.addEventListener('input', calculate);
+
+        document.querySelectorAll('[data-preset]').forEach(btn => btn.addEventListener('click', () => {
+            const c = PRESETS[btn.dataset.preset];
+            invSlider.value = c.inv;
+            profitSlider.value = c.profit;
+            update();
+        }));
+        invSlider.addEventListener('input', update);
+        profitSlider.addEventListener('input', update);
+        update();
     </script>
 </body>
 </html>
 Quality Checklist
-Before delivering a widget, verify:
+Before delivering a widget, verify both parts.
+
+Form
 
 ✅ Compact (fits ~500px height)
 ✅ No author/metadata sections
@@ -220,6 +263,19 @@ Before delivering a widget, verify:
 ✅ THWS orange for primary actions
 ✅ Single HTML file
 ✅ Works standalone in IFRAME
+✅ All UI text in the `I18N` dictionary; `?lang=` switches it
+
+Function (Funktionstest — `references/functional-test.md`)
+
+✅ Defaults reproduce the chapter's worked example exactly (state the numbers checked)
+✅ Placeholders, values and labels show the same default numbers
+✅ Slider min/max/step cover every value in text, tutorial tasks and slides
+✅ Presets for the chapter's cases
+✅ Same conventions as the chapter: discrete vs. continuous, signs, percent vs. fraction, units, timing
+✅ Same symbols, names and terms as the chapter and `_running_case.md`
+✅ Norm citations and norm rules (floors, caps) checked against the original norm text
+✅ Node test of the CALC functions with the chapter numbers passes
+✅ Opened once in a browser: no console errors, presets and slider extremes work (or report that no browser tool was available)
 
 Remember
-Simplicity is key. The lecture text does the teaching - the widget just makes one concept visual and interactive.
+Simplicity is key. The lecture text does the teaching - the widget just makes one concept visual and interactive, with the chapter's own numbers.

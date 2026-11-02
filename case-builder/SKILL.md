@@ -1,6 +1,6 @@
 ---
 name: case-builder
-description: Create pedagogically rigorous business case studies following "The Ultimate Case Guide" methodology (Kupp & Mueller). This skill guides you through the structured "Case Development Funnel" to produce teaching cases that effectively combine compelling narratives (Lead) with specific learning objectives (Need). Output is a `.qmd` file ready for Quarto Single Source Publishing. Works in both German and English. Use this skill whenever the user mentions case studies, Fallstudien, teaching cases, business cases for classroom use, Kupp & Mueller, case method, case development, or wants to create narrative-driven learning materials about a company or business situation. Also trigger when the user wants to write a case for exam preparation, classroom discussion, or executive education, even if they don't explicitly say "case study".
+description: "Create pedagogically rigorous business case studies following \"The Ultimate Case Guide\" (Kupp & Mueller): the Case Development Funnel combines a compelling narrative (Lead) with specific learning objectives (Need). Two modes: Kurzfall / short decision case (max. 400 words, one decision, about 30 minutes; the default for a tutorial session, embedded in a tutorial-builder sheet) and the long case (1,500–3,000 words, 90-minute case session, full teaching note). Output is a .qmd file for Quarto Single Source Publishing, in German or English. Use whenever the user mentions case studies, Fallstudien, Kurzfall, short case, teaching cases, business cases for class, Kupp & Mueller, case method or case development, or wants narrative-driven learning material about a company or business situation, also for exam preparation, classroom discussion or executive education, even without the words 'case study'."
 ---
 
 ## Core Philosophy
@@ -17,13 +17,34 @@ Two concepts are easy to confuse but must stay distinct throughout:
 - **Immediate Issue**: The concrete, urgent decision the protagonist faces *right now* — the narrative hook
 - **Underlying Issue**: The theoretical concept students should learn by analyzing that decision — the actual learning objective
 
+## Choose the Mode First
+
+| | **Kurzfall (short decision case)** | **Long case** |
+|---|---|---|
+| Use when | the case is for a tutorial session or any in-class slot of ≤ 45 minutes — **the default whenever the request mentions a tutorial, Tutorium or tutorial-builder** | a dedicated 90-minute case session, exam preparation case, executive education, or the user asks for a full case |
+| Narrative | **max. 400 words (EN max. 450), hard limit** | typically 1,500–3,000 words |
+| Decision, protagonist | one protagonist, one decision | one protagonist, may develop over several decision points |
+| Exhibits | max. one (a table) | as needed, inline |
+| Tasks | 2–3, each with the LO tag line | 3–5 Aufgaben |
+| Class time | about 30 minutes | 90 minutes |
+| Teaching note | short part: expected answers as a table, typical errors | full Teaching Note (Phase 4) |
+
+The Kurzfall rules are in "Kurzfall Mode" below; everything else in this skill (Lead + Need, cut-off before the decision, immediate vs. underlying issue, arithmetic check) applies to both modes.
+
+## Course Files
+
+- **`_curriculum.md`** (if it exists): take the learning objectives and their **course-wide numbers** from there; never invent a second numbering. Its "Kohorte & Vorwissen" section sets the audience.
+- **`_running_case.md`** (if the course has a running case company): read it first. If the case uses that company, use only its numbers, dates, persons and terms, and fit the scene into its **Zeitachse**; introduce nothing new silently. Report every new value at the end under the heading `FACT SHEET ADDITIONS` (item | value | case/task). A case set in a different company still uses the course-wide parameters (risk-free rate, tax rate, notation) from the fact sheet.
+
 ## Phase 1: Exploration Interview
 
 **Fast-path:** If the trigger message already provides answers to all four core questions below (underlying issue/concept, fictional vs. real, protagonist approach, target audience), skip the Q&A. State your assumptions in one short paragraph and proceed directly to Phase 2.
 
 Only ask if something is genuinely missing. Ask all open questions together in one message — never trickle them out one by one.
 
-1. **Educational Need (Underlying Issue)**: Which theoretical concept should students learn? Be specific. Not "innovation" but "Disruptive Innovation nach Christensen" or "Blue Ocean Strategy nach Kim/Mauborgne".
+0. **Mode**: Kurzfall or long case (see above). Default Kurzfall when the case is for a tutorial session.
+
+1. **Educational Need (Underlying Issue)**: Which theoretical concept and which learning objectives (numbers from `_curriculum.md`) should students learn? Be specific. Not "innovation" but "Disruptive Innovation nach Christensen" or "Blue Ocean Strategy nach Kim/Mauborgne".
 
 2. **Case Lead**: What's the story? Company, situation, context. A rich real-world scenario works best.
 
@@ -46,9 +67,23 @@ A case built on vague foundations cannot be fixed in editing.
 - **Tense**: Past tense throughout — this is a story, not a report
 - **Perspective**: Third person, close to the protagonist's viewpoint. Never "I". Never "the company should".
 - **Tone**: Neutral, descriptive, never prescriptive. The case asks questions; it never teaches solutions. A case that reveals the "right answer" has failed.
-- **Length**: Typically 1,500–3,000 words for the main text. Executive cases can run longer; exam cases shorter.
+- **Length**: Kurzfall max. 400 words of narrative (EN max. 450) — a hard limit, checked by count, not by feel. Long case typically 1,500–3,000 words; executive cases can run longer.
+- **Quotes and signs** (Typst output): type only straight quotes `"…"` (Typst sets „…“ or “…” from `lang`); never start a table cell or line with `+ `, `- ` or `= `. Details: `~/.claude/skills/tutorial-builder/references/format-cheatsheet.md`.
 
-### Structure
+### Kurzfall Mode
+
+Templates (embedded in a tutorial sheet or standalone), the short teaching-note part and a word-count command: [references/kurzfall-template.md](references/kurzfall-template.md).
+
+- **Narrative ≤ 400 words (EN ≤ 450)**, counted without tag line, exhibit, tasks and solutions. Over the limit → cut background, never the stakes or the decision.
+- **Shape:** opening paragraph (≤ 100 words, the same four elements as below) → only the background the decision needs → closing paragraph with the protagonist just *before* the decision. One protagonist with real stakes, one decision, no second storyline.
+- **One exhibit** (a table) holds the numbers; no numbers scattered across the prose that the tasks need but the exhibit lacks.
+- **Does not name the standard or theory** (the underlying issue); the norm reference belongs in the solution.
+- **2–3 tasks**, typically analyse → compute → judge. At least one task asks for a reasoned judgement or recommendation (Bloom: evaluate). LO tag line per task (`*Lernziele: 7, 8 · ca. 10 Minuten*`, EN `*Learning objectives: 7, 8 · about 10 minutes*`); embedded in a tutorial sheet, the block's single tag line covers all its tasks (tutorial-builder rule). Max. 2–3 LOs for the whole Kurzfall.
+- **About 30 minutes** in class: ~5 reading, ~15 working, ~10 discussion.
+- **Format:** `tutorial-typst` rules — one block `## Aufgabe N: Kurzfall — <Firma>`, tasks as `#### Task N:`, a solution div per task. When embedded, follow tutorial-builder's sheet conventions; a Kurzfall from an old long case keeps company, protagonist and core problem.
+- **Teaching note:** only the short part (expected answers as a table, typical errors, 30-minute split). No full Phase 4 Teaching Note.
+
+### Long Case Structure
 
 1. **Opening Paragraph** — the most critical part of the entire case. Must contain: protagonist by name, organization, specific point in time, and the immediate issue. Max 200 words. If this paragraph doesn't hook the reader, the case is dead.
 
@@ -62,7 +97,7 @@ A case built on vague foundations cannot be fixed in editing.
 
 6. **Closing Paragraph**: Returns to the protagonist and the immediate issue. Creates urgency. Often ends mid-thought, with a question hanging in the air, or the protagonist staring at an email they haven't yet answered.
 
-### Quarto File Template
+### Long Case Quarto File Template
 
 ```qmd
 ---
@@ -86,6 +121,8 @@ format:
 [Core problem section — develops the underlying issue implicitly. No heading. Bold labels if needed.]
 
 ## Aufgabe 1 — [Analysefeld]
+
+*Lernziele: 7, 8 · ca. 20 Minuten*
 
 [Brief narrative context that sets up this specific task — 2–4 sentences max, no subheadings.]
 
@@ -120,7 +157,7 @@ b) [Question sub-part]
 
 ### Heading Hierarchy Discipline
 
-The heading hierarchy separates **story from task**:
+The heading hierarchy separates **story from task** (long case in `handout-typst`; a Kurzfall follows the `tutorial-typst` rules in Kurzfall Mode):
 
 - **Story and background sections** (Unternehmenshintergrund, Marktumfeld, analytical context) use **no headings** — prose only, with **bold labels** at most for visual anchors. Reason: these are continuous narrative; sub-divisions create a table-of-contents feel that interrupts the story and competes with the task structure.
 - **Aufgaben** (the numbered tasks) are the H2 heading level. There should be no H2 headings in the story sections at all — if a story section carries an H2, it will visually compete with the task headings and make the numbering feel inconsistent.
@@ -186,6 +223,8 @@ The `---` separator signals "this section is complete, next begins."
 
 After completing the draft, run through this checklist before presenting to the user:
 
+- Kurzfall: narrative word count (command in the reference) ≤ 400 (EN ≤ 450)? One exhibit, 2–3 tasks, one judgement task, ~30 minutes?
+- Does every task carry its LO tag line, and is every LO the case is meant to serve actually tested?
 - Does the opening paragraph contain all four required elements (protagonist, organization, time, immediate issue)?
 - Is the cut-off point clearly defined — does the case end *before* the decision?
 - Are immediate issue and underlying issue clearly distinct, and does the case never explicitly name the underlying issue?
@@ -223,6 +262,10 @@ For every number in the case, verify:
 
 6. **Conceptual correctness**: Does the numerical setup embed the right conceptual structure? A number that "works out" under a wrong concept teaches the wrong framework — worse than a wrong number.
 
+7. **Every number derives from the stated facts**: a term of 11 months gives 11 monthly amounts, not 12. Compute unrounded, display rounded, and mark rounded statements ("about", "rund").
+
+8. **Fact-pattern trigger check**: Does any narrative detail unintentionally trigger another rule, exception or option that would flip the solution? Example: a swap entered "so that interest expense follows the variable rate of its customer financing" makes customer financing a possible main business activity (IFRS 18.65(a)) and moves the line item. Remove the detail or rule it out explicitly ("the company does not finance customers").
+
 Flag any discrepancy and resolve it in the case *before* writing the teaching note solution.
 
 ## Phase 3c: Review
@@ -259,7 +302,7 @@ Melde nur echte Lücken im finalen Output — kompakt, ein Satz pro Punkt:
 
 ## Phase 4: Teaching Note
 
-After the case draft is approved (and the arithmetic check has passed), offer to create the Teaching Note. This is a separate `.qmd` file — confidential, for the instructor only, never distributed to students.
+Long case only (a Kurzfall gets the short part described in Kurzfall Mode). After the case draft is approved (and the arithmetic check has passed), offer to create the Teaching Note. This is a separate `.qmd` file — confidential, for the instructor only, never distributed to students.
 
 A Teaching Note makes the difference between a case that gets used once and one that becomes a course staple. It answers: "How do I actually run this in class?"
 
@@ -288,7 +331,7 @@ format:
 
 # Lernziele
 
-Nach der Diskussion sollen Studierende in der Lage sein:
+Nach der Diskussion sollen Studierende in der Lage sein (Nummern aus `_curriculum.md`):
 
 1. [Lernziel 1 — konkret und messbar, direkt auf eine Frage des Falls abbildbar]
 2. [Lernziel 2]
@@ -337,7 +380,7 @@ Example format:
 
 # Diskussionsplan (Zeitübersicht)
 
-Target: **90 minutes total**, including instructor explanations. Typical split: ~10 min opening/framing, ~60–65 min for Aufgaben discussion, ~10 min synthesis/closing, ~5 min buffer. Do not plan more than 90 minutes — the Diskussionsleiter has one session.
+Target: **90 minutes total**, including instructor explanations. Typical split: ~10 min opening/framing, ~55–60 min for Aufgaben discussion, ~10 min synthesis/closing, ~10 min buffer. Planned content (without buffer) about 75–80 minutes; never plan the full 90 — the Diskussionsleiter has one session.
 
 | Phase | Inhalt | Dauer |
 |-------|--------|-------|
@@ -346,6 +389,7 @@ Target: **90 minutes total**, including instructor explanations. Typical split: 
 | Aufgabe 2 | [Title — including instructor explanation time] | [N] Min. |
 | Aufgabe 3 | [Title — including instructor explanation time] | [N] Min. |
 | Synthese | Abschluss, Theoriebrücke, nächstes Thema | 10 Min. |
+| Puffer | | 10 Min. |
 | **Gesamt** | | **90 Min.** |
 
 # Tafelbild (Board Plan)
@@ -376,8 +420,8 @@ The model solution is the most failure-prone part of a teaching note. To write i
 
 ## Output
 
-Save both files to the project's `Fallstudien/` directory (relative to the working directory), or to the path the user specifies.
+- **Kurzfall, embedded:** inside the tutorial sheet `tutorials/tut_NN_slug.qmd` (tutorial-builder conventions; render both versions as described there).
+- **Kurzfall or long case, standalone, in a book project:** follow the project's scheme (e.g. `cases/case_a_<slug>.qmd` + `cases/case_a_<slug>_teaching_note.qmd`).
+- **Otherwise:** the project's `Fallstudien/` directory or the path the user specifies, named `fallstudie_[unternehmensname]_[jahr].qmd` and `teaching_note_[unternehmensname]_[jahr].qmd`.
 
-File naming convention:
-- Case: `fallstudie_[unternehmensname]_[jahr].qmd`
-- Teaching Note: `teaching_note_[unternehmensname]_[jahr].qmd`
+Report at the end: files, mode, narrative word count, LO → task map, arithmetic check result, open points, and `FACT SHEET ADDITIONS` if a running case was used.
