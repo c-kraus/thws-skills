@@ -83,6 +83,8 @@ Interaction and exercise slides take the time of 2–3 content slides each. When
 - Use `→` for the consequence of a slide (`→ **Folge:** …`), keep it to one arrow line where possible.
 - Tables only for real comparisons or exercise sheets; otherwise bullets.
 - **Quotes:** verbatim only if verified, otherwise label `(Autor, Jahr, sinngemäß)` and do not use quotation marks as if verbatim. Never put invented words in a thinker's mouth.
+- **Quote layout:** the theme sets block quotes (`>`) bold, 32 px, 550 px wide — about 8–10 words per line, so a 40-word quote fills half the slide. Quote up to ~30 words: at most two more blocks on the slide (source line plus one short line or two bullets). Longer quote: its own `center` slide with quote and source only; the explanation goes on the next slide. Shorten a verbatim quote only with `[…]`, never silently.
+- **Typography:** MARP does not convert `--` or straight quotes. Write the characters: dash `–` (also in ranges, `1724–1804`, page ranges `5–15`), German quotes „…“, English quotes “…”, never a straight `"` closing a „.
 - **Speaker notes** as HTML comments (`<!-- … -->`) directly after the slide content: timing of the opening block, expected answers to exercises, caveats ("Zahlen vor dem Einsatz prüfen"), fallbacks ("ohne Rollenkarten: Handzeichen").
 - **Preparation (Material):** When a session needs paper or setup (slips, role cards, a split room, printed versions of a case), say so in the speaker note of the slide where it is used, starting with `Vorbereitung:` / `Preparation:`, with the exact text to print and a version **without** material. Mention it once more in the final report so the lecturer can prepare in time.
 - Use `fit` only on one or two `center` slides per deck.
@@ -106,7 +108,7 @@ Report what you verified, what is secondary-sourced and what remains open.
 
 ### Step 8 — Render and check
 1. `scripts/fetch_theme.sh` once (downloads `thws.css`/`thws-pr.css`).
-2. `scripts/overflow_scan.js <theme-dir> <deck.md …>` — reports slides whose content exceeds the slide height **and render errors** (a line starting with `FEHLER`, exit code 1, e.g. a MathJax command that cannot be parsed). Fix errors first, then overflow: `tiny-text`, then cut content. Full-bleed image slides (class `fullscreen`) may show up as false positives. The scan is a **pre-filter, not the check**: it only compares element boxes with the bottom edge of the slide, so it reports "ok" for slides that are visibly broken — text clipped at the side or under header/footer, overlapping blocks, missing images, unreadable colours (e.g. white table text on a white row). Decks with "ok" scans have been delivered with cut-off slides.
+2. `scripts/overflow_scan.js <theme-dir> <deck.md …>` — reports **render errors** (a line starting with `FEHLER`, exit code 1, e.g. a MathJax command that cannot be parsed), slides whose content runs past the bottom edge (`Inhalt bis … px`), blocks cut off inside the slide (`abgeschnitten … px`) and `TYPOGRAFIE` problems in the source (`--`, „…"). Fix errors first, then overflow and clipping: `small-text`/`tiny-text`, then cut or split content (quotes: see Step 6), then typography. Full-bleed image slides (class `fullscreen`) may show up as false positives. Background: until c-kraus/thws 2f7ad71 the theme shrank overfull slides and cut each paragraph, list or table separately, so text vanished mid-slide while the old scan said "ok"; since then an overfull slide overflows visibly. The scan is still a **pre-filter, not the check**: it misses text clipped at the side or under header/footer, overlapping blocks, missing images and unreadable colours (e.g. white table text on a white row).
 3. **Look at every slide (mandatory).** `scripts/render_png.sh <scratch-dir> <deck.md …>` renders one PNG per slide (into a scratch directory, never the repo). Open **each** PNG (Read tool) and check: nothing cut off at any edge, tables and formulas readable with enough contrast, images present, nothing overlapping, slide not overfull. Fix and re-render until every slide passes; report "checked N/N slides as PNG".
 4. `scripts/render_pdf.sh <out-dir> <deck.md …>` — render PDFs. The script ends a hanging render after `RENDER_TIMEOUT` seconds (default 100) and retries once; it fails with `FEHLER` if no PDF was produced.
 
@@ -156,6 +158,7 @@ If sources are available, cite empirical claims inline `*(Author, Year)*` and en
 - "Zum Mitnehmen" and "Anhang" present?
 - Main slide count within the table?
 - All numbers recomputed, quotes verified or marked, time-sensitive facts dated?
+- Long quotes (> ~30 words) on their own slide; `–` and „…“ instead of `--` and `"`?
 - Only approved classes, only local images?
 - Running-case numbers, dates and terms as in `_running_case.md`; `FACT SHEET ADDITIONS` reported?
 - Overflow scan clean, **every slide looked at as PNG**, PDF rendered?

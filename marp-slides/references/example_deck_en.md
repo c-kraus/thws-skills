@@ -34,7 +34,7 @@ Moderation (approx. 8 min total, slides 2-4): No agenda, no learning objectives.
 # Two Ways of Saying "No"
 
 - **Because of the consequences:** "If doctors acted like that, nobody would dare go to hospital."
-- **Because of the principle:** "You may not use a human being as a spare-parts store -- no matter how many it saves."
+- **Because of the principle:** "You may not use a human being as a spare-parts store – no matter how many it saves."
 
 Last week we followed the first answer (rule utilitarianism). Today is about the **second.**
 
@@ -54,11 +54,11 @@ Last week we followed the first answer (rule utilitarianism). Today is about the
 
 ---
 
-# Immanuel Kant (1724--1804)
+# Immanuel Kant (1724–1804)
 
 Philosopher of the Enlightenment in Königsberg. His question for morality: *What should I do?*
 
-The answer can only come from **reason** -- not from experience, tradition or utility.
+The answer can only come from **reason** – not from experience, tradition or utility.
 
 Two ideas carry his ethics:
 
@@ -78,7 +78,7 @@ Anecdote (optional): Kant never left Königsberg in his life; legend has it that
 *(Kant, 1785)*
 
 - **Price:** Things are exchangeable, they can be offset
-- **Dignity:** People are not -- they cannot be **weighed** against utility
+- **Dignity:** People are not – they cannot be **weighed** against utility
 
 → This is Kant's answer to last week's question: **Whoever is missing from the calculation has a dignity, not a price.**
 
@@ -101,7 +101,7 @@ Anecdote (optional): Kant never left Königsberg in his life; legend has it that
 
 # Exercise: Testing Maxims
 
-**Groups (5 minutes):** What happens if **everyone** acts this way? Does the maxim still make sense -- or does it destroy itself?
+**Groups (5 minutes):** What happens if **everyone** acts this way? Does the maxim still make sense – or does it destroy itself?
 
 1. "I conceal a mistake if it harms me."
 2. "I copy someone else's code if nobody notices."
@@ -134,26 +134,34 @@ A company can raise efficiency by 12% through **biometric monitoring** of its em
 **Groups (4 minutes):**
 
 - Are the employees treated merely as a means here?
-- Does consent solve the problem -- or is there a limit that even consent does not remove?
+- Does consent solve the problem – or is there a limit that even consent does not remove?
 
 *Note: Utilitarianism would calculate here. What does Kant not calculate?*
 
 ---
 
-# The Good Will: Why Do You Do It?
+# The Good Will
 
 > "Nothing in the world ... can possibly be conceived which could be called good without qualification except a good will."
 
 *(Kant, 1785)*
 
-**The shopkeeper:** He serves inexperienced customers honestly -- because otherwise his reputation suffers.
+**The shopkeeper:** He serves inexperienced customers honestly – because otherwise his reputation suffers.
 
-- The act is **in accordance with duty** -- it matches what duty requires
+- The act is **in accordance with duty** – it matches what duty requires
 - But it is not done **from duty**, but from self-interest
 
 → An action has moral worth only if it is done **from duty.**
 
-*An engineer submits a correct safety report because he expects a bonus. Does he act morally? Does it matter why we do the right thing? -- 2 minutes with your neighbour.*
+---
+
+<!-- _class: structural -->
+
+# Why Do You Do It?
+
+An engineer submits a correct safety report because he expects a **bonus**.
+
+**In pairs (2 minutes):** Does he act morally? Does it matter why we do the right thing?
 
 ---
 
@@ -165,7 +173,7 @@ Roger Boisjoly, an engineer at Morton Thiokol, had warned in writing months earl
 
 Management overrode him. The *Challenger* broke apart 73 seconds after launch, killing all seven crew members.
 
-Boisjoly later testified before the investigating commission -- with personal consequences.
+Boisjoly later testified before the investigating commission – with personal consequences.
 
 → No calculation relieved him of the decision. The **duty of safety was not negotiable.**
 
@@ -179,7 +187,7 @@ Most people find this **untenable.** And: What if two duties collide? Truth and 
 
 **W. D. Ross (1930):** There are several duties that hold **prima facie** (fidelity, non-maleficence, justice, beneficence). In a conflict they must be **weighed.**
 
-→ Deontology need not be rigid. It can weigh -- without giving up thinking in principles.
+→ Deontology need not be rigid. It can weigh – without giving up thinking in principles.
 
 ---
 
@@ -187,9 +195,9 @@ Most people find this **untenable.** And: What if two duties collide? Truth and 
 
 Deontological thinking is in what engineers **must do:**
 
-- **Professional codes** (VDI, IEEE, NSPE): public safety, honesty, competence -- duties, not optimisation goals
+- **Professional codes** (VDI, IEEE, NSPE): public safety, honesty, competence – duties, not optimisation goals
 - **Data protection law (GDPR):** The right to informational self-determination protects **dignity**, not utility
-- **EU AI Act:** Certain AI practices are **prohibited outright** (e.g. social scoring) -- regardless of utility
+- **EU AI Act:** Certain AI practices are **prohibited outright** (e.g. social scoring) – regardless of utility
 
 → Whoever asks: **"What must I never do?"** thinks deontologically.
 
@@ -201,10 +209,10 @@ Deontological thinking is in what engineers **must do:**
 - **Dignity instead of price:** People cannot be offset against each other
 - **Categorical imperative:** Could everyone act this way? And: Is no one used **merely as a means**?
 - **Good will:** Moral worth lies in what is done **from duty**
-- **Limits:** Rigidity and conflicts of duty -- Ross allows weighing
+- **Limits:** Rigidity and conflicts of duty – Ross allows weighing
 - **Profession:** Codes, data protection and AI bans are duties, not optimisation goals
 
-**Next session:** Social inequality. Bourdieu asks: Are moral principles equally accessible to everyone -- or does dignity depend on capital?
+**Next session:** Social inequality. Bourdieu asks: Are moral principles equally accessible to everyone – or does dignity depend on capital?
 
 ---
 
@@ -214,7 +222,7 @@ Deontological thinking is in what engineers **must do:**
 
 **My red line.**
 
-On a slip of paper, write in one sentence a limit you would **not cross** in your profession -- and whether you would keep it out of duty or out of fear of the consequences.
+On a slip of paper, write in one sentence a limit you would **not cross** in your profession – and whether you would keep it out of duty or out of fear of the consequences.
 
 *Hand it in at the exit.*
 
@@ -238,7 +246,7 @@ On a slip of paper, write in one sentence a limit you would **not cross** in you
 2. **What may I hope?** *(Religion and metaphysics)*
 3. **What should I do?** *(Ethics)*
 
-→ For morality: The answer can only come from **pure reason** -- not from experience, tradition or utility.
+→ For morality: The answer can only come from **pure reason** – not from experience, tradition or utility.
 
 ---
 
@@ -264,10 +272,10 @@ On a slip of paper, write in one sentence a limit you would **not cross** in you
 
 **Philippa Foot (1967):** A tram is heading for five people. You can divert it onto a track with one person.
 
-- **Pulling the lever:** The death of the one person is a **side effect** -- they are not used as a means
+- **Pulling the lever:** The death of the one person is a **side effect** – they are not used as a means
 - **Pushing a person off the bridge:** The death is the **means** of saving the five
 
-Many allow the first and forbid the second -- although the numbers are the same.
+Many allow the first and forbid the second – although the numbers are the same.
 
 → This explains the **humanity formula:** The second treats a human being merely as a means.
 
@@ -281,10 +289,10 @@ Many allow the first and forbid the second -- although the numbers are the same.
 
 The saying puts the charge of **consequence blindness** in a nutshell: Deontology risks holding on to principles even when catastrophic consequences loom.
 
-- **Advantage:** Clear, reliable limits -- independent of pressure and calculation
+- **Advantage:** Clear, reliable limits – independent of pressure and calculation
 - **Disadvantage:** Those who pay for consistent adherence to principle are often others
 
-→ Deontology helps with **saying no** -- not always with weighing.
+→ Deontology helps with **saying no** – not always with weighing.
 
 ---
 
@@ -300,7 +308,7 @@ The saying puts the charge of **consequence blindness** in a nutshell: Deontolog
 | **Beneficence** | Helping others where possible |
 | **Gratitude** | Returning kindness |
 
-In a conflict, **weighing** decides -- not a fixed ranking.
+In a conflict, **weighing** decides – not a fixed ranking.
 
 *(Ross, 1930)*
 
@@ -310,7 +318,7 @@ In a conflict, **weighing** decides -- not a fixed ranking.
 
 # References
 
-- Foot, P. (1967). The problem of abortion and the doctrine of the double effect. *Oxford Review, 5,* 5--15.
+- Foot, P. (1967). The problem of abortion and the doctrine of the double effect. *Oxford Review, 5,* 5–15.
 - Kant, I. (1785). *Groundwork of the Metaphysics of Morals.*
 - Kant, I. (1797). On a supposed right to lie from philanthropy.
 - Ross, W. D. (1930). *The Right and the Good.* Clarendon Press.

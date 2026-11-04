@@ -16,7 +16,7 @@ math: mathjax
 ---
 ```
 
-Kein Zusatz wie „Kapitel 6 · …" in den Header oder in die Titelfolie schreiben.
+Kein Zusatz wie „Kapitel 6 · …“ in den Header oder in die Titelfolie schreiben.
 
 ## 2. Folienklassen
 
@@ -33,8 +33,8 @@ Die Klasse steht als Kommentar direkt unter dem Trenner `---`:
 | Klasse | Verwendung |
 |---|---|
 | `titlepage` | Nur die erste Folie. Titel `#`, Untertitel `##` (Zeilenumbruch mit `<br>`) |
-| `structural` | Übungen, Abstimmungen, Kapitel-Trenner („Anhang"). Dunkler Hintergrund |
-| `center` | Zentrierte Thesen, Provokationen, Zitate, „Zum Mitnehmen" |
+| `structural` | Übungen, Abstimmungen, Kapitel-Trenner („Anhang“). Dunkler Hintergrund |
+| `center` | Zentrierte Thesen, Provokationen, Zitate, „Zum Mitnehmen“ |
 | `fullscreen` | Vollbild-Bild, zusammen mit `![bg](pfad)` |
 | `end` | Inhalt am unteren Rand: Literatur, Schlusszitat |
 | `tiny-text` | Kleine Schrift für Tabellen und dichte Folien |
@@ -66,10 +66,10 @@ Bilder nur, wenn sie etwas **erklären** (Diagramm, Vergleich, Daten). Keine Sto
 - `# Titel` — jede Inhaltsfolie hat genau einen Titel
 - Hervorhebung `**fett**`, Betonung `*kursiv*`
 - Folgerung: eine Zeile `→ **Folge:** …` am Folienende
-- Zitate: `> Zitat` (wörtlich nur, wenn geprüft; sonst „sinngemäß")
+- Zitate: `> Zitat` (wörtlich nur, wenn geprüft; sonst „sinngemäß“)
 - Provokation: `# <!-- fit --> Text <br> mit Umbruch` auf einer `center`-Folie (ein- bis zweimal pro Deck)
 - Formeln: siehe Abschnitt 5 (MathJax)
-- Gedankenstrich im Fließtext als `--`, Pfeil als `→`
+- Gedankenstrich als Zeichen `–` (auch in Spannen: `1724–1804`, `S. 5–15`), nie `--`: MARP wandelt es nicht um. Anführungszeichen deutsch „…“, englisch “…”. Pfeil als `→`
 
 ## 5. Formeln (MathJax)
 
@@ -84,7 +84,7 @@ $$\sigma_p^2 = w_A^2\sigma_A^2 + w_B^2\sigma_B^2 + \underbrace{2\,w_A w_B\,\rho_
 
 - Operatoren mit `\operatorname{Cov}`, Text mit `\text{...}`, Fettdruck mit `\mathbf{...}`
 - Klammern, die mitwachsen: `\left( ... \right)`
-- Währungs-Dollarzeichen kollidieren mit Inline-Mathe: `\$` schreiben oder „USD" ausschreiben
+- Währungs-Dollarzeichen kollidieren mit Inline-Mathe: `\$` schreiben oder „USD“ ausschreiben
 - **Keine Nicht-ASCII-Zeichen (`€` usw.) und kein `{,}` innerhalb von `\mathbf{…}`, und `€` auch sonst nicht in Formeln** (z. B. `\mathbf{€35m}` oder `$S_0 = €500{,}000$` bricht das Rendern ab; Fehler `reading '4'`). Währung und Einheiten fett **außerhalb** der Formel setzen: `$V \approx$ **€35m**`
 - Pro Folie höchstens zwei Blockformeln; eine Herleitung gehört in den Anhang
 - Nach dem Rendern mindestens eine Formelfolie ansehen, ob alles erscheint (Skript `overflow_scan.js` prüft nur die Höhe)

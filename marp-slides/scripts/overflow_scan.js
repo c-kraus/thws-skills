@@ -1,10 +1,13 @@
 #!/usr/bin/env node
-// overflow_scan.js — meldet Folien, deren Inhalt über den unteren Rand hinausreicht.
+// overflow_scan.js — meldet Folien, deren Inhalt über den unteren Rand hinausreicht oder in einem Block
+// abgeschnitten wird (Absatz, Liste, Tabelle mit overflow: hidden), dazu Typografie-Fehler im Quelltext.
 // Aufruf: node overflow_scan.js THEME_DIR datei1.md [datei2.md ...]
 // Voraussetzung: @marp-team/marp-cli global installiert (npm i -g @marp-team/marp-cli), Chrome vorhanden.
 // Rendert die Dateien in Chrome, meldet Überlauf und Renderfehler (Exit-Code 1 bei Fehler).
 // Hinweise: Vollbild-Bildfolien (class: fullscreen) können als Fehlalarm erscheinen.
 //           Schwelle: Inhalt bis weniger als 12 px vor dem Folienrand wird gemeldet.
+//           "abgeschnitten N px": ein Block ist höher als sein sichtbarer Bereich (Text fehlt mitten auf der Folie).
+//           Typografie: "--" im Fließtext (MARP macht daraus keinen Gedankenstrich) und „… mit geradem Schlusszeichen.
 const fs = require('fs'), path = require('path'), { execSync } = require('child_process');
 const [themeDir, ...files] = process.argv.slice(2);
 if (!themeDir || files.length === 0) { console.error('Aufruf: node overflow_scan.js THEME_DIR datei.md ...'); process.exit(1); }
@@ -30,6 +33,15 @@ const chrome = process.env.CHROME_PATH || '/Applications/Google Chrome.app/Conte
     try { rendered = marp.render(fs.readFileSync(f, 'utf8')); } catch (e) { errors.push(String(e).split('\n')[0]); }
     console.error = saved.error; console.warn = saved.warn; console.log = saved.log; process.stderr.write = saved.write;
     if (errors.length) { console.log(path.basename(f) + ': FEHLER beim Rendern: ' + [...new Set(errors)].join(' | ')); process.exitCode = 1; }
+    // Typografie im Quelltext (ohne Kommentare, Code und Foliengrenzen)
+    const src = fs.readFileSync(f, 'utf8').replace(/<!--[\s\S]*?-->/g, '').replace(/```[\s\S]*?```/g, '').replace(/`[^`\n]*`/g, '');
+    const typo = [];
+    src.split('\n').forEach((line, n) => {
+      if (/^\s*-{3,}\s*$/.test(line) || /^\s*\|?[\s:|-]+\|?\s*$/.test(line)) return;
+      if (/(^|[^-])--([^-]|$)/.test(line)) typo.push(`Z. ${n + 1}: "--" statt "–"`);
+      if (/„[^“"\n]*"/.test(line)) typo.push(`Z. ${n + 1}: „…" statt „…“`);
+    });
+    if (typo.length) console.log(path.basename(f) + ': TYPOGRAFIE ' + typo.length + ' Stelle(n): ' + typo.slice(0, 8).join('; ') + (typo.length > 8 ? ' …' : ''));
     if (!rendered) continue;
     const { html, css } = rendered;
     fs.writeFileSync(tmp, `<!doctype html><meta charset=utf-8><base href="file://${path.dirname(path.resolve(f))}/"><style>${css}</style>${html}`);
@@ -40,9 +52,10 @@ const chrome = process.env.CHROME_PATH || '/Applications/Google Chrome.app/Conte
     const res = await page.evaluate(() => [...document.querySelectorAll('section')].map((s, i) => {
       const r = s.getBoundingClientRect(); let max = 0;
       s.querySelectorAll('*').forEach(e => { const b = e.getBoundingClientRect(); if (b.height > 0 && b.width > 0) max = Math.max(max, b.bottom - r.top); });
-      return { i: i + 1, h: r.height, max: Math.round(max), over: Math.round(max - r.height), t: (s.querySelector('h1,h2,h3') || {}).textContent || '' };
-    }).filter(x => x.over > -12));
-    console.log(path.basename(f) + ': ' + (res.length ? res.map(r => `#${r.i} "${r.t.trim().slice(0, 40)}" (Inhalt bis ${r.max}px von ${r.h}px)`).join('; ') : 'ok'));
+      let clip = 0; s.querySelectorAll('*').forEach(e => { if (e.scrollHeight - e.clientHeight > 2 && getComputedStyle(e).overflowY !== 'visible') clip = Math.max(clip, e.scrollHeight - e.clientHeight); });
+      return { i: i + 1, h: r.height, max: Math.round(max), over: Math.round(max - r.height), clip, t: (s.querySelector('h1,h2,h3') || {}).textContent || '' };
+    }).filter(x => x.over > -12 || x.clip > 0));
+    console.log(path.basename(f) + ': ' + (res.length ? res.map(r => `#${r.i} "${r.t.trim().slice(0, 40)}" (${r.over > -12 ? `Inhalt bis ${r.max}px von ${r.h}px` : ''}${r.over > -12 && r.clip ? ', ' : ''}${r.clip ? `abgeschnitten ${r.clip}px` : ''})`).join('; ') : 'ok'));
     await page.close();
   }
   await browser.close();

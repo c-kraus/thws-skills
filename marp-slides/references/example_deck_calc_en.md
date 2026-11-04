@@ -118,7 +118,7 @@ Same assets A and B, weights 40% / 60%. You want the portfolio risk **below 5%.*
 *One answer and one sentence of reasoning per group.*
 
 <!--
-Expected: 1 -- sigma^2 < 0.0025 => rho < (0.0025 - 0.00306)/0.001296 = -0.43. 2 -- w_A = sigma_B / (sigma_A + sigma_B) = 9/12 = 75%, w_B = 25%: |0.75*3% - 0.25*9%| = 0. 3 -- Perfect negative correlation does not occur in real markets; correlations of stocks are typically clearly positive.
+Expected: 1 – sigma^2 < 0.0025 => rho < (0.0025 - 0.00306)/0.001296 = -0.43. 2 – w_A = sigma_B / (sigma_A + sigma_B) = 9/12 = 75%, w_B = 25%: |0.75*3% - 0.25*9%| = 0. 3 – Perfect negative correlation does not occur in real markets; correlations of stocks are typically clearly positive.
 -->
 
 ---
@@ -161,7 +161,7 @@ Risk-free rate: **3%.**
 2. Can you reach **X's 12% with less risk** using Y? How?
 
 <!--
-Expected: 1 -- Sharpe = (mu - rf)/sigma: X = 9/15 = 0.60, Y = 6/8 = 0.75, so Y. 2 -- Leverage Y with L = 1.5 (borrow 50% at 3%): return = 3% + 1.5*(9% - 3%) = 12%, risk = 1.5*8% = 12% < 15%.
+Expected: 1 – Sharpe = (mu - rf)/sigma: X = 9/15 = 0.60, Y = 6/8 = 0.75, so Y. 2 – Leverage Y with L = 1.5 (borrow 50% at 3%): return = 3% + 1.5*(9% - 3%) = 12%, risk = 1.5*8% = 12% < 15%.
 -->
 
 ---
@@ -307,7 +307,7 @@ Vary $\mu_{\text{target}}$ and the frontier appears. Tools: Excel Solver, Python
 
 ---
 
-# Harry Markowitz (1927--2023)
+# Harry Markowitz (1927–2023)
 
 - *Portfolio Selection* (1952): the foundation of **modern portfolio theory**
 - Nobel Memorial Prize in Economic Sciences **1990** (with Merton Miller and William Sharpe)
@@ -321,8 +321,8 @@ Vary $\mu_{\text{target}}$ and the frontier appears. Tools: Excel Solver, Python
 
 # References
 
-- DeMiguel, V., Garlappi, L. & Uppal, R. (2009). Optimal versus naive diversification. *Review of Financial Studies, 22*(5), 1915--1953.
-- Longin, F. & Solnik, B. (2001). Extreme correlation of international equity markets. *Journal of Finance, 56*(2), 649--676.
-- Markowitz, H. (1952). Portfolio selection. *Journal of Finance, 7*(1), 77--91.
-- Michaud, R. O. (1989). The Markowitz optimization enigma: Is "optimized" optimal? *Financial Analysts Journal, 45*(1), 31--42.
-- Sharpe, W. F. (1966). Mutual fund performance. *Journal of Business, 39*(1), 119--138.
+- DeMiguel, V., Garlappi, L. & Uppal, R. (2009). Optimal versus naive diversification. *Review of Financial Studies, 22*(5), 1915–1953.
+- Longin, F. & Solnik, B. (2001). Extreme correlation of international equity markets. *Journal of Finance, 56*(2), 649–676.
+- Markowitz, H. (1952). Portfolio selection. *Journal of Finance, 7*(1), 77–91.
+- Michaud, R. O. (1989). The Markowitz optimization enigma: Is "optimized" optimal? *Financial Analysts Journal, 45*(1), 31–42.
+- Sharpe, W. F. (1966). Mutual fund performance. *Journal of Business, 39*(1), 119–138.
