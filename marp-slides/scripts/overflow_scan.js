@@ -5,7 +5,8 @@
 // Voraussetzung: @marp-team/marp-cli global installiert (npm i -g @marp-team/marp-cli), Chrome vorhanden.
 // Rendert die Dateien in Chrome, meldet Überlauf und Renderfehler (Exit-Code 1 bei Fehler).
 // Hinweise: Vollbild-Bildfolien (class: fullscreen) können als Fehlalarm erscheinen.
-//           Schwelle: Inhalt bis weniger als 12 px vor dem Folienrand wird gemeldet.
+//           "über den Rand": Inhalt reicht über die Folie hinaus. "Randbereich": Inhalt in den unteren 80 von 720 px
+//           (ab Höhe der Seitenzahl, außerhalb der Inhaltsfläche des Themes; small-text/tiny-text oder kürzen).
 //           "abgeschnitten N px": ein Block ist höher als sein sichtbarer Bereich (Text fehlt mitten auf der Folie).
 //           Typografie: "--" im Fließtext (MARP macht daraus keinen Gedankenstrich) und „… mit geradem Schlusszeichen.
 const fs = require('fs'), path = require('path'), { execSync } = require('child_process');
@@ -54,8 +55,8 @@ const chrome = process.env.CHROME_PATH || '/Applications/Google Chrome.app/Conte
       s.querySelectorAll('*').forEach(e => { const b = e.getBoundingClientRect(); if (b.height > 0 && b.width > 0) max = Math.max(max, b.bottom - r.top); });
       let clip = 0; s.querySelectorAll('*').forEach(e => { if (e.scrollHeight - e.clientHeight > 2 && getComputedStyle(e).overflowY !== 'visible') clip = Math.max(clip, e.scrollHeight - e.clientHeight); });
       return { i: i + 1, h: r.height, max: Math.round(max), over: Math.round(max - r.height), clip, t: (s.querySelector('h1,h2,h3') || {}).textContent || '' };
-    }).filter(x => x.over > -12 || x.clip > 0));
-    console.log(path.basename(f) + ': ' + (res.length ? res.map(r => `#${r.i} "${r.t.trim().slice(0, 40)}" (${r.over > -12 ? `Inhalt bis ${r.max}px von ${r.h}px` : ''}${r.over > -12 && r.clip ? ', ' : ''}${r.clip ? `abgeschnitten ${r.clip}px` : ''})`).join('; ') : 'ok'));
+    }).filter(x => x.max > x.h * (1 - 80 / 720) || x.clip > 0));
+    console.log(path.basename(f) + ': ' + (res.length ? res.map(r => `#${r.i} "${r.t.trim().slice(0, 40)}" (${r.over > 0 ? 'über den Rand' : r.max > r.h * (1 - 80 / 720) ? 'Randbereich' : ''}${r.max > r.h * (1 - 80 / 720) ? `: Inhalt bis ${r.max}px von ${r.h}px` : ''}${r.max > r.h * (1 - 80 / 720) && r.clip ? ', ' : ''}${r.clip ? `abgeschnitten ${r.clip}px` : ''})`).join('; ') : 'ok'));
     await page.close();
   }
   await browser.close();

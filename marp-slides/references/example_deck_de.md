@@ -71,9 +71,11 @@ Anekdote (optional): Kant verließ Königsberg sein Leben lang nie; der Legende 
 
 ---
 
+<!-- _class: small-text -->
+
 # Preis oder Würde
 
-> „Im Reich der Zwecke hat alles entweder einen Preis oder eine Würde. Was einen Preis hat, kann durch etwas anderes ersetzt werden. Was dagegen über allen Preis erhaben ist, hat eine Würde.“
+> „Im Reich der Zwecke hat alles entweder einen Preis oder eine Würde. […] [W]as dagegen über allen Preis erhaben ist, mithin kein Äquivalent verstattet, das hat eine Würde.“
 
 *(Kant, 1785)*
 
@@ -111,6 +113,8 @@ Anekdote (optional): Kant verließ Königsberg sein Leben lang nie; der Legende 
 *Pro Gruppe zwei Maximen. Nennen Sie das Ergebnis und die Begründung.*
 
 ---
+
+<!-- _class: small-text -->
 
 # Zweck oder bloß Mittel?
 
@@ -262,9 +266,7 @@ Schreiben Sie in einem Satz auf einen Zettel eine Grenze, die Sie in Ihrem Beruf
 | **Autonomieformel** | Handle so, dass dein Wille sich selbst als allgemein gesetzgebend betrachten kann. | Selbstgesetzgebung |
 | **Reich-der-Zwecke-Formel** | Handle so, als ob du ein gesetzgebendes Glied im Reich der Zwecke wärst. | Moralische Gemeinschaft |
 
-*(Kant, 1785)*
-
-→ Kant hielt alle Formeln für **Ausdrucksformen desselben Prinzips.**
+→ Kant hielt alle Formeln für **Ausdrucksformen desselben Prinzips.** *(Kant, 1785)*
 
 ---
 

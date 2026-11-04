@@ -112,6 +112,8 @@ Anecdote (optional): Kant never left Königsberg in his life; legend has it that
 
 ---
 
+<!-- _class: small-text -->
+
 # End or Merely a Means?
 
 > "So act that you use humanity, whether in your own person or in the person of any other, always at the same time as an end, never merely as a means."
@@ -262,9 +264,7 @@ On a slip of paper, write in one sentence a limit you would **not cross** in you
 | **Autonomy** | Act so that your will can regard itself as giving universal law. | Self-legislation |
 | **Kingdom of ends** | Act as if you were a legislating member of the kingdom of ends. | Moral community |
 
-*(Kant, 1785)*
-
-→ Kant regarded all formulas as **expressions of the same principle.**
+→ Kant regarded all formulas as **expressions of the same principle.** *(Kant, 1785)*
 
 ---
 
