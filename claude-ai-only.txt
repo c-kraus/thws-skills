@@ -1,0 +1,12 @@
+# Skills, die nur über claude.ai aktiv sind und deshalb NICHT nach
+# ~/.claude/skills verlinkt werden (sonst sieht Claude sie doppelt).
+# Das Repo bleibt maßgeblich: ändern, dann auf claude.ai hochladen.
+# Ein Skill-Name pro Zeile.
+ba-gutachten
+case-builder
+exam-builder-skill
+html-builder
+marp-slides
+quarto-book-setup
+quarto-lecture
+widget-analyzer

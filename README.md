@@ -123,6 +123,8 @@ Skills werden von Claude Code automatisch erkannt sobald der Symlink in `~/.clau
 
 Die Repos sind maßgeblich, claude.ai erhält Kopien (Upload über *Anpassungen → Skills → Hinzufügen → Skill hochladen*, „Hochladen und ersetzen“ behält die Versionshistorie).
 
+Skills in `claude-ai-only.txt` werden von `install.sh` nicht nach `~/.claude/skills` verlinkt, weil sie über claude.ai bereits aktiv sind (sonst sieht Claude sie doppelt). `skill-sync-check.py` vergleicht sie direkt mit dem Repo-Ordner.
+
 `tools/skill-sync-check.py` vergleicht jeden Skill in `~/.claude/skills` mit der Kopie, die die Claude-Desktop-App von deinen claude.ai-Skills anlegt, und meldet je Skill: *gleich*, *Repo neuer* (hochladen), *claude.ai neuer* (ins Repo holen) oder *nur claude.ai*.
 
 ```bash

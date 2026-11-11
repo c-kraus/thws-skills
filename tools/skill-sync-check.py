@@ -28,6 +28,10 @@ CACHE_GLOB = os.path.join(
     HOME, "Library", "Application Support", "Claude",
     "local-agent-mode-sessions", "skills-plugin", "*", "*")
 IGNORE_FILE = os.path.join(HOME, ".claude", "skill-sync-ignore")
+REPO_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+# Skills, die nur über claude.ai aktiv sind (nicht in ~/.claude/skills verlinkt);
+# verglichen wird dann direkt der Ordner im Repo.
+CLAUDE_AI_ONLY_FILE = os.path.join(REPO_DIR, "claude-ai-only.txt")
 SKIP_NAMES = {".git", ".DS_Store", "__pycache__", ".claude-plugin"}
 
 
@@ -100,6 +104,12 @@ def main():
               and s["name"] not in ignore}
     local = {n: os.path.join(LOCAL_DIR, n) for n in os.listdir(LOCAL_DIR)
              if n not in ignore and os.path.isfile(os.path.join(LOCAL_DIR, n, "SKILL.md"))}
+    if os.path.exists(CLAUDE_AI_ONLY_FILE):
+        with open(CLAUDE_AI_ONLY_FILE) as f:
+            for n in (l.strip() for l in f):
+                if n and not n.startswith("#") and n not in ignore and n not in local \
+                        and os.path.isfile(os.path.join(REPO_DIR, n, "SKILL.md")):
+                    local[n] = os.path.join(REPO_DIR, n)
 
     rows = []
     for name in sorted(set(remote) | set(local)):
